@@ -1,0 +1,27 @@
+{% extends 'father.html' %}{% block content %}
+<h1>角色管理</h1>
+<a class="btn btn-primary" href="/rbac/roles/new" type="button">新增</a>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <td>角色</td>
+        <td>权限</td>
+        <td colspan="2">操作</td>
+    </tr>
+    <thead>
+    <tbody>
+    {% for role in role_list %}
+        <tr>
+            <td>{{ role.title }}</td>
+            <td>
+                {% for item in role.permissions.all %}
+                <button class="btn btn-outline-success" type="button">{{ item.title }}</button>
+                {% endfor %}
+            </td>
+            <td><a href="/rbac/roles/edit/{{ role.id }}">编辑</a></td>
+            <td><a href="/rbac/roles/delete/{{ role.id }}">删除</a></td>
+        </tr>
+    {% endfor %}
+    <tbody>
+</table>
+{% endblock %}

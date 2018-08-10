@@ -1,0 +1,23 @@
+{% extends 'father.html' %}{% block content %}
+<h1>菜单管理</h1>
+<a href="/rbac/menus/new"><button>新增</button></a>
+<table class="table table-hover">
+	<thead>
+    <tr>
+        <td>菜单</td>
+        <td>父级菜单</td>
+        <td colspan="2">操作</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for menu in menu_list %}
+        <tr>
+            <td>{{ menu.title }}</td>
+            <td>{{ menu.parent }}</td>
+            <td><a href="/rbac/menus/edit/{{ menu.id }}">编辑</a></td>
+            <td><a href="/rbac/menus/delete/{{ menu.id }}">删除</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
