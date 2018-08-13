@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
 from django.conf import settings
-import urllib,M2Crypto,json,base64,time
+#import urllib,M2Crypto,json,base64,time
+import urllib,json,base64,time
 
 
 
@@ -14,14 +15,11 @@ def login(request):
         ptoken = request.GET['ptoken']
     except Exception as e:
         print(e)
-        print('00000','0000000000001')
         pass
     response = None
     if ('uid' not in request.COOKIES and ptoken is ""):
-        print(11111111111)
         return redirect(login_url)
     if (ptoken != "" ):#login request callback
-        print(2222222222222,ptoken)
         message = urllib.parse.unquote(ptoken)
         strcode = base64.b64decode(message)
         pkey = M2Crypto.RSA.load_pub_key('/search/odin/pypro/webqa/public.pem')
@@ -49,7 +47,6 @@ def login(request):
         else:
             response = None
     elif ('uid' in request.COOKIES):#already login
-        print(33333333333333333333)
         try:
             uid = request.COOKIES['uid']
         except:

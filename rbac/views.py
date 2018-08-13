@@ -5,8 +5,7 @@ from .forms import UserInfoModelForm, RoleModelForm, PermissionModelForm, MenuMo
 
 
 def index(request):
-    print('rbacrbac')
-    return render(request, 'rbac/index.html')
+    return render(request, 'index.html')
 
 
 def users(request):

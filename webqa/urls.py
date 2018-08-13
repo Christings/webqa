@@ -14,18 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include,re_path
+from django.urls import include,re_path
 from fanyi import views
 urlpatterns = [
     re_path('admin/', admin.site.urls),
+    re_path(r'^$', views.login),
     re_path(r'login/', views.login),
-    re_path(r'test/', views.test),
     re_path(r'index/', views.index),
-    re_path(r'order/', views.index),
-    re_path(r'survey/produce/', views.index),
-    re_path(r'stock/detail/', views.index),
-    re_path(r'produce/detail/', views.index),
     re_path(r'rbac/', include('rbac.urls')),
-    re_path('polls/', include('polls.urls')),
-    re_path('fanyi/', include('fanyi.urls')),
+    re_path(r'polls/', include('polls.urls')),
+    re_path(r'fanyi/', include('fanyi.urls')),
 ]
