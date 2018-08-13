@@ -7,3 +7,4 @@ fanyi/__pycache__/
 .project
 *.pyc
 script/*.log
+script/uwsgi.pid
