@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
 from django.conf import settings
-import urllib,M2Crypto,json,base64,time
-# import urllib,json,base64,time
+# import urllib,M2Crypto,json,base64,time
+import urllib,json,base64,time
 
 
 
@@ -66,7 +66,7 @@ def login(request):
 
 def index(request):
     # return render(request, 'index.html')
-    return render(request, 'father.html')
+    return render(request, 'welcome.html')
 
 
 def logout(request):
