@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
@@ -7,24 +8,30 @@ import urllib,M2Crypto,json,base64,time
 
 
 def login(request):
-    login_url = "https://login.sogou-inc.com/?appid=1220$sso_redirect=http://webqa.web.sjs.ted/&targetUrl="
+    login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
     ptoken = ""
     try:
         ptoken = request.GET['ptoken']
     except Exception as e:
+        print(e)
+        print('00000','0000000000001')
         pass
+    response = None
     if ('uid' not in request.COOKIES and ptoken is ""):
+        print(11111111111)
         return redirect(login_url)
-    if (ptoken != ""):#login request callback
+    if (ptoken != "" ):#login request callback
+        print(2222222222222,ptoken)
         message = urllib.parse.unquote(ptoken)
         strcode = base64.b64decode(message)
-        pkey = M2Crypto.RSA.load_pub_key('/search/odin/daemon/pyonsg/public.pem')
+        pkey = M2Crypto.RSA.load_pub_key('/search/odin/pypro/webqa/public.pem')
         output = pkey.public_decrypt(strcode, M2Crypto.RSA.pkcs1_padding)
         try:
             json_data = json.loads(output.decode('utf-8'))
             uid = json_data['uid']
             login_time = int(json_data['ts'])/1000 #s
-            userStatus = UserInfo.objects.filter(user_name=uid)
+            print(uid)
+            userStatus = UserInfo.objects.filter(username=uid)
             if userStatus.exists()==False:
                 insertInfo = UserInfo(username=uid)
                 insertInfo.save()
@@ -42,6 +49,7 @@ def login(request):
         else:
             response = None
     elif ('uid' in request.COOKIES):#already login
+        print(33333333333333333333)
         try:
             uid = request.COOKIES['uid']
         except:
@@ -54,7 +62,7 @@ def login(request):
                 response.set_cookie("uid", uid)
         else:
             response = None
-    if (response == None):
+    if (response is None):
         return redirect(login_url)
     return response
 

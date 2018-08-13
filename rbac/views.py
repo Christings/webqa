@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*- 
 from django.shortcuts import render, redirect, reverse
 from .models import UserInfo, Role, Permission, Menu
 from .forms import UserInfoModelForm, RoleModelForm, PermissionModelForm, MenuModelForm
 
 
 def index(request):
+    print('rbacrbac')
     return render(request, 'rbac/index.html')
 
 

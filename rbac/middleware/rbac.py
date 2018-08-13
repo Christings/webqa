@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 from django.conf import settings
 from django.shortcuts import HttpResponse, redirect
 import re
@@ -26,11 +27,12 @@ class RbacMiddleware(MiddlewareMixin):
     def process_request(self, request):
         request_url = request.path_info
         permission_url = request.session.get(settings.SESSION_PERMISSION_URL_KEY)
-        print('访问url',request_url)
-        print('权限--',permission_url)
+        print('url',request_url)
+        print('permission--',permission_url)
         # 如果请求url在白名单，放行
         for url in settings.SAFE_URL:
             if re.match(url, request_url):
+                print('write list',url)
                 return None
 
         # 如果未取到permission_url, 重定向至登录；为了可移植性，将登录url写入配置

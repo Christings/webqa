@@ -25,7 +25,7 @@ SECRET_KEY = '+y!y#j+guc+r8#51yxlx83jrbkbenyegj)1z6$vl)%6s)*cv8@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.144.120.30','webqa.web.sjs.ted']
 
 
 # Application definition
@@ -135,6 +135,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = "/search/odin/pypro/static/"
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'static'),

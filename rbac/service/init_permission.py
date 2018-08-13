@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..models import UserInfo, Menu
 
 
@@ -30,9 +31,9 @@ def init_permission(request, user_obj):
     from django.conf import settings
 
     # 保存用户权限url列表
-    print('permission_url_list ------------------- ',permission_url_list)
-    print('permission_menu_list ------------------- ',permission_menu_list)
-    print('menu_list ------------------- ',menu_list)
+    print('permission_url_list ------------------- ',str(permission_url_list).encode('utf-8'))
+    print('permission_menu_list ------------------- ',str(permission_menu_list).encode('utf-8'))
+    print('menu_list ------------------- ',str(menu_list).encode('utf-8'))
 
     request.session[settings.SESSION_PERMISSION_URL_KEY] = permission_url_list
 
