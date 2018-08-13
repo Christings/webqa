@@ -163,7 +163,6 @@ def menus_edit(request, id):
 def menus_delete(request, id):
     print(id)
     menu_obj = Menu.objects.filter(id=id).first()
-    print(menu_obj)
     menu_obj.delete()
     return redirect(reverse(menus))
 
