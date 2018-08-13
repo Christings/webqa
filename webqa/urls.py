@@ -20,6 +20,7 @@ urlpatterns = [
     re_path('admin/', admin.site.urls),
     re_path(r'^$', views.login),
     re_path(r'login/', views.login),
+    re_path(r'logout/', views.logout),
     re_path(r'index/', views.index),
     re_path(r'rbac/', include('rbac.urls')),
     re_path(r'polls/', include('polls.urls')),
