@@ -1,12 +1,13 @@
 {% extends 'father.html' %}{% block content %}
+<div class="col-md-6">
 <h1>菜单管理</h1>
 <a href="/rbac/menus/new" ><button class="btn btn-primary">新增</button></a>
 <table class="table table-hover">
-	<thead>
-    <tr>
-        <td>菜单</td>
-        <td>父级菜单</td>
-        <td colspan="2">操作</td>
+    <thead>
+    <tr role="row">
+        <th>菜单</th>
+        <th>父级菜单</th>
+        <th colspan="2">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -20,4 +21,5 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
 {% endblock %}
