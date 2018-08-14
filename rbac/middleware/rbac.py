@@ -30,8 +30,8 @@ class RbacMiddleware(MiddlewareMixin):
         print('url',request_url)
         print('permission--',permission_url)
         # 如果请求url在白名单，放行
+        print('write lsit--',settings.SAFE_URL)
         for url in settings.SAFE_URL:
-            print(settings.SAFE_URL)
             if re.match(url, request_url):
                 print('write list',url)
                 return None
