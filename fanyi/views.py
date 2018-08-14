@@ -2,13 +2,42 @@
 from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
-from webqa import settings
-import urllib,M2Crypto,json,base64,time
-# import urllib,json,base64,time
+from utils import pagination
+from fanyi import models
+# import urllib,M2Crypto,json,base64,time
+import urllib,json,base64,time
 
-
+def auth(func):
+    def inner(request,*args,**kwargs):
+        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
+        try:
+            user_id = request.COOKIES.get('uid')
+            if not user_id:
+                return redirect(login_url)
+        except:
+            return redirect(login_url)
+        return func(request,*args,**kwargs)
+    return inner
+@auth
 def debug(request):
-    return HttpResponse('let go')
+    # uid = request.COOKIES['uid']
+    uid = 'zhangjingjun'
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            req_list = models.ReqInfo.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(req_list), 3, 5)
+            data = req_list[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/fanyi/debug?page=")
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'fanyi/fy_debug.html',{'user_id': uid,'li': data,'page_str': page_str})
+    elif request.method == 'POST':
+        return HttpResponse('let go')
 
 
 def login(request):
