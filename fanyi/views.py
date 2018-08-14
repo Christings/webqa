@@ -68,14 +68,7 @@ def login(request):
 
 
 def index(request):
-    try:
-        alive = request.session[settings.SESSION_MENU_KEY]
-    except:
-        alive = '0'
-    if alive == '0':
-        return redirect('login')
-    else:
-        return render(request, 'welcome.html')
+    return render(request, 'welcome.html')
 
 
 def logout(request):
