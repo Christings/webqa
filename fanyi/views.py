@@ -2,8 +2,8 @@
 from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
-# import urllib,M2Crypto,json,base64,time
-import urllib,json,base64,time
+import urllib,M2Crypto,json,base64,time
+#import urllib,json,base64,time
 
 
 def debug(request):

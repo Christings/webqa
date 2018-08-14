@@ -161,5 +161,4 @@ SAFE_URL = [
     r'/login/',
     '/admin/.*',
     '/index/',
-    r'/',
 ]
