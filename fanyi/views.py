@@ -2,8 +2,9 @@
 from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
+from webqa import settings
 import urllib,M2Crypto,json,base64,time
-#import urllib,json,base64,time
+# import urllib,json,base64,time
 
 
 def debug(request):
@@ -67,7 +68,14 @@ def login(request):
 
 
 def index(request):
-    return render(request, 'welcome.html')
+    try:
+        alive = request.session[settings.SESSION_MENU_KEY]
+    except:
+        alive = '0'
+    if alive == '0':
+        return redirect('login')
+    else:
+        return render(request, 'welcome.html')
 
 
 def logout(request):
