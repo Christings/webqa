@@ -13,7 +13,6 @@
     <!-- Font-icon css-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        {% rbac_css %}
     </style>
   </head>
   <body class="app sidebar-mini rtl">
@@ -36,7 +35,6 @@
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
       <ul class="app-menu">
-      	{% rbac_menu request %}
       </ul>
     </aside>
     <main class="app-content">
@@ -46,12 +44,7 @@
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
-    {% block js%}{% endblock %}
-    <script>
-        $(function () {
-            {% rbac_js %}
-        })
-    </script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
     {% block js%}{% endblock %}
   </body>
 </html>

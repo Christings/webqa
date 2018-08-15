@@ -59,20 +59,20 @@ class Page:
                     start_index = self.total_count - self.pager_num + 1
 
         if self.current_page == 1:
-            prev = '<li><a href="javascript:void(0);" aria-label="Previous"><span aria-hidden="true">Previous</span></a></li>'
+            prev = '<li class="page-item"><a class="page-link" href="javascript:void(0);" aria-label="Previous"><span aria-hidden="true">Previous</span></a></li>'
         else:
-            prev = '<li><a href=%s%s aria-label="Previous"><span aria-hidden="true">Previous</span></a></li>' % (base_url,self.current_page -1)
+            prev = '<li class="page-item"><a class="page-link" href=%s%s aria-label="Previous"><span aria-hidden="true">Previous</span></a></li>' % (base_url,self.current_page -1)
 
         page_list.append(prev)
 
         for i in range(int(start_index),int(end_index)):
-            temp = '<li><a href=%s%s>%s</a></li>' % (base_url, i, i)
+            temp = '<li class="page-item"><a class="page-link" href=%s%s>%s</a></li>' % (base_url, i, i)
             page_list.append(temp)
 
         if self.current_page == self.total_count:
-            nex = '<li><a href="javascript:void(0);" aria-label="Next"><span aria-hidden="true">Next</span></a></li>'
+            nex = '<li class="page-item"><a class="page-link" href="javascript:void(0);" aria-label="Next"><span aria-hidden="true">Next</span></a></li>'
         else:
-            nex = '<li><a href=%s%s aria-label="Next"><span aria-hidden="true">Next</span></a></li>' % (base_url,self.current_page + 1)
+            nex = '<li class="page-item"><a class="page-link" href=%s%s aria-label="Next"><span aria-hidden="true">Next</span></a></li>' % (base_url,self.current_page + 1)
 
         page_list.append(nex)
 
