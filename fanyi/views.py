@@ -5,7 +5,7 @@ from rbac.service.init_permission import init_permission
 from utils import pagination
 from fanyi import models
 from fanyi import requestData
-import urllib,M2Crypto,json,base64,time
+import urllib,M2Crypto,json,base64,time,requests
 # import urllib,json,base64,time,requests
 
 def auth(func):
