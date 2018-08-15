@@ -1,4 +1,4 @@
-{% extends 'father.html' %}{% block content %}{% load tag_tools %}{% load static %}
+{% extends 'main.html' %}{% block content %}{% load tag_tools %}{% load static %}
 <div class="row">       
     <div class="col-md-9">
       <div class="tile">
@@ -213,7 +213,7 @@
 				<tr req_id="{{item.id}}" class="get_data" lang_type="{{item.trans_direct}}">
 					<td style="">{{item.reqtype}}</td>
 					<td style="display: none;">{% formatIp item.host_ip %}</td>
-					<td style="text-align: center;">{{item.trans_direct}}</td>
+					<td>{{item.trans_direct}}</td>
 					<td class="tabletd">{{item.req_text}}</td>
 					<td style="display: none;">{{item.result}}</td>
 					<td style="display: none;">{{item.isfromzh}}</td>
@@ -270,7 +270,7 @@
 				if(reqtext != "" && inputHost != "") {
 					$.ajax({
 						type: "POST",
-						url: "/fanyi/debug_info_save/",
+						url: "/fanyi/req_info_save/",
 						async: true,
 						traditional: true,
 						data: {
@@ -318,16 +318,12 @@
 						data: $('#form_xml').serialize(),
 						dataType: 'JSON',
 						success: function(obj) {
-							console.log(obj.status)
 							if(obj.status) {
-								console.log(obj.transResult)
 								if(obj.reqtype=='alltrans_json'){
 									resultSplit=(obj.transResult).split('|||');
 									result_str=""
 									for(i=0;i<resultSplit.length;i++){
-										console.log(i)
 										result_str+=(resultSplit[i]+'\r\n')
-										console.log(resultSplit[i])
 									}
 //									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
 									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'
@@ -366,7 +362,7 @@
 				var line_id = $(this).parent().parent().attr('req_id');
 				$.ajax({
 					type: "POST",
-					url: "/fanyi/debug_del_line/",
+					url: "/fanyi/del_line/",
 					async: true,
 					data: {
 						'line_id': line_id,
