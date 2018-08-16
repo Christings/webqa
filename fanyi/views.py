@@ -86,7 +86,7 @@ def gpu_task_start(request):
         models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1,
                                         h_id=req_id)
         running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
-        os.system('/usr/local/bin/python3 /search/odin/daemon/pyonsg/utils/monitor.py %s %s &' % (str(running_case_id.id),req_id))
+        os.system('/usr/local/bin/python3 /search/odin/pypro/webqa/utils/monitor.py %s %s &' % (str(running_case_id.id),req_id))
         time.sleep(1)
         new_running_ip = models.Host.objects.filter(id=req_id).first()
         if new_running_ip.runningPID == '':
