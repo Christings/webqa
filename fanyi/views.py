@@ -114,8 +114,8 @@ def gpu_del_host(request):
 
 @auth
 def gpu(request):
-    uid = 'zhangjingjun'
-    # uid = request.COOKIES['uid']
+    # uid = 'zhangjingjun'
+    uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         task_id = request.GET.get('taskid')
@@ -163,8 +163,8 @@ def gpu(request):
 # bbk
 @auth
 def bbk(request):
-    uid = 'zhangjingjun'
-    # uid = request.COOKIES['uid']
+    # uid = 'zhangjingjun'
+    uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         current_page = 1
