@@ -10,10 +10,10 @@ import os
 import logUtils
 
 database_host="10.134.110.163"
-database_data="sogotest"
-database_table="fanyi_fymonitor"
+database_data="sogowebqa"
+database_table="fanyi_gpumonitor"
 database_user="root"
-database_pass="Zhangjj@sogou123"
+database_pass="Websearch@qa66"
 monitor_id = int(sys.argv[1])
 host_id = sys.argv[2]
 

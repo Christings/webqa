@@ -75,6 +75,7 @@ def gpu_task_start(request):
     req_id = request.POST.get('line_id')
     try:
         running_pid = models.Host.objects.filter(id=req_id, status=1).values('runningPID')
+        print(running_pid)
         monitor_ip = models.Host.objects.filter(id=req_id).first()
 
         if running_pid:
@@ -83,9 +84,10 @@ def gpu_task_start(request):
         close_all_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).values('id')
         for close_id in close_all_id:
             models.GpuMonitor.objects.filter(id=close_id['id'], h_id=req_id).update(status=0)
-        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1,
-                                        h_id=req_id)
+        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1, h_id=req_id)
         running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
+        print('running_case_id',running_case_id)
+        print('req_id',req_id)
         os.system('/usr/local/bin/python3 /search/odin/pypro/webqa/utils/monitor.py %s %s &' % (str(running_case_id.id),req_id))
         time.sleep(1)
         new_running_ip = models.Host.objects.filter(id=req_id).first()
@@ -94,6 +96,7 @@ def gpu_task_start(request):
             ret['error'] = "Error:start error"
             models.GpuMonitor.objects.filter(id=running_case_id.id).update(status=2)
     except Exception as e:
+        print(e)
         ret['status'] = False
         ret['error'] = "Error:" + str(e)
     return HttpResponse(json.dumps(ret))
@@ -123,12 +126,9 @@ def gpu(request):
             current_page = int(page)
         try:
             if task_id == '':
-                gpu_info = models.GpuMonitor.objects.all().values('id', 'create_time', 'end_time', 'monitorip', 'user',
-                                                                 'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.all().values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
             else:
-                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id).values('id', 'create_time', 'end_time',
-                                                                                'monitorip', 'user',
-                                                                                'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/fanyi/gpu/?taskid=%s&page=" % task_id)
