@@ -1,0 +1,264 @@
+{% extends 'father.html' %} {% load static %}{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="alert alert-dismissible alert-success" role="alert">任务详情</div>
+			<div class="tile-body">
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table table-hover" id="reqData">
+						<thead>
+							<tr>
+								<td style="width: 40px;">ID</td>
+								<td style="">StartTime</td>
+								<td>EndTime</td>
+								<td style="">IP</td>
+								<td>User</td>
+								<td style="width: 100px;">Stauts</td>
+							</tr>
+						</thead>
+						<tbody id="reqBody">
+							<tr req_id="{{item.id}}">
+								<td class="tabletd" style="">{{task_detail.0.id}}</td>
+								<td class="tabletd" style="">{{task_detail.0.create_time}}</td>
+								<td class="tabletd">{{task_detail.0.end_time}}</td>
+								<td class="tabletd" style="">{{task_detail.0.monitorip}}</td>
+								<td class="tabletd">{{task_detail.0.user}}</td>
+								<td class="tabletd">
+										{% ifequal task_detail.0.status 0 %}
+										<button class="btn btn-outline-info btn-sm" style="color: green;">Stopped</button>
+										{% endifequal %} 
+										{% ifequal task_detail.0.status 1 %}
+										<button class="btn btn-outline-success btn-sm" style="color: cream;">Running</button>
+										{% endifequal %}
+										{% ifequal task_detail.0.status 2 %}
+										<button class="btn btn-outline-danger btn-sm" style="color: red;">Error</button>
+										{% endifequal %}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div id="showDiv"></div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-12">
+						<div id="container" style="width: 100%; height: 320px; margin: 0 auto"></div>
+    					<div id="container2" style="width: 100%; height: 320px; margin: 0 auto"></div>
+					</div>
+				</div>
+			</div>						
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block js %}
+<script src="{% static "js/highcharts.js" %}"></script>
+<script>
+$(document).ready(function() {  
+   var chart = {
+      type: 'spline'      
+   }; 
+   var title = {
+      text: 'GPU 内存使用量'   
+   };
+   var subtitle = {
+      text: ''
+   };
+   var xAxis = {
+      type: 'datetime',
+      dateTimeLabelFormats: { // don't display the dummy year
+         month: '%e. %b',
+         year: '%b'
+      },
+      title: {
+         text: 'Date'
+      }
+   };
+   var yAxis = {
+      title: {
+         text: 'GPU Men Used (m)'
+      },
+      min: 0
+   };
+   var tooltip = {
+      headerFormat: '<b>{series.name}</b><br>',
+      pointFormat: '{point.x:%e. (%b-1)}: {point.y:.2f} M'
+   };
+   var plotOptions = {
+      spline: {
+         marker: {
+            enabled: true
+         }
+      }
+   };
+   var series= [{
+         name: 'GPU Mem Used (m)',
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+         data: [
+			{{ task_detail.0.gpumem }}
+             
+         ]
+     }
+   ];     
+      
+   var json = {};
+   json.chart = chart;
+   json.title = title;
+   json.subtitle = subtitle;
+   json.tooltip = tooltip;
+   json.xAxis = xAxis;
+   json.yAxis = yAxis;  
+   json.series = series;
+   json.plotOptions = plotOptions;
+   $('#container').highcharts(json);
+   
+   
+   var chart2 = {
+      type: 'spline'      
+   }; 
+   var title2 = {
+      text: 'GPU 内存使用率'   
+   };
+   var subtitle2 = {
+      text: ''
+   };
+   var xAxis2 = {
+      type: 'datetime',
+      dateTimeLabelFormats: { // don't display the dummy year
+         month: '%e. %b',
+         year: '%b'
+      },
+      title: {
+         text: 'Date'
+      }
+   };
+   var yAxis2 = {
+      title: {
+         text: 'GPU Mem Used (%)'
+      },
+      min: 0
+   };
+   var tooltip2 = {
+      headerFormat: '<b>{series.name}</b><br>',
+      pointFormat: '{point.x:%e. %b}: {point.y:.2f} M'
+   };
+   var plotOptions2 = {
+      spline: {
+         marker: {
+            enabled: true
+         }
+      }
+   };
+   var series2= [{
+         name: 'GPU Mem Used (%)',
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+         data: [
+			{{ task_detail.0.gpumemused }}      
+         ]
+     }
+   ];
+   
+   
+   var json2 = {};
+   json2.chart = chart2;
+   json2.title = title2;
+   json2.subtitle = subtitle2;
+   json2.tooltip = tooltip2;
+   json2.xAxis = xAxis2;
+   json2.yAxis = yAxis2;  
+   json2.series = series2;
+   json2.plotOptions = plotOptions2;
+   $('#container2').highcharts(json2);
+  
+});
+</script>
+
+
+<script>
+	//cancel task
+	$('#cancel_task').click(function(){
+		var task_id = $(this).attr('task_id');
+		$.ajax({
+				type: "POST",
+				url: "/qo_task_cancel",
+				async: true,
+				traditional: true,
+				data: {
+					'task_id':task_id,
+				},
+				dataType: 'JSON',
+				success: function(obj) {
+					if(obj.status) {						
+						location.reload();
+					} else {
+						$('#error_xml').text(obj.error);
+					}
+				},
+				error: function() {
+
+				},
+			});
+	})
+	
+	//restart task
+	$('#restart_task').click(function(){
+		var task_id = $(this).attr('task_id');
+		$.ajax({
+				type: "POST",
+				url: "/qo_task_readd",
+				async: true,
+				traditional: true,
+				data: {
+					'task_id':task_id,
+				},
+				dataType: 'JSON',
+				success: function(obj) {
+					if(obj.status) {
+						//location.reload();
+						window.location.href='/qo_automation';
+					} else {
+						$('#error_xml').text(obj.error);
+					}
+				},
+				error: function() {
+
+				},
+			});
+	})
+	
+		//table hover
+	$(function() {
+		function showBox(obj, box) {
+			var timer = null;
+			$(obj).on("mouseover", function(e) {
+				clearTimeout(timer);
+				var clientX = e.clientX;
+				var clientY = e.clientY;
+				var y = clientY + 20;
+				var txt = $(this).text();
+				timer = setTimeout(function() {
+					$(box).css("left", clientX).css("top", y);
+					if(txt == "") {
+						$(box).hide();
+					} else {
+						$(box).show();
+						$(box).html(txt);
+					}
+				}, 300);
+			});
+			$(obj).on("mouseout", function() {
+				clearTimeout(timer);
+				$(box).hide();
+			});
+		}
+		showBox("#reqData > tbody td", "#showDiv");
+	});
+	
+	
+</script>
+{% endblock %}

@@ -28,7 +28,15 @@ urlpatterns = [
     re_path(r'^debug/$', views.debug),
     # bbk
     re_path(r'^bbk/$', views.bbk),
-    # share
+    # debug and bbk share
     re_path(r'^del_line/$', views.del_line),
     re_path(r'^req_info_save/$', views.req_info_save),
+    # nvidia monitor
+    re_path(r'^gpu/$', views.gpu),
+    re_path(r'^gpu_detail/$', views.gpu_detail),
+    re_path(r'^gpu_del_task/$', views.gpu_del_task),
+    re_path(r'^gpu_del_host/$', views.gpu_del_host),
+    re_path(r'^gpu_task_start/$', views.gpu_task_start),
+    re_path(r'^gpu_task_stop/$', views.gpu_task_stop),
+
 ]

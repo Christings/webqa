@@ -4,14 +4,17 @@ from rbac.models import UserInfo
 from rbac.service.init_permission import init_permission
 from utils import pagination
 from fanyi import models
-from fanyi import requestData
 from utils import baidufy_t
-from utils import googlefy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-import urllib,M2Crypto,json,base64,time,requests
-# import urllib,json,base64,time,requests
+import M2Crypto
+import urllib
+import json
+import base64
+import time
+import os
+import signal
 
 def auth(func):
     def inner(request,*args,**kwargs):
@@ -24,6 +27,137 @@ def auth(func):
             return redirect(login_url)
         return func(request,*args,**kwargs)
     return inner
+
+
+# monitor
+@auth
+def gpu_detail(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    task_id = request.GET.get('taskid')
+    task_detail = models.GpuMonitor.objects.filter(id=int(task_id))
+    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail})
+
+
+def gpu_del_task(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('monitor_id')
+    try:
+        models.GpuMonitor.objects.filter(id=req_id).delete()
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+    return HttpResponse(json.dumps(ret))
+
+
+def gpu_task_stop(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('line_id')
+    try:
+        running_pid = models.Host.objects.filter(id=req_id, status=1).values('runningPID')
+        if running_pid:
+            for item in running_pid:
+                # os.popen('kill -9 %s' % item['runningPID'])
+                os.kill(int(item['runningPID']), signal.SIGTERM)
+        models.Host.objects.filter(id=req_id).update(runningPID="", status=0)
+        models.GpuMonitor.objects.filter(status=1, h_id=req_id).update(status=0, end_time=get_now_time())
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+    return HttpResponse(json.dumps(ret))
+
+
+@auth
+def gpu_task_start(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('line_id')
+    try:
+        running_pid = models.Host.objects.filter(id=req_id, status=1).values('runningPID')
+        monitor_ip = models.Host.objects.filter(id=req_id).first()
+
+        if running_pid:
+            for item in running_pid:
+                os.kill(int(item['runningPID']), signal.SIGTERM)
+        close_all_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).values('id')
+        for close_id in close_all_id:
+            models.GpuMonitor.objects.filter(id=close_id['id'], h_id=req_id).update(status=0)
+        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1,
+                                        h_id=req_id)
+        running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
+        os.system('/usr/local/bin/python3 /search/odin/daemon/pyonsg/utils/monitor.py %s %s &' % (
+        time.sleep(1)
+        new_running_ip = models.Host.objects.filter(id=req_id).first()
+        if new_running_ip.runningPID == '':
+            ret['status'] = False
+            ret['error'] = "Error:start error"
+            models.GpuMonitor.objects.filter(id=running_case_id.id).update(status=2)
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+    return HttpResponse(json.dumps(ret))
+
+
+def gpu_del_host(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('line_id')
+    try:
+        models.Host.objects.filter(id=req_id).delete()
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+    return HttpResponse(json.dumps(ret))
+
+@auth
+def gpu(request):
+    uid = 'zhangjingjun'
+    # uid = request.COOKIES['uid']
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        task_id = request.GET.get('taskid')
+        if task_id is None or task_id == 'None':
+            task_id = ''
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            if task_id == '':
+                gpu_info = models.GpuMonitor.objects.all().values('id', 'create_time', 'end_time', 'monitorip', 'user',
+                                                                 'status').order_by('id')[::-1]
+            else:
+                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id).values('id', 'create_time', 'end_time',
+                                                                                'monitorip', 'user',
+                                                                                'status').order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
+            data = gpu_info[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/fanyi/gpu/?taskid=%s&page=" % task_id)
+
+            host_list = models.Host.objects.all().order_by('ip')
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'fanyi/gpu_monitor.html', {'user_id': uid, 'li': data, 'page_str': page_str, 'host_list': host_list})
+    elif request.method == 'POST':
+        ret = {'status': True, 'errro': None, 'data': None}
+        ip = request.POST.get('monitorip')
+        monitor_user = request.POST.get('monitoruser')
+        monitor_passw = request.POST.get('monitorpassw')
+        gpuid = request.POST.get('gpuid')
+        if gpuid == '':
+            gpuid = 0
+        try:
+            nameisExist = models.Host.objects.filter(ip=ip, gpuid=gpuid)
+            if nameisExist.exists() == False:
+                models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid))
+            else:
+                ret['error'] = "Error:ip已存在，请勿重新添加"
+                ret['status'] = False
+        except Exception as e:
+            ret['error'] = "Error:" + str(e)
+            print(e)
+            ret['status'] = False
+        return HttpResponse(json.dumps(ret))
 
 
 # bbk
@@ -258,3 +392,7 @@ def logout(request):
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
     return response
+
+def get_now_time():
+    timeArray = time.localtime()
+    return time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
