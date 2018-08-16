@@ -39,4 +39,5 @@ urlpatterns = [
     re_path(r'^gpu_task_start/$', views.gpu_task_start),
     re_path(r'^gpu_task_stop/$', views.gpu_task_stop),
 
+
 ]
