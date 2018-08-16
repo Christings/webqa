@@ -8,3 +8,4 @@ fanyi/__pycache__/
 *.pyc
 script/*.log
 script/uwsgi.pid
+log/
