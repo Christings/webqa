@@ -81,7 +81,7 @@ def man_eval_detail(request):
     task_diff_detail = models.ManEvalDiff.objects.filter(diff_task_id=task_id).order_by('id')[::-1]
     page_obj = pagination.Page(current_page, len(task_diff_detail), 4, 9)
     data = task_diff_detail[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("/man_eval_detail/?tasknum=" + task_id + '&page=')
+    page_str = page_obj.page_str("/man_eval/detail/?tasknum=" + task_id + '&page=')
     hubsvn = str_unix2br(task_detail.hubsvn)
     sersvn = str_unix2br(task_detail.sersvn)
     loginfo = str_unix2br(task_detail.errorlog)

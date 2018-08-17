@@ -201,7 +201,7 @@
 						<td>{{ item.tolan }}</td>
 						<td>{{ item.testtag }}</td>
 						<td>
-							<a href="/fanyi/man_eval_detail/?tasknum={{ item.id }}">
+							<a href="/fanyi/man_eval/detail/?tasknum={{ item.id }}">
 								{% ifequal item.status 0 %}
 								<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Waiting</button>
 								{% endifequal %} 
@@ -283,51 +283,7 @@
     				}    				
     			}
     		});
-			//save
-			$('#save_xml').click(function() {
-				var reqtext = $('#reqtext').val()
-				var inputHost = $('#inputHost').val()
-				var lan_sel = $('#lan_sel').val()
-				var inlineRadioOptions = $("input[name='inlineRadioOptions']:checked").val()
-				var result = $('#result').val()
-				var reqtpye = $('#reqtype').val()
-				if(reqtext != "" && inputHost != "") {
-					$.ajax({
-						type: "POST",
-						url: "/xml_req_save",
-						async: true,
-						traditional: true,
-						data: {
-							'inputHost': inputHost,
-							'lan_sel': lan_sel,
-							'inlineRadioOptions': inlineRadioOptions,
-							'reqtext': reqtext,
-							'result': result,
-							'reqtype': reqtpye,
-						},
-						dataType: 'JSON',
-						success: function(obj) {
-							if(obj.status) {
-								location.reload();
-							} else {
-								$('#error_xml').text(obj.error);
-							}
-						},
-						error: function() {
-		
-						},
-					});
-					$('#error_xml').text('');
-				} else {
-					if(reqtext == '') {
-						$('#error_xml').text('Request不可为空。');
-					} else if(inputHost == '') {
-						$('#error_xml').text('Host不可为空。');
-					} else {
-						$('#error_xml').text('未知错误。');
-					}
-				}
-			})
+			
 		
 			//add task
 			$('#add_fy_task').click(function() {

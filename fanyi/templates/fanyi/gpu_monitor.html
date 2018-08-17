@@ -107,7 +107,7 @@
 						<td class="tabletd" style="">{{item.monitorip}}</td>
 						<td class="tabletd">{{item.user}}</td>
 						<td class="tabletd">
-							<a href="/fanyi/gpu_detail/?taskid={{item.id}}">
+							<a href="/fanyi/gpu/detail/?taskid={{item.id}}">
 								{% ifequal item.status 0 %}
 								<button class="btn btn-outline-info btn-sm" style="color: green;">Stopped</button>
 								{% endifequal %} 
@@ -250,7 +250,7 @@
 				var monitor_id = $(this).parent().parent().attr('req_id');
 				$.ajax({
 					type: "POST",
-					url: "/fanyi/gpu_del_task/",
+					url: "/fanyi/gpu/del_task/",
 					async: true,
 					data: {
 						'monitor_id': monitor_id
@@ -277,7 +277,7 @@
 				console.log(line_id)
 				$.ajax({
 					type: "POST",
-					url: "/fanyi/gpu_task_start/",
+					url: "/fanyi/gpu/task_start/",
 					async: true,
 					data: {
 						'line_id': line_id,
@@ -306,7 +306,7 @@
 				var line_id = $(this).parent().parent().attr('host_id');
 				$.ajax({
 					type: "POST",
-					url: "/fanyi/gpu_task_stop/",
+					url: "/fanyi/gpu/task_stop/",
 					async: true,
 					data: {
 						'line_id': line_id,
@@ -332,7 +332,7 @@
 				var line_id = $(this).parent().parent().attr('host_id');
 				$.ajax({
 					type: "POST",
-					url: "/fanyi/gpu_del_host/",
+					url: "/fanyi/gpu/del_host/",
 					async: true,
 					data: {
 						'line_id': line_id
