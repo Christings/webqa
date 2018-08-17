@@ -48,6 +48,7 @@ class RbacMiddleware(MiddlewareMixin):
         flag = False
         for url in permission_url:
             url_pattern = settings.REGEX_URL.format(url=url)
+            print('hahahahaha',url_pattern)
             if re.match(url_pattern, request_url):
                 flag = True
                 break
