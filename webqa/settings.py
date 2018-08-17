@@ -158,7 +158,10 @@ PERMISSION_MENU_KEY = 'k2'
 
 LOGIN_URL = '/login/'
 
-REGEX_URL = r'^{url}$'  # url作严格匹配
+#REGEX_URL = r'^{url}$'  # url作严格匹配
+
+REGEX_URL = r'^{url}'
+
 
 # 配置url权限白名单
 SAFE_URL = [
