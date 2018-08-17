@@ -159,22 +159,7 @@
 	</div>
 </div>
 {% endblock %} {% block js %}
-<script>
-	$(function(){
-    		//判断ajax里面的方法是get还是post
-    		function csrfSafeMethod(method){
-    			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    		}
-    		
-			//只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
-    		$.ajaxSetup({
-    			beforeSend:function(xhr,settings){
-    				if(!csrfSafeMethod(settings.type)&&!this.crossDomain){
-    					xhr.setRequestHeader('X-CSRFtoken',$.cookie('csrftoken'))
-    				}    				
-    			}
-    		});
-	
+<script>	
 		//cancel task
 		$('#cancel_task').click(function() {
 			var task_id = $(this).attr('task_id');
@@ -296,6 +281,5 @@
 				scrollTop: $(document).height()
 			}, 400);
 		}
-	})	
 </script>
 {% endblock %}
