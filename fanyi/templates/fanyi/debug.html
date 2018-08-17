@@ -134,12 +134,12 @@
       <div class="tile">
         <h3 class="tile-title">请求列表</h3>
         <div class="tile-body">
-        	<table class="table table-hover" id="reqData">
+        	<table class="table" id="reqData">
 			<thead>
 				<tr>
 					<td style="">Type</td>
 					<td style="display: none;">Host</td>
-					<td style="width:100px">
+					<td>
 						<select id="lan_filter" name="lan_filter" class="form-control">
 							<option value="all" selected=""> Lang </option>
 							<option value="en"> 英 </option>
@@ -208,13 +208,13 @@
 					<td>Ctrl</td>
 				</tr>
 			</thead>
-			<tbody style="cursor: pointer;" id="reqBody">
+			<tbody id="reqBody">
 				{% for item in li %}
 				<tr req_id="{{item.id}}" class="get_data" lang_type="{{item.trans_direct}}">
 					<td style="">{{item.reqtype}}</td>
 					<td style="display: none;">{% formatIp item.host_ip %}</td>
 					<td>{{item.trans_direct}}</td>
-					<td class="tabletd">{{item.req_text}}</td>
+					<td>{{item.req_text}}</td>
 					<td style="display: none;">{{item.result}}</td>
 					<td style="display: none;">{{item.isfromzh}}</td>
 					<td style="">

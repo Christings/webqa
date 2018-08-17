@@ -15664,12 +15664,12 @@ be a descendant of the grid when it is being dragged.
 	display: none;
 }
 
-.tabletd {
+/*.tabletd {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	table-layout: fixed;
-}
+}*/
 
 #showDiv {
 	display: none;
