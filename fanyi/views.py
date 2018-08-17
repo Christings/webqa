@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
+from django.forms.models import model_to_dict
 from rbac.service.init_permission import init_permission
 from utils import pagination
 from fanyi import models
@@ -28,6 +29,128 @@ def auth(func):
         return func(request,*args,**kwargs)
     return inner
 
+
+# man eval
+@auth
+def man_eval_readd(request):
+    # user_id = "zhangjingjun"
+    user_id = request.COOKIES.get('uid')
+    ret = {'status': True, 'errro': None, 'data': None}
+    re_add_task_d = request.POST.get('task_id')
+    try:
+        task_detail = models.ManEval.objects.get(id=re_add_task_d)
+        task_detail_todic = model_to_dict(task_detail)
+        task_detail_todic.pop('id')
+        task_detail_todic['create_time'] = get_now_time()
+        task_detail_todic['start_time'] = ""
+        task_detail_todic['end_time'] = ""
+        task_detail_todic['status'] = 0
+        task_detail_todic['errorlog'] = ""
+        task_detail_todic['finished'] = 0
+        task_detail_todic['runningIP'] = ""
+        task_detail_todic['user'] = user_id
+        models.ManEval.objects.create(**task_detail_todic)
+    except Exception as e:
+        print(e)
+        ret['error'] = 'error:' + str(e)
+        ret['status'] = False
+    return HttpResponse(json.dumps(ret))
+
+
+def man_eval_cancal(request):
+    ret = {'status': True, 'errro': None, 'data': None}
+    try:
+        cancel_id = request.POST.get('task_id')
+        models.ManEval.objects.filter(id=cancel_id).update(status=6)
+    except Exception as e:
+        ret['error'] = 'error:' + str(e)
+        ret['status'] = False
+    return HttpResponse(json.dumps(ret))
+
+
+@auth
+def man_eval_detail(request):
+    # user_id="zhangjingjun"
+    user_id = request.COOKIES.get('uid')
+    task_id = request.GET.get('tasknum')
+    page = request.GET.get('page')
+    current_page = 1
+    if page:
+        current_page = int(page)
+    task_detail = models.ManEval.objects.filter(id=task_id).first()
+    task_diff_detail = models.ManEvalDiff.objects.filter(diff_task_id=task_id).order_by('id')[::-1]
+    page_obj = pagination.Page(current_page, len(task_diff_detail), 4, 9)
+    data = task_diff_detail[page_obj.start:page_obj.end]
+    page_str = page_obj.page_str("/man_eval_detail/?tasknum=" + task_id + '&page=')
+    hubsvn = str_unix2br(task_detail.hubsvn)
+    sersvn = str_unix2br(task_detail.sersvn)
+    loginfo = str_unix2br(task_detail.errorlog)
+    return render(request, 'fanyi/man_eval_detail.html',{'user_id': user_id,'task_detail': task_detail,'hubsvn':hubsvn,'sersvn': sersvn, 'loginfo':loginfo,'li': data, 'page_str': page_str})
+
+
+@auth
+def man_eval(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            task_list = models.ManEval.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(task_list), 16, 9)
+            data = task_list[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/man_eval?page=")
+
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'fanyi/man_eval.html',{'user_id': user_id, 'li': data,'page_str': page_str})
+    elif request.method == 'POST':
+        ret = {'status': True, 'errro': None, 'data': None}
+        hubsvn = str_dos2unix(request.POST.get('hub_svn'))
+        sersvn = str_dos2unix(request.POST.get('server_svn'))
+        hubcfgip = str_dos2unix(request.POST.get('hub_conf_ip'))
+        hubcfguser = str_dos2unix(request.POST.get('hub_conf_user'))
+        hubcfgpassw = str_dos2unix(request.POST.get('hub_conf_pass'))
+        hubcfgpath = str_dos2unix(request.POST.get('hub_conf_path'))
+        hubdatapath = str_dos2unix(request.POST.get('hub_data_path'))
+        sercfgip = str_dos2unix(request.POST.get('ser_conf_ip'))
+        sercfguser = str_dos2unix(request.POST.get('ser_conf_user'))
+        sercfgpassw = str_dos2unix(request.POST.get('ser_conf_pass'))
+        sercfgpath = str_dos2unix(request.POST.get('ser_conf_path'))
+        serdatapath = str_dos2unix(request.POST.get('ser_data_path'))
+        queryip = str_dos2unix(request.POST.get('query_ip'))
+        queyruser = str_dos2unix(request.POST.get('query_user'))
+        querypassw = str_dos2unix(request.POST.get('query_pass'))
+        querypath = str_dos2unix(request.POST.get('query_path'))
+        testtag = str_dos2unix(request.POST.get('testtag'))
+        lan_sel = request.POST.get('lan_sel')
+        fromto = request.POST.get('inlineRadioOptions')
+        if fromto == 'tozh':
+            fromlan = lan_sel
+            tolan = 'zh-CHS'
+        else:
+            fromlan = 'zh-CHS'
+            tolan = lan_sel
+
+        try:
+            models.ManEval.objects.create(create_time=get_now_time(), user=user_id, hubsvn=hubsvn,
+                                         sersvn=sersvn,
+                                         hubcfgip=hubcfgip, hubcfguser=hubcfguser,
+                                         hubcfgpassw=hubcfgpassw, hubcfgpath=hubcfgpath, hubdatapath=hubdatapath,
+                                         sercfgip=sercfgip, sercfguser=sercfguser, sercfgpassw=sercfgpassw,
+                                         sercfgpath=sercfgpath, serdatapath=serdatapath, queryip=queryip,
+                                         queyruser=queyruser,
+                                         querypassw=querypassw, querypath=querypath,
+                                         testtag=testtag, fromlan=fromlan, tolan=tolan, lan_sel=lan_sel,
+                                         isfromzh=fromto)
+        except Exception as e:
+            print(e)
+            ret['error'] = 'error:' + str(e)
+            ret['status'] = False
+        return HttpResponse(json.dumps(ret))
 
 # monitor
 @auth
@@ -111,6 +234,7 @@ def gpu_del_host(request):
         ret['status'] = False
         ret['error'] = "Error:" + str(e)
     return HttpResponse(json.dumps(ret))
+
 
 @auth
 def gpu(request):
@@ -393,6 +517,15 @@ def logout(request):
         response.delete_cookie("uid")
     return response
 
+
 def get_now_time():
     timeArray = time.localtime()
     return time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+
+
+def str_dos2unix(input):
+    return input.replace('\r\n', '\n').replace(' ', '')
+
+
+def str_unix2br(input):
+    return input.replace('\n', '<br>')

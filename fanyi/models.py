@@ -34,3 +34,43 @@ class GpuMonitor(models.Model):
     h = models.ForeignKey(to="Host", to_field='id', on_delete=models.CASCADE)
 
 
+class ManEval(models.Model):
+    create_time = models.CharField(max_length=50, default="")
+    start_time = models.CharField(max_length=50, default="")
+    end_time = models.CharField(max_length=50, default="")
+    user = models.CharField(max_length=50)
+    status = models.IntegerField(default=0)
+    hubcfgip = models.CharField(max_length=500, default="")
+    hubcfguser = models.CharField(max_length=500, default="")
+    hubcfgpassw = models.CharField(max_length=500, default="")
+    hubcfgpath = models.CharField(max_length=500, default="")
+    hubdatapath = models.CharField(max_length=500, default="")
+    sercfgip = models.CharField(max_length=500, default="")
+    sercfguser = models.CharField(max_length=500, default="")
+    sercfgpassw = models.CharField(max_length=500, default="")
+    sercfgpath = models.CharField(max_length=500, default="")
+    serdatapath = models.CharField(max_length=500, default="")
+    queryip = models.CharField(max_length=500, default="")
+    queyruser = models.CharField(max_length=500, default="")
+    querypassw = models.CharField(max_length=500, default="")
+    querypath = models.CharField(max_length=500, default="")
+    runningIP = models.CharField(max_length=50, default="")
+    hubsvn = models.TextField(default="")
+    sersvn = models.TextField(default="")
+    errorlog = models.TextField(default="")
+    testtag = models.CharField(max_length=500, default="")
+    finished = models.IntegerField(default=0)
+    diffnum = models.IntegerField(default=0)
+    fromlan = models.CharField(max_length=20, default="")
+    tolan = models.CharField(max_length=20, default="")
+    isfromzh = models.CharField(max_length=10, default="")
+    lan_sel = models.CharField(max_length=10, default="")
+
+
+class ManEvalDiff(models.Model):
+    create_time = models.CharField(max_length=50, default="")
+    user = models.CharField(max_length=50)
+    diff_content = models.TextField(default="")
+    diff_task = models.ForeignKey(to="ManEval", to_field='id', on_delete=models.CASCADE)
+
+
