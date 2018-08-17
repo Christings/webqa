@@ -1,4 +1,4 @@
-{% extends 'father.html' %} {% load tag_tools %} {% block content %}
+{% extends 'main.html' %} {% load tag_tools %} {% block content %}
 <div class="row">
 	<div class="col-md-6">
 		<div class="tile">
@@ -191,9 +191,9 @@
 						<td style="display: none;">Ctrl</td>						
 					</tr>
 				</thead>
-				<tbody style="cursor: pointer;" id="reqBody" class="get_data">
+				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
-					<tr>
+					<tr class="get_data">
 						<td>{{ item.id }}</td>
 						<td>{{ item.create_time }}</td>
 						<td>{{ item.start_time }}</td>
@@ -412,7 +412,8 @@
 			querypath = $(linelst[23]).text();
 			isfromzh = $(linelst[24]).text();
 			lan_sel = $(linelst[25]).text();
-			
+			console.log(testtag)
+			console.log(hubsvn)
 			$('#hub_svn').val(hubsvn);
 			$('#server_svn').val(sersvn);
 			$('#hub_conf_ip').val(hubcfgip);
