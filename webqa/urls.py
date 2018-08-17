@@ -25,4 +25,7 @@ urlpatterns = [
     re_path(r'rbac/', include('rbac.urls')),
     re_path(r'polls/', include('polls.urls')),
     re_path(r'fanyi/', include('fanyi.urls')),
+    re_path(r'webqo/', include('webqo.urls')),
+    re_path(r'webqw/', include('webqw.urls')),
+    re_path(r'wiki/', include('wiki.urls')),
 ]

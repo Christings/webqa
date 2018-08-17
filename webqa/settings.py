@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'rbac.apps.RbacConfig',
     'polls.apps.PollsConfig',
     'fanyi.apps.FanyiConfig',
+    'webqo.apps.WebqoConfig',
+    'webqw.apps.WebqwConfig',
+    'wiki.apps.WikiConfig',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'rbac.middleware.rbac.RbacMiddleware',
+    'rbac.middleware.rbac.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'webqa.urls'
