@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from django.forms.models import model_to_dict
 from rbac.service.init_permission import init_permission
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from utils import pagination
 from fanyi import models
 from utils import baidufy_t
@@ -32,6 +33,7 @@ def auth(func):
 
 # man eval
 @auth
+@csrf_exempt
 def man_eval_readd(request):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
