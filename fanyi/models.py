@@ -19,6 +19,7 @@ class Host(models.Model):
     status = models.IntegerField(default=0)
     runningPID = models.CharField(max_length=20, default="")
     gpuid = models.IntegerField(default=0)
+    user_fk = models.ForeignKey(to=UserInfo, to_field='username', on_delete=models.CASCADE)
 
 
 class GpuMonitor(models.Model):
