@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from rbac.models import UserInfo
 from django.forms.models import model_to_dict
 from rbac.service.init_permission import init_permission
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from utils import pagination
 from fanyi import models
 from utils import baidufy_t
@@ -32,6 +33,7 @@ def auth(func):
 
 # man eval
 @auth
+@csrf_exempt
 def man_eval_readd(request):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
@@ -81,7 +83,7 @@ def man_eval_detail(request):
     task_diff_detail = models.ManEvalDiff.objects.filter(diff_task_id=task_id).order_by('id')[::-1]
     page_obj = pagination.Page(current_page, len(task_diff_detail), 4, 9)
     data = task_diff_detail[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("/man_eval_detail/?tasknum=" + task_id + '&page=')
+    page_str = page_obj.page_str("/man_eval/detail/?tasknum=" + task_id + '&page=')
     hubsvn = str_unix2br(task_detail.hubsvn)
     sersvn = str_unix2br(task_detail.sersvn)
     loginfo = str_unix2br(task_detail.errorlog)
@@ -158,8 +160,33 @@ def gpu_detail(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('taskid')
-    task_detail = models.GpuMonitor.objects.filter(id=int(task_id))
-    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail})
+    task_detail = models.GpuMonitor.objects.filter(id=int(task_id)).first()
+    gpumem_list = list(map(int,task_detail.gpumem_list.split(',')[0:-1]))
+    gpumemused_list = list(map(int,task_detail.gpumemused_list.split(',')[0:-1]))
+    if len(gpumem_list) > 0:
+        max_gpumem = max(gpumem_list[0:-1])
+        min_gpumem = min(gpumem_list[0:-1])
+        avg_gpumem = sum(gpumem_list)/len(gpumem_list)
+    else:
+        max_gpumem = 0
+        min_gpumem = 0
+        avg_gpumem = 0
+    if len(gpumemused_list) > 0:
+        max_gpuused = max(gpumemused_list[0:-1])
+        min_gpuused = min(gpumemused_list[0:-1])
+        avg_gpuused = sum(gpumemused_list) / len(gpumemused_list)
+    else:
+        max_gpuused = 0
+        min_gpuused = 0
+        avg_gpuused = 0
+    ret = dict()
+    ret['max_gpumem'] = max_gpumem
+    ret['min_gpumem'] = min_gpumem
+    ret['avg_gpumem'] = avg_gpumem
+    ret['max_gpuused'] = max_gpuused
+    ret['min_gpuused'] = min_gpuused
+    ret['avg_gpuused'] = avg_gpuused
+    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail,'ret':ret})
 
 
 def gpu_del_task(request):
@@ -207,7 +234,7 @@ def gpu_task_start(request):
         close_all_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).values('id')
         for close_id in close_all_id:
             models.GpuMonitor.objects.filter(id=close_id['id'], h_id=req_id).update(status=0)
-        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1, h_id=req_id)
+        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip,  user=user_id, status=1, h_id=req_id)
         running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
         print('running_case_id',running_case_id)
         print('req_id',req_id)
@@ -250,14 +277,14 @@ def gpu(request):
             current_page = int(page)
         try:
             if task_id == '':
-                gpu_info = models.GpuMonitor.objects.all().values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.filter(user=uid).values('id', 'create_time', 'end_time', 'monitorip', 'gpuid','user', 'status').order_by('id')[::-1]
             else:
-                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id,user=uid).values('id', 'create_time', 'end_time', 'monitorip','gpuid', 'user', 'status').order_by('id')[::-1]
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/fanyi/gpu/?taskid=%s&page=" % task_id)
 
-            host_list = models.Host.objects.all().order_by('ip')
+            host_list = models.Host.objects.filter(user_fk_id=uid).order_by('ip')
         except Exception as e:
             print(e)
             pass
@@ -273,7 +300,7 @@ def gpu(request):
         try:
             nameisExist = models.Host.objects.filter(ip=ip, gpuid=gpuid)
             if nameisExist.exists() == False:
-                models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid))
+                models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid),user_fk_id=uid)
             else:
                 ret['error'] = "Error:ip已存在，请勿重新添加"
                 ret['status'] = False

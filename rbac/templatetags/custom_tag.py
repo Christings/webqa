@@ -104,7 +104,7 @@ def get_menu_html(menu_data):
                 <i class="treeview-indicator fa fa-angle-right"></i>
             </a>
           <ul class="treeview-menu">
-            <li><a class="rbac-menu-body {display}" >{sub_menu}</a></li>
+            <li><a class="{display}" >{sub_menu}</a></li>
           </ul>
         </li>
         """

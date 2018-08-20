@@ -26,21 +26,22 @@ app_name = 'fanyi'
 urlpatterns = [
     # debug
     re_path(r'^debug/$', views.debug),
+    re_path(r'^debug/del_line/$', views.del_line),
+    re_path(r'^debug/req_info_save/$', views.req_info_save),
     # bbk
     re_path(r'^bbk/$', views.bbk),
-    # debug and bbk share
-    re_path(r'^del_line/$', views.del_line),
-    re_path(r'^req_info_save/$', views.req_info_save),
+    re_path(r'^bbk/del_line/$', views.del_line),
+    re_path(r'^bbk/req_info_save/$', views.req_info_save),
     # nvidia monitor
     re_path(r'^gpu/$', views.gpu),
-    re_path(r'^gpu_detail/$', views.gpu_detail),
-    re_path(r'^gpu_del_task/$', views.gpu_del_task),
-    re_path(r'^gpu_del_host/$', views.gpu_del_host),
-    re_path(r'^gpu_task_start/$', views.gpu_task_start),
-    re_path(r'^gpu_task_stop/$', views.gpu_task_stop),
+    re_path(r'^gpu/detail/$', views.gpu_detail),
+    re_path(r'^gpu/del_task/$', views.gpu_del_task),
+    re_path(r'^gpu/del_host/$', views.gpu_del_host),
+    re_path(r'^gpu/task_start/$', views.gpu_task_start),
+    re_path(r'^gpu/task_stop/$', views.gpu_task_stop),
     # man eval
     re_path(r'^man_eval/$', views.man_eval),
-    re_path(r'^man_eval_detail/$', views.man_eval_detail),
-    re_path(r'^man_eval_cancel/$', views.man_eval_cancal),
-    re_path(r'^man_eval_readd/$', views.man_eval_readd),
+    re_path(r'^man_eval/detail/$', views.man_eval_detail),
+    re_path(r'^man_eval/cancel/$', views.man_eval_cancal),
+    re_path(r'^man_eval/readd/$', views.man_eval_readd),
 ]

@@ -181,7 +181,7 @@
 				<thead>
 					<tr>
 						<td>ID</td>
-						<td>CreateTime</td>
+						<td style="display: none;">CreateTime</td>
 						<td>StartTime</td>
 						<td>From</td>
 						<td>To</td>
@@ -193,15 +193,15 @@
 				</thead>
 				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
-					<tr>
-						<td style="width: 20px;">{{ item.id }}</td>
-						<td>{{ item.create_time }}</td>
+					<tr class="get_data">
+						<td>{{ item.id }}</td>
+						<td style="display: none;">{{ item.create_time }}</td>
 						<td>{{ item.start_time }}</td>
 						<td>{{ item.fromlan }}</td>
 						<td>{{ item.tolan }}</td>
 						<td>{{ item.testtag }}</td>
 						<td>
-							<a href="/fanyi/man_eval_detail/?tasknum={{ item.id }}">
+							<a href="/fanyi/man_eval/detail/?tasknum={{ item.id }}">
 								{% ifequal item.status 0 %}
 								<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Waiting</button>
 								{% endifequal %} 
@@ -283,51 +283,7 @@
     				}    				
     			}
     		});
-			//save
-			$('#save_xml').click(function() {
-				var reqtext = $('#reqtext').val()
-				var inputHost = $('#inputHost').val()
-				var lan_sel = $('#lan_sel').val()
-				var inlineRadioOptions = $("input[name='inlineRadioOptions']:checked").val()
-				var result = $('#result').val()
-				var reqtpye = $('#reqtype').val()
-				if(reqtext != "" && inputHost != "") {
-					$.ajax({
-						type: "POST",
-						url: "/xml_req_save",
-						async: true,
-						traditional: true,
-						data: {
-							'inputHost': inputHost,
-							'lan_sel': lan_sel,
-							'inlineRadioOptions': inlineRadioOptions,
-							'reqtext': reqtext,
-							'result': result,
-							'reqtype': reqtpye,
-						},
-						dataType: 'JSON',
-						success: function(obj) {
-							if(obj.status) {
-								location.reload();
-							} else {
-								$('#error_xml').text(obj.error);
-							}
-						},
-						error: function() {
-		
-						},
-					});
-					$('#error_xml').text('');
-				} else {
-					if(reqtext == '') {
-						$('#error_xml').text('Request不可为空。');
-					} else if(inputHost == '') {
-						$('#error_xml').text('Host不可为空。');
-					} else {
-						$('#error_xml').text('未知错误。');
-					}
-				}
-			})
+			
 		
 			//add task
 			$('#add_fy_task').click(function() {
@@ -412,55 +368,7 @@
 		
 			})
 		
-			//getData
-			$('.get_data').dblclick(function() {
-				var linelst = $(this).children();
-				testtag = $(linelst[5]).text();
-				hubsvn = $(linelst[8]).text();
-				sersvn = $(linelst[9]).text();
-				hubcfgip = $(linelst[10]).text();
-				hubcfguser = $(linelst[11]).text();
-				hubcfgpassw = $(linelst[12]).text();
-				hubcfgpath = $(linelst[13]).text();
-				hubdatapath = $(linelst[14]).text();
-				sercfgip = $(linelst[15]).text();
-				sercfguser = $(linelst[16]).text();
-				sercfgpassw = $(linelst[17]).text();
-				sercfgpath = $(linelst[18]).text();
-				serdatapath = $(linelst[19]).text();
-				queryip = $(linelst[20]).text();
-				queyruser = $(linelst[21]).text();
-				querypassw = $(linelst[22]).text();
-				querypath = $(linelst[23]).text();
-				isfromzh = $(linelst[24]).text();
-				lan_sel = $(linelst[25]).text();
-				
-				$('#hub_svn').val(hubsvn);
-				$('#server_svn').val(sersvn);
-				$('#hub_conf_ip').val(hubcfgip);
-				$('#hub_conf_user').val(hubcfguser);
-				$('#hub_conf_pass').val(hubcfgpassw);
-				$('#hub_conf_path').val(hubcfgpath);
-				$('#hub_data_path').val(hubdatapath);
-				$('#ser_conf_ip').val(sercfgip);
-				$('#ser_conf_user').val(sercfguser);
-				$('#ser_conf_pass').val(sercfgpassw);
-				$('#ser_conf_path').val(sercfgpath);
-				$('#ser_data_path').val(serdatapath);
-				$('#query_ip').val(queryip);
-				$('#query_user').val(queyruser);
-				$('#query_pass').val(querypassw);
-				$('#query_path').val(querypath);
-				$('#testtag').val(testtag);
-				$('#lan_sel').val(lan_sel);
-				if(isfromzh == 'fromzh') {
-					$('#inlineRadio2').attr("checked", 'checked');
-					$('#inlineRadio1').attr("checked", false);
-				} else {
-					$('#inlineRadio1').attr("checked", 'checked');
-					$('#inlineRadio2').attr("checked", false);
-				}
-			})
+			
 		
 			$('#lan_filter').change(function() {
 				var sel_lang = $(this).val();
@@ -481,6 +389,56 @@
 		
 				}
 			})
+		})
+	//getData
+		$('.get_data').dblclick(function() {
+			var linelst = $(this).children();
+			testtag = $(linelst[5]).text();
+			hubsvn = $(linelst[8]).text();
+			sersvn = $(linelst[9]).text();
+			hubcfgip = $(linelst[10]).text();
+			hubcfguser = $(linelst[11]).text();
+			hubcfgpassw = $(linelst[12]).text();
+			hubcfgpath = $(linelst[13]).text();
+			hubdatapath = $(linelst[14]).text();
+			sercfgip = $(linelst[15]).text();
+			sercfguser = $(linelst[16]).text();
+			sercfgpassw = $(linelst[17]).text();
+			sercfgpath = $(linelst[18]).text();
+			serdatapath = $(linelst[19]).text();
+			queryip = $(linelst[20]).text();
+			queyruser = $(linelst[21]).text();
+			querypassw = $(linelst[22]).text();
+			querypath = $(linelst[23]).text();
+			isfromzh = $(linelst[24]).text();
+			lan_sel = $(linelst[25]).text();
+			console.log(testtag)
+			console.log(hubsvn)
+			$('#hub_svn').val(hubsvn);
+			$('#server_svn').val(sersvn);
+			$('#hub_conf_ip').val(hubcfgip);
+			$('#hub_conf_user').val(hubcfguser);
+			$('#hub_conf_pass').val(hubcfgpassw);
+			$('#hub_conf_path').val(hubcfgpath);
+			$('#hub_data_path').val(hubdatapath);
+			$('#ser_conf_ip').val(sercfgip);
+			$('#ser_conf_user').val(sercfguser);
+			$('#ser_conf_pass').val(sercfgpassw);
+			$('#ser_conf_path').val(sercfgpath);
+			$('#ser_data_path').val(serdatapath);
+			$('#query_ip').val(queryip);
+			$('#query_user').val(queyruser);
+			$('#query_pass').val(querypassw);
+			$('#query_path').val(querypath);
+			$('#testtag').val(testtag);
+			$('#lan_sel').val(lan_sel);
+			if(isfromzh == 'fromzh') {
+				$('#inlineRadio2').attr("checked", 'checked');
+				$('#inlineRadio1').attr("checked", false);
+			} else {
+				$('#inlineRadio1').attr("checked", 'checked');
+				$('#inlineRadio2').attr("checked", false);
+			}
 		})
 </script>
 {% endblock %}
