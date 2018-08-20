@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-import M2Crypto
+# import M2Crypto
 import urllib
 import json
 import base64
@@ -224,7 +224,7 @@ def gpu_task_start(request):
         close_all_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).values('id')
         for close_id in close_all_id:
             models.GpuMonitor.objects.filter(id=close_id['id'], h_id=req_id).update(status=0)
-        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, user=user_id, status=1, h_id=req_id)
+        models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip,  user=user_id, status=1, h_id=req_id)
         running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
         print('running_case_id',running_case_id)
         print('req_id',req_id)

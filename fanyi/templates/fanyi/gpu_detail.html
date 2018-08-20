@@ -15,6 +15,7 @@
 								<td style="">StartTime</td>
 								<td>EndTime</td>
 								<td style="">IP</td>
+								<td>GpuID</td>
 								<td>User</td>
 								<td style="width: 100px;">Stauts</td>
 							</tr>
@@ -25,6 +26,7 @@
 								<td class="tabletd" style="">{{task_detail.create_time}}</td>
 								<td class="tabletd">{{task_detail.end_time}}</td>
 								<td class="tabletd" style="">{{task_detail.monitorip}}</td>
+								<td>{{task_detail.gpuid}}</td>
 								<td class="tabletd">{{task_detail.user}}</td>
 								<td class="tabletd">
 									{% ifequal task_detail.status 0 %}

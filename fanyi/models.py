@@ -34,6 +34,7 @@ class GpuMonitor(models.Model):
     gpumemused = models.TextField(default="")
     gpumem_list = models.TextField(default="")
     gpumemused_list = models.TextField(default="")
+    gpuid = models.IntegerField(default=0)
     h = models.ForeignKey(to="Host", to_field='id', on_delete=models.CASCADE)
 
 

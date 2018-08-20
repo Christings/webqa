@@ -47,8 +47,8 @@
 								<thead>
 									<tr>										
 										<td>IP</td>
-										<td>user</td>
-										<td>password</td>
+										<td style="display: none;">user</td>
+										<td style="display: none;">password</td>
 										<td>GpuID</td>
 										<td>Ctrl</td>
 										<td>Filter</td>
@@ -58,8 +58,8 @@
 									{% for item in host_list %}
 									<tr host_id="{{item.id}}" class="get_host">
 										<td>{{item.ip}}</td>
-										<td>{{item.user}}</td>
-										<td>{{item.passw}}</td>
+										<td style="display: none;">{{item.user}}</td>
+										<td style="display: none;">{{item.passw}}</td>
 										<td>{{item.gpuid}}</td>
 										<td>
 											{% ifequal item.status 0 %}
@@ -93,6 +93,7 @@
 						<td style="">StartTime</td>
 						<td>EndTime</td>
 						<td style="">IP</td>
+						<td>GpuID</td>
 						<td>User</td>
 						<td style="width: 100px;">Stauts</td>
 						<td style="width: 80px;">Ctrl</td>
@@ -105,6 +106,7 @@
 						<td>{{item.create_time}}</td>
 						<td>{{item.end_time}}</td>
 						<td>{{item.monitorip}}</td>
+						<td>{{item.gpuid}}</td>
 						<td>{{item.user}}</td>
 						<td>
 							<a href="/fanyi/gpu/detail/?taskid={{item.id}}">
