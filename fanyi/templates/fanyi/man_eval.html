@@ -180,8 +180,8 @@
 				<table class="table table-hover" id="reqData">
 				<thead>
 					<tr>
-						<td>ID</td>
-						<td>CreateTime</td>
+						<td style="display: none;">ID</td>
+						<td style="display: none;">CreateTime</td>
 						<td>StartTime</td>
 						<td>From</td>
 						<td>To</td>
@@ -194,8 +194,8 @@
 				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
 					<tr class="get_data">
-						<td>{{ item.id }}</td>
-						<td>{{ item.create_time }}</td>
+						<td style="display: none;">{{ item.id }}</td>
+						<td style="display: none;">{{ item.create_time }}</td>
 						<td>{{ item.start_time }}</td>
 						<td>{{ item.fromlan }}</td>
 						<td>{{ item.tolan }}</td>
