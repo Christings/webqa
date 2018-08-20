@@ -313,10 +313,10 @@ def gpu(request):
 
 
 # bbk
-@auth
+# @auth
 def bbk(request):
-    # uid = 'zhangjingjun'
-    uid = request.COOKIES['uid']
+    uid = 'zhangjingjun'
+    # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         current_page = 1
@@ -427,10 +427,10 @@ def req_info_save(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
+# @auth
 def debug(request):
-    # uid = 'zhangjingjun'
-    uid = request.COOKIES['uid']
+    uid = 'zhangjingjun'
+    # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         current_page = 1

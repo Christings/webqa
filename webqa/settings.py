@@ -171,3 +171,5 @@ SAFE_URL = [
     r'/logout/',
     '/favicon.ico'
 ]
+
+# AUTH_USER_MODEL = 'rbac.UserInfo'
