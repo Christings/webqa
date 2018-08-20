@@ -6,7 +6,8 @@ class Menu(models.Model):
     菜单
     """
     title = models.CharField(max_length=32, unique=True)
-    parent = models.ForeignKey("Menu", null=True, blank=True,on_delete=models.CASCADE)
+    parent = models.ForeignKey("Menu", null=True, blank=True, on_delete=models.CASCADE)
+
     # 定义菜单间的自引用关系
     # 权限url 在 菜单下；菜单可以有父级菜单；还要支持用户创建菜单，因此需要定义parent字段（parent_id）
     # blank=True 意味着在后台管理中填写可以为空，根菜单没有父级菜单
@@ -27,7 +28,7 @@ class Permission(models.Model):
     """
     title = models.CharField(max_length=32, unique=True)
     url = models.CharField(max_length=128, unique=True)
-    menu = models.ForeignKey("Menu", null=True, blank=True,on_delete=models.CASCADE)
+    menu = models.ForeignKey("Menu", null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         # 显示带菜单前缀的权限
@@ -41,6 +42,7 @@ class Role(models.Model):
     title = models.CharField(max_length=32, unique=True)
 
     permissions = models.ManyToManyField("Permission")
+
     # 定义角色和权限的多对多关系
 
     def __str__(self):
@@ -51,12 +53,18 @@ class UserInfo(models.Model):
     """
     用户：划分角色
     """
-    username = models.CharField(max_length=32,unique=True)
-    #password = models.CharField(max_length=64)
-    #nickname = models.CharField(max_length=32)
-    #email = models.EmailField()
+    # REQUIRED_FIELDS = ('username',)
+    # USERNAME_FIELD = 'email'
+
+    # REQUIRED_FIELDS = ['username']
+
+    username = models.CharField(max_length=32, unique=True)
+    # password = models.CharField(max_length=64)
+    # nickname = models.CharField(max_length=32)
+    # email = models.EmailField()
 
     roles = models.ManyToManyField("Role")
+
     # 定义用户和角色的多对多关系
 
     def __str__(self):
@@ -83,5 +91,3 @@ class User(AbstractUser):
         return self.username
 
 '''
-
-

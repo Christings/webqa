@@ -25,10 +25,10 @@ def auth(func):
 
 
 # 请求调试区
-# @auth
+@auth
 def debug(request):
-    user_id = "zhangjingjun"
-    # user_id = request.COOKIES.get('uid')
+    # user_id = "zhangjingjun"
+    user_id = request.COOKIES.get('uid')
     if request.method == 'GET':
         req_lst = models.DebugQw.objects.filter(user_fk_id=user_id)
         return render(request, 'webqw/debug.html', {'user_id': user_id, 'req_lst': req_lst, })
@@ -91,7 +91,7 @@ def debug(request):
         return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def debug_del(request):
     ret = {'status': True, 'error': None, 'data': None}
     req_id = request.POST.get('line_id')
@@ -104,10 +104,10 @@ def debug_del(request):
     return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def debug_save(request):
-    # user_id = request.COOKIES.get('uid')
-    user_id = "zhangjingjun"
+    user_id = request.COOKIES.get('uid')
+    # user_id = "zhangjingjun"
     ret = {
         'status': True,
         'error': None,
@@ -226,7 +226,7 @@ def debug_diff(request):
     return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def automation_cancel(request):
     ret = {'status': True, 'error': None, 'data': None}
     try:
@@ -238,7 +238,7 @@ def automation_cancel(request):
     return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def automation_restart(request):
     user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'errro': None, 'data': None}
@@ -280,10 +280,10 @@ def automation_restart(request):
     return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def automation_detail(request, task_id):
-    user_id = "zhangjingjun"
-    # user_id = request.COOKIES.get('uid')
+    # user_id = "zhangjingjun"
+    user_id = request.COOKIES.get('uid')
     task_detail = models.Qps.objects.filter(id=task_id)
     diff_detail = models.Diff.objects.filter(diff_fk_id=task_id)
 
@@ -307,10 +307,10 @@ def automation_detail(request, task_id):
                        'page_str': page_str})
 
 
-# @auth
+@auth
 def automation_add(request):
-    user_id = "zhangjingjun"
-    # user_id = request.COOKIES.get('uid')
+    # user_id = "zhangjingjun"
+    user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'error': None, 'data': None}
     test_svn = str_dos2unix(request.POST.get('qw_testsvn'))
     base_svn = str_dos2unix(request.POST.get('qw_basesvn'))
@@ -388,7 +388,7 @@ def automation_add(request):
         return HttpResponse(json.dumps(ret))
 
 
-# @auth
+@auth
 def automation(request, page_id):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')

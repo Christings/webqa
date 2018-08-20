@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'rbac.middleware.rbac.RbacMiddleware',
+    # 'rbac.middleware.rbac.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'webqa.urls'
@@ -171,3 +171,5 @@ SAFE_URL = [
     r'/logout/',
     '/favicon.ico'
 ]
+
+# AUTH_USER_MODEL = 'rbac.UserInfo'
