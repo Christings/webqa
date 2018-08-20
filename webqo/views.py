@@ -1,7 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.forms.models import model_to_dict
 from webqo import models
-from fanyi import models as layout
 from utils import pagination
 import time, json
 import requests
@@ -13,14 +12,13 @@ import difflib
 # Create your views here.
 def auth(func):
     def inner(request, *args, **kwargs):
-        login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/&targetUrl="
+        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
         try:
             user_id = request.COOKIES.get('uid')
             if not user_id:
                 return redirect(login_url)
         except:
             return redirect(login_url)
-        v = request.COOKIES.get('username111')
         return func(request, *args, **kwargs)
 
     return inner
@@ -411,7 +409,8 @@ def str_dos2unix(input):
 
 
 def logout(request):
-    response = redirect('https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/&targetUrl=')
+    response = redirect(
+        'https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl=')
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
     return response

@@ -1,7 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.forms.models import model_to_dict
 from webqw import models
-from fanyi import models as layout
 from utils import pagination
 import time, json
 import requests
@@ -13,7 +12,7 @@ import difflib
 
 def auth(func):
     def inner(request, *args, **kwargs):
-        login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/&targetUrl="
+        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
         try:
             user_id = request.COOKIES.get('uid')
             if not user_id:
@@ -123,7 +122,7 @@ def debug_save(request):
 
     try:
         models.DebugQw.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
-                                    user_fk_id=user_id)
+                                      user_fk_id=user_id)
         ret['inputHost'] = inputHost
         ret['inputExpId'] = inputExpId
         ret['query_from'] = query_from
