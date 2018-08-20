@@ -57,11 +57,11 @@
 								<tbody style="cursor: pointer;" id="reqBody">									
 									{% for item in host_list %}
 									<tr host_id="{{item.id}}" class="get_host">
-										<td class="tabletd" style="">{{item.ip}}</td>
-										<td class="tabletd" >{{item.user}}</td>
-										<td class="tabletd" >{{item.passw}}</td>
-										<td class="tabletd" >{{item.gpuid}}</td>
-										<td style="">
+										<td>{{item.ip}}</td>
+										<td>{{item.user}}</td>
+										<td>{{item.passw}}</td>
+										<td>{{item.gpuid}}</td>
+										<td>
 											{% ifequal item.status 0 %}
 											<button class="btn btn-success btn-sm startMonitor" style="color: black;">START</button>
 											<button class="btn btn-danger btn-sm del_line" style="color: black;" >DEL</button>
@@ -89,7 +89,7 @@
 				<table class="table table-hover" id="reqData">
 				<thead>
 					<tr>
-						<td style="width: 40px;">ID</td>
+						<td style="display: none;">ID</td>
 						<td style="">StartTime</td>
 						<td>EndTime</td>
 						<td style="">IP</td>
@@ -101,12 +101,12 @@
 				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
 					<tr req_id="{{item.id}}">
-						<td class="tabletd" style="">{{item.id}}</td>
-						<td class="tabletd" style="">{{item.create_time}}</td>
-						<td class="tabletd">{{item.end_time}}</td>
-						<td class="tabletd" style="">{{item.monitorip}}</td>
-						<td class="tabletd">{{item.user}}</td>
-						<td class="tabletd">
+						<td  style="display: none;">{{item.id}}</td>
+						<td>{{item.create_time}}</td>
+						<td>{{item.end_time}}</td>
+						<td>{{item.monitorip}}</td>
+						<td>{{item.user}}</td>
+						<td>
 							<a href="/fanyi/gpu/detail/?taskid={{item.id}}">
 								{% ifequal item.status 0 %}
 								<button class="btn btn-outline-info btn-sm" style="color: green;">Stopped</button>
