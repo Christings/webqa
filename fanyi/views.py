@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-# import M2Crypto
+import M2Crypto
 import urllib
 import json
 import base64
