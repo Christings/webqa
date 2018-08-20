@@ -31,12 +31,11 @@ urlpatterns = [
     re_path(r'^debug_save$', views.debug_save),
     re_path(r'^debug_diff$', views.debug_diff),
     # re_path(r'^auto/$', views.auto),
-    # re_path(r'^qo_automation(?P<page_id>\d*)$',views.qo_automation),
-    # re_path(r'^qo_automation_add',views.qo_automation_add),
-    # re_path(r'^qo_task_detail_(?P<task_id>\d+).html$',views.qo_task_detail),
-    # re_path(r'^qo_task_readd$',views.qo_task_readd),
-    # re_path(r'^qo_task_cancel',views.qo_task_cancel),
+    re_path(r'^automation(?P<page_id>\d*)$',views.automation),
+    re_path(r'^automation_add',views.automation_add),
+    re_path(r'^automation_detail_(?P<task_id>\d+).html$',views.automation_detail),
+    re_path(r'^automation_restart$',views.automation_restart),
+    re_path(r'^automation_cancel',views.automation_cancel),
 
-    # re_path(r'^qo_req$',views.qo_req),
     # re_path(r'^logout$',views.logout),
 ]

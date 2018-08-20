@@ -193,7 +193,7 @@ def debug_save(request):
 
     try:
         models.DebugQo.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
-                                  user_fk_id=user_id)
+                                      user_fk_id=user_id)
 
         ret['inputHost'] = inputHost
         ret['inputExpId'] = inputExpId
@@ -223,9 +223,9 @@ def debug_del(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qo_task_cancel(request):
-    ret = {'status': True, 'errro': None, 'data': None}
+# @auth
+def automation_cancel(request):
+    ret = {'status': True, 'error': None, 'data': None}
     try:
         re_add_task_d = request.POST.get('task_id')
         models.Qps.objects.filter(id=re_add_task_d).update(status=6)
@@ -235,11 +235,11 @@ def qo_task_cancel(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qo_task_readd(request):
+# @auth
+def automation_restart(request):
     # user_id='gongyanli'
     user_id = request.COOKIES.get('uid')
-    ret = {'status': True, 'errro': None, 'data': None}
+    ret = {'status': True, 'error': None, 'data': None}
     re_add_task_id = request.POST.get('task_id')
     try:
         task_detail = models.Qps.objects.get(id=re_add_task_id)
@@ -280,15 +280,12 @@ def qo_task_readd(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qo_task_detail(request, task_id):
-    # user_id="zhangjingjun"
-    user_id = request.COOKIES.get('uid')
+# @auth
+def automation_detail(request, task_id):
+    user_id = "zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
     task_detail = models.Qps.objects.filter(id=task_id)
     diff_detail = models.Diff.objects.filter(diff_fk_id=task_id)
-    business_lst = layout.Business.objects.all()
-    app_lst = layout.Application.objects.all()
-    user_app_lst = layout.UserToApp.objects.filter(user_name_id=user_id)
 
     testitem = models.Qps.objects.filter(id=task_id).values('testitem')
 
@@ -299,26 +296,22 @@ def qo_task_detail(request, task_id):
 
     if testitem.first()['testitem'] == 1:
 
-        return render(request, 'qo_task_tail.html',
-                      {'business_lst': business_lst, 'app_lst': app_lst, 'user_id': user_id,
-                       'user_app_lst': user_app_lst,
-                       'businame': 'Webqo', 'app_name': "webqo性能对比自动化", 'topic': '任务详情', 'task_detail': task_detail})
+        return render(request, 'webqo/automation_detail.html',
+                      {'user_id': user_id, 'task_detail': task_detail})
     elif testitem.first()['testitem'] == 0:
         page_obj = pagination.Page(current_page, len(diff_detail), 3, 9)
         data = diff_detail[page_obj.start:page_obj.end]
-        page_str = page_obj.page_str('qo_task_detail_' + task_id + '.html?page=')
+        page_str = page_obj.page_str('automation_detail_' + task_id + '.html?page=')
 
-        return render(request, 'qo_diff_detail.html',
-                      {'business_lst': business_lst, 'app_lst': app_lst, 'user_id': user_id,
-                       'user_app_lst': user_app_lst,
-                       'businame': 'Webqo', 'app_name': "diff", 'topic': '任务详情', 'task_detail': task_detail,
-                       'diff_detail': diff_detail, 'li': data, 'page_str': page_str})
+        return render(request, 'webqo/diff_detail.html',
+                      {'user_id': user_id, 'task_detail': task_detail, 'diff_detail': diff_detail, 'li': data,
+                       'page_str': page_str})
 
 
-@auth
-def qo_automation_add(request):
-    # user_id = "zhangjingjun"
-    user_id = request.COOKIES.get('uid')
+# @auth
+def automation_add(request):
+    user_id = "zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'errro': None, 'data': None}
     test_svn = str_dos2unix(request.POST.get('qo_testsvn'))
     base_svn = str_dos2unix(request.POST.get('qo_basesvn'))
@@ -358,13 +351,13 @@ def qo_automation_add(request):
             press_rate = 0
         # print('test_svn:'+test_svn,'base_svn:'+base_svn,'newconfip:'+newconfip,'newconfuser:'+newconfuser,'newconfpassw:'+newconfpassw,'newconfpath:'+newconfpath,'newdataip:'+newdataip,'newdatauser:'+newdatauser,'newdatapassw:'+newdatapassw,'newdatapath:'+newdatapath)
         try:
-            models.webqoqps.objects.create(create_time=get_now_time(), user=user_id, testitem=1, testsvn=test_svn,
-                                           basesvn=base_svn,
-                                           newconfip=newconfip, newconfuser=newconfuser, newconfpassw=newconfpassw,
-                                           newconfpath=newconfpath, newdataip=newdataip, newdatauser=newdatauser,
-                                           newdatapassw=newdatapassw, newdatapath=newdatapath, press_qps=press_qps,
-                                           press_time=press_time, press_expid=press_expid, press_rate=press_rate,
-                                           testtag=testtag)
+            models.Qps.objects.create(create_time=get_now_time(), user=user_id, testitem=1, testsvn=test_svn,
+                                      basesvn=base_svn,
+                                      newconfip=newconfip, newconfuser=newconfuser, newconfpassw=newconfpassw,
+                                      newconfpath=newconfpath, newdataip=newdataip, newdatauser=newdatauser,
+                                      newdatapassw=newdatapassw, newdatapath=newdatapath, press_qps=press_qps,
+                                      press_time=press_time, press_expid=press_expid, press_rate=press_rate,
+                                      testtag=testtag)
         except Exception as e:
             print(e)
             ret['error'] = 'error:' + str(e)
@@ -376,14 +369,14 @@ def qo_automation_add(request):
         if press_rate == "":
             press_rate = 0
         try:
-            models.webqoqps.objects.create(create_time=get_now_time(), user=user_id, testitem=0, testsvn=test_svn,
-                                           basesvn=base_svn,
-                                           newconfip=newconfip, newconfuser=newconfuser, newconfpassw=newconfpassw,
-                                           newconfpath=newconfpath, newdataip=newdataip, newdatauser=newdatauser,
-                                           newdatapassw=newdatapassw, newdatapath=newdatapath, press_expid=press_expid,
-                                           press_rate=press_rate, query_ip=query_ip, query_user=query_user,
-                                           query_pwd=query_pwd,
-                                           query_path=query_path, testtag=testtag)
+            models.Qps.objects.create(create_time=get_now_time(), user=user_id, testitem=0, testsvn=test_svn,
+                                      basesvn=base_svn,
+                                      newconfip=newconfip, newconfuser=newconfuser, newconfpassw=newconfpassw,
+                                      newconfpath=newconfpath, newdataip=newdataip, newdatauser=newdatauser,
+                                      newdatapassw=newdatapassw, newdatapath=newdatapath, press_expid=press_expid,
+                                      press_rate=press_rate, query_ip=query_ip, query_user=query_user,
+                                      query_pwd=query_pwd,
+                                      query_path=query_path, testtag=testtag)
         except Exception as e:
             print(e)
             ret['error'] = 'error:' + str(e)
@@ -391,34 +384,21 @@ def qo_automation_add(request):
         return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qo_automation(request, page_id):
-    # user_id="zhangjingjun"
-    user_id = request.COOKIES.get('uid')
+# @auth
+def automation(request, page_id):
+    user_id = "zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
     if page_id == '':
         page_id = 1
-    task_list = models.webqoqps.objects.order_by('id')[::-1]
+    task_list = models.Qps.objects.order_by('id')[::-1]
     current_page = page_id
     current_page = int(current_page)
     page_obj = pagination.Page(current_page, len(task_list), 16, 9)
     data = task_list[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("/qo_automation")
+    page_str = page_obj.page_str("webqo/automation")
 
-    business_lst = layout.Business.objects.all()
-    app_lst = layout.Application.objects.all()
-    user_app_lst = layout.UserToApp.objects.filter(user_name_id=user_id)
-    app_id_lst = list()
-    for appid in user_app_lst:
-        app_id_lst.append(appid.app_id_id)
-    if 5 in app_id_lst:
-        return render(request, 'qo_automation.html',
-                      {'business_lst': business_lst, 'user_id': user_id, 'user_app_lst': user_app_lst,
-                       'app_lst': app_lst, 'businame': 'Webqo', 'app_name': "webqo性能对比自动化", 'li': data,
-                       'page_str': page_str})
-    else:
-        return render(request, 'no_limit.html',
-                      {'business_lst': business_lst, 'user_app_lst': user_app_lst, 'user_id': user_id,
-                       'app_lst': app_lst, 'businame': 'Webqo', 'app_name': "webqo性能对比自动化"})
+    return render(request, 'webqo/automation.html',
+                  {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
 
 def get_now_time():

@@ -1,5 +1,6 @@
 {% extends 'main.html' %}
 {% block content %}
+    {% load tag_tools %}
     {% load static %}
     <div class="app-title" xmlns="http://www.w3.org/1999/html">
         <div>
@@ -9,7 +10,7 @@
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
             <li class="breadcrumb-item">sogouTest</li>
-            <li class="breadcrumb-item active"><a href="#">webqw</a></li>
+            <li class="breadcrumb-item active"><a href="#">webqo</a></li>
         </ul>
     </div>
     <div class="row">
@@ -22,13 +23,13 @@
                         {% csrf_token %}
                         <div class="form-group col-md-12">
                             <label class="control-label">Basesvn</label>
-                            <textarea class="form-control" rows="5" id="qw_basesvn" name="qw_basesvn"
+                            <textarea class="form-control" rows="5" id="qo_basesvn" name="qo_basesvn"
                                       placeholder='job.ini[main.svn]'
                             ></textarea>
                         </div>
                         <div class="form-group col-md-12">
                             <label class="control-label">Testsvn</label>
-                            <textarea class="form-control" rows="5" id="qw_testsvn" name="qw_testsvn"
+                            <textarea class="form-control" rows="5" id="qo_testsvn" name="qo_testsvn"
                                       placeholder='job.ini[main.svn]'
                             ></textarea>
                         </div>
@@ -60,7 +61,7 @@
                             <label class="control-label col-md-2">cfgpath</label>
                             <div class="col-md-10">
                                 <input type="text" class="form-control" id="new_conf_path" name="new_conf_path"
-                                       placeholder="path(e.g.)/search/odin/daemon/qw/conf/qw.cfg(绝对路径)">
+                                       placeholder="path(e.g.)/search/odin/daemon/qo/conf/qo.cfg(绝对路径)">
                             </div>
                         </div>
                         <div class="form-group col-md-12 row">
@@ -82,17 +83,17 @@
                             <label class="control-label col-md-2">datafrom</label>
                             <div class="col-md-10">
                                 <textarea class="form-control" rows="4" name="new_data_path" id="new_data_path"
-                                          placeholder='1.使用和线上一致的数据，置空&#13;&#10;2.更新单独文件/search/odin/daemon/qw/data/vocab.txt;data/base/nb&#13;&#10;3.更新多文件/search/odin/daemon/zhangjj/tools/qw/data/{template.lst,tflag_qw.xml};data/base&#13;&#10;4.完全使用自有完整数据(需支持rsync)/search/odin/daemon/zhangjj/tools/qw/data;data'></textarea>
+                                          placeholder='1.使用和线上一致的数据，置空&#13;&#10;2.更新单独文件/search/odin/daemon/qo/data/vocab.txt;data/base/nb&#13;&#10;3.更新多文件/search/odin/daemon/zhangjj/tools/qo/data/{template.lst,tflag_qo.xml};data/base&#13;&#10;4.完全使用自有完整数据(需支持rsync)/search/odin/daemon/zhangjj/tools/qo/data;data'></textarea>
                             </div>
                         </div>
                         <div class="form-group col-md-12 row">
                             <label class="control-label col-md-2">exp_id</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="qw_press_expid" name="qw_press_expid"
+                                <input type="text" class="form-control" id="qo_press_expid" name="qo_press_expid"
                                        placeholder="expid">
                             </div>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control" id="qw_press_rate" name="qw_press_rate"
+                                <input type="text" class="form-control" id="qo_press_rate" name="qo_press_rate"
                                        placeholder="实验配比1-100(无需百分号%)">
                             </div>
                             <div class="col-sm-1">
@@ -118,11 +119,11 @@
                         <div class="form-group col-md-12 row">
                             <label class="control-label col-md-2">presscfg</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="qw_qps" name="qw_qps"
+                                <input type="text" class="form-control" id="qo_qps" name="qo_qps"
                                        placeholder="press qps默认1000">
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="qw_press_time" name="qw_press_time"
+                                <input type="text" class="form-control" id="qo_press_time" name="qo_press_time"
                                        placeholder="press time默认30min">
                             </div>
                         </div>
@@ -187,7 +188,7 @@
                             <td>{{ item.press_rate }}</td>
                             <td>{{ item.testtag }}</td>
                             <td>
-                                <a href="/webqw/automation_detail_{{ item.id }}.html">
+                                <a href="/webqo/automation_detail_{{ item.id }}.html">
                                     {% ifequal item.status 0 %}
                                         <font color="gray">Waiting</font>
                                     {% endifequal %}
@@ -265,12 +266,12 @@
 
         //request
         $('#add_automation').click(function () {
-            var qw_base_svn = $('#qw_basesvn').val()
-            var qw_text_svn = $('#qw_testsvn').val()
-            if (qw_base_svn != "" || qw_text_svn != "") {
+            var qo_base_svn = $('#qo_basesvn').val()
+            var qo_text_svn = $('#qo_testsvn').val()
+            if (qo_base_svn != "" || qo_text_svn != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/automation_add",
+                    url: "/webqo/automation_add",
                     async: true,
                     traditional: true,
                     data: $('#form_automation').serialize(),
@@ -278,7 +279,7 @@
                     success: function (obj) {
                         console.log(obj.status)
                         if (obj.status) {
-                            {#                            console.log(JSON.stringify($('#form_qw_addtask').serialize()))#}
+                            {#                            console.log(JSON.stringify($('#form_qo_addtask').serialize()))#}
                             location.reload();
                         } else {
                             $('#error_xml').text(obj.error);
@@ -371,8 +372,8 @@
             query_pwd = $(linelst[23]).text();
             query_path = $(linelst[24]).text();
 
-            $('#qw_testsvn').val(testsvn);
-            $('#qw_basesvn').val(basesvn);
+            $('#qo_testsvn').val(testsvn);
+            $('#qo_basesvn').val(basesvn);
             $('#new_conf_ip').val(newconfip);
             $('#new_conf_user').val(newconfuser);
             $('#new_conf_pass').val(newconfpassw);
@@ -381,10 +382,10 @@
             $('#new_data_user').val(newdatauser);
             $('#new_data_pass').val(newdatapassw);
             $('#new_data_path').val(newdatapath);
-            $('#qw_qps').val(press_qps);
-            $('#qw_press_time').val(press_time);
-            $('#qw_press_rate').val(press_rate);
-            $('#qw_press_expid').val(press_expid);
+            $('#qo_qps').val(press_qps);
+            $('#qo_press_time').val(press_time);
+            $('#qo_press_rate').val(press_rate);
+            $('#qo_press_expid').val(press_expid);
             $('#testtag').val(testtag);
             $('#query_ip').val(query_ip);
             $('#query_user').val(query_user);
@@ -407,12 +408,12 @@
                     $('#query_pwd').attr('readonly', true);
                     $('#query_path').attr('readonly', true);
 
-                    $('#qw_qps').attr('readonly', false);
-                    $('#qw_press_time').attr('readonly', false);
+                    $('#qo_qps').attr('readonly', false);
+                    $('#qo_press_time').attr('readonly', false);
                 }
                 else if (this.value == 'longdiff') {
-                    $('#qw_qps').attr('readonly', true);
-                    $('#qw_press_time').attr('readonly', true);
+                    $('#qo_qps').attr('readonly', true);
+                    $('#qo_press_time').attr('readonly', true);
 
                     $('#query_ip').attr('readonly', false);
                     $('#query_user').attr('readonly', false);
