@@ -163,12 +163,22 @@ def gpu_detail(request):
     task_detail = models.GpuMonitor.objects.filter(id=int(task_id)).first()
     gpumem_list = list(map(int,task_detail.gpumem_list.split(',')[0:-1]))
     gpumemused_list = list(map(int,task_detail.gpumemused_list.split(',')[0:-1]))
-    max_gpumem = max(gpumem_list[0:-1])
-    min_gpumem = min(gpumem_list[0:-1])
-    avg_gpumem = sum(gpumem_list)/len(gpumem_list)
-    max_gpuused = max(gpumemused_list[0:-1])
-    min_gpuused = min(gpumemused_list[0:-1])
-    avg_gpuused = sum(gpumemused_list) / len(gpumemused_list)
+    if len(gpumem_list) > 0:
+        max_gpumem = max(gpumem_list[0:-1])
+        min_gpumem = min(gpumem_list[0:-1])
+        avg_gpumem = sum(gpumem_list)/len(gpumem_list)
+    else:
+        max_gpumem = 0
+        min_gpumem = 0
+        avg_gpumem = 0
+    if len(gpumemused_list) > 0:
+        max_gpuused = max(gpumemused_list[0:-1])
+        min_gpuused = min(gpumemused_list[0:-1])
+        avg_gpuused = sum(gpumemused_list) / len(gpumemused_list)
+    else:
+        max_gpuused = 0
+        min_gpuused = 0
+        avg_gpuused = 0
     ret = dict()
     ret['max_gpumem'] = max_gpumem
     ret['min_gpumem'] = min_gpumem
