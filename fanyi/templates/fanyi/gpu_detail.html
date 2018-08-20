@@ -79,7 +79,7 @@ $(document).ready(function() {
    };
    var yAxis = {
       title: {
-         text: 'GPU Men Used (m) min:{{ ret.min_gpumem }} max:{{ ret.max_gpumem }}  avg:{{ ret.avg_gpumem }}'
+         text: 'GPU Men Used (m)'
       },
       min: 0
    };
@@ -95,7 +95,7 @@ $(document).ready(function() {
       }
    };
    var series= [{
-         name: 'GPU Mem Used (m)',
+         name: 'GPU Mem Used (m) min:{{ ret.min_gpumem }} max:{{ ret.max_gpumem }}  avg:{{ ret.avg_gpumem }}',
             // Define the data points. All series have a dummy year
             // of 1970/71 in order to be compared on the same x axis. Note
             // that in JavaScript, months start at 0 for January, 1 for February etc.
@@ -139,7 +139,7 @@ $(document).ready(function() {
    };
    var yAxis2 = {
       title: {
-         text: 'GPU Mem Used (%) min:{{ ret.min_gpuused }} max:{{ ret.max_gpuused }}  avg:{{ ret.avg_gpuused }}'
+         text: 'GPU Mem Used (%)'
       },
       min: 0
    };
@@ -155,7 +155,7 @@ $(document).ready(function() {
       }
    };
    var series2= [{
-         name: 'GPU Mem Used (%)',
+         name: 'GPU Mem Used (%) min:{{ ret.min_gpuused }} max:{{ ret.max_gpuused }}  avg:{{ ret.avg_gpuused }}',
             // Define the data points. All series have a dummy year
             // of 1970/71 in order to be compared on the same x axis. Note
             // that in JavaScript, months start at 0 for January, 1 for February etc.
