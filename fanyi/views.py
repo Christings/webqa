@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-# import M2Crypto
+import M2Crypto
 import urllib
 import json
 import base64
@@ -252,14 +252,14 @@ def gpu(request):
             current_page = int(page)
         try:
             if task_id == '':
-                gpu_info = models.GpuMonitor.objects.filter(username=uid).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.filter(user_fk_id=uid).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
             else:
-                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id,username=uid).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
+                gpu_info = models.GpuMonitor.objects.filter(h_id=task_id,user_fk_id=uid).values('id', 'create_time', 'end_time', 'monitorip', 'user', 'status').order_by('id')[::-1]
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/fanyi/gpu/?taskid=%s&page=" % task_id)
 
-            host_list = models.Host.objects.filter(username=uid).order_by('ip')
+            host_list = models.Host.objects.filter(user_fk_id=uid).order_by('ip')
         except Exception as e:
             print(e)
             pass
