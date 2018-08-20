@@ -160,8 +160,23 @@ def gpu_detail(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('taskid')
-    task_detail = models.GpuMonitor.objects.filter(id=int(task_id))
-    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail})
+    task_detail = models.GpuMonitor.objects.filter(id=int(task_id)).first()
+    gpumem_list = list(map(int,task_detail.gpumem_list.split(',')[0:-1]))
+    gpumemused_list = list(map(int,task_detail.gpumemused_list.split(',')[0:-1]))
+    max_gpumem = max(gpumem_list[0:-1])
+    min_gpumem = min(gpumem_list[0:-1])
+    avg_gpumem = sum(gpumem_list)/len(gpumem_list)
+    max_gpuused = max(gpumemused_list[0:-1])
+    min_gpuused = min(gpumemused_list[0:-1])
+    avg_gpuused = sum(gpumemused_list) / len(gpumemused_list)
+    ret = dict()
+    ret['max_gpumem'] = max_gpumem
+    ret['min_gpumem'] = min_gpumem
+    ret['avg_gpumem'] = avg_gpumem
+    ret['max_gpuused'] = max_gpuused
+    ret['min_gpuused'] = min_gpuused
+    ret['avg_gpuused'] = avg_gpuused
+    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail,'ret':ret})
 
 
 def gpu_del_task(request):
