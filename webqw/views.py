@@ -33,7 +33,7 @@ def debug(request):
     if request.method == 'GET':
         req_lst = models.Debug.objects.filter(user_fk_id=user_id)
         return render(request, 'webqw/debug.html', {'user_id': user_id, 'req_lst': req_lst, })
-    elif request.method=='POST':
+    elif request.method == 'POST':
         ret = {
             'status': True,
             'error': None,
@@ -90,6 +90,50 @@ def debug(request):
             ret['error'] = "Error:" + str(e)
             ret['status'] = False
         return HttpResponse(json.dumps(ret))
+
+
+# @auth
+def debug_del(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('line_id')
+    try:
+        models.Debug.objects.filter(id=req_id).delete()
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+        print(e)
+    return HttpResponse(json.dumps(ret))
+
+
+# @auth
+def debug_save(request):
+    # user_id = request.COOKIES.get('uid')
+    user_id = "zhangjingjun"
+    ret = {
+        'status': True,
+        'error': None,
+        'data': None,
+    }
+    inputHost = request.POST.get('inputHost')
+    # reqtype=request.POST.get('reqtype')
+    inputExpId = request.POST.get('inputExpId')
+    query_from = request.POST.get('query_from')
+    query = request.POST.get('query')
+    # result = request.POST.get('result')
+
+    try:
+        models.Debug.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
+                                    user_fk_id=user_id)
+        ret['inputHost'] = inputHost
+        ret['inputExpId'] = inputExpId
+        ret['query_from'] = query_from
+        ret['query'] = query
+    except Exception as e:
+        ret['error'] = "Error:" + str(e)
+        print(e)
+        ret['status'] = False
+    return HttpResponse(json.dumps(ret))
+
 
 def debug_diff(request):
     ret = {
@@ -184,49 +228,7 @@ def debug_diff(request):
 
 
 # @auth
-def debug_del(request):
-    ret = {'status': True, 'error': None, 'data': None}
-    req_id = request.POST.get('line_id')
-    try:
-        models.Debug.objects.filter(id=req_id).delete()
-    except Exception as e:
-        ret['status'] = False
-        ret['error'] = "Error:" + str(e)
-        print(e)
-    return HttpResponse(json.dumps(ret))
-
-# @auth
-def debug_save(request):
-    # user_id = request.COOKIES.get('uid')
-    user_id = "zhangjingjun"
-    ret = {
-        'status': True,
-        'error': None,
-        'data': None,
-    }
-    inputHost = request.POST.get('inputHost')
-    # reqtype=request.POST.get('reqtype')
-    inputExpId = request.POST.get('inputExpId')
-    query_from = request.POST.get('query_from')
-    query = request.POST.get('query')
-    # result = request.POST.get('result')
-
-    try:
-        models.Debug.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
-                                    user_fk_id=user_id)
-        ret['inputHost'] = inputHost
-        ret['inputExpId'] = inputExpId
-        ret['query_from'] = query_from
-        ret['query'] = query
-    except Exception as e:
-        ret['error'] = "Error:" + str(e)
-        print(e)
-        ret['status'] = False
-    return HttpResponse(json.dumps(ret))
-
-
-@auth
-def qw_task_cancel(request):
+def automation_cancel(request):
     ret = {'status': True, 'error': None, 'data': None}
     try:
         re_add_task_d = request.POST.get('task_id')
@@ -237,8 +239,8 @@ def qw_task_cancel(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qw_task_readd(request):
+# @auth
+def automation_restart(request):
     user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'errro': None, 'data': None}
     re_add_task_id = request.POST.get('task_id')
@@ -279,15 +281,12 @@ def qw_task_readd(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qw_task_detail(request, task_id):
-    # user_id = "zhangjingjun"
-    user_id = request.COOKIES.get('uid')
+# @auth
+def automation_detail(request, task_id):
+    user_id = "zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
     task_detail = models.Qps.objects.filter(id=task_id)
     diff_detail = models.Diff.objects.filter(diff_fk_id=task_id)
-    business_lst = layout.Business.objects.all()
-    app_lst = layout.Application.objects.all()
-    user_app_lst = layout.UserToApp.objects.filter(user_name_id=user_id)
 
     testitem = models.Qps.objects.filter(id=task_id).values('testitem')
 
@@ -298,26 +297,22 @@ def qw_task_detail(request, task_id):
 
     if testitem.first()['testitem'] == 1:
 
-        return render(request, 'qw_task_tail.html',
-                      {'business_lst': business_lst, 'app_lst': app_lst, 'user_id': user_id,
-                       'user_app_lst': user_app_lst, 'businame': 'Webqw', 'app_name': "webqw性能对比自动化", 'topic': '任务详情',
-                       'task_detail': task_detail})
+        return render(request, 'webqw/automation_detail.html', {'user_id': user_id, 'automation_detail': task_detail})
     elif testitem.first()['testitem'] == 0:
         page_obj = pagination.Page(current_page, len(diff_detail), 3, 9)
         data = diff_detail[page_obj.start:page_obj.end]
-        page_str = page_obj.page_str('qw_task_detail_' + task_id + '.html?page=')
+        page_str = page_obj.page_str('diff_detail_' + task_id + '.html?page=')
 
-        return render(request, 'qw_diff_detail.html',
-                      {'business_lst': business_lst, 'app_lst': app_lst, 'user_id': user_id,
-                       'user_app_lst': user_app_lst, 'businame': 'Webqw', 'app_name': "diff", 'topic': '任务详情',
-                       'task_detail': task_detail, 'diff_detail': diff_detail, 'li': data, 'page_str': page_str})
+        return render(request, 'webqw/diff_detail.html',
+                      {'user_id': user_id, 'task_detail': task_detail, 'diff_detail': diff_detail, 'li': data,
+                       'page_str': page_str})
 
 
-@auth
-def qw_automation_add(request):
-    # user_id = "zhangjingjun"
-    user_id = request.COOKIES.get('uid')
-    ret = {'status': True, 'errro': None, 'data': None}
+# @auth
+def automation_add(request):
+    user_id = "zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
+    ret = {'status': True, 'error': None, 'data': None}
     test_svn = str_dos2unix(request.POST.get('qw_testsvn'))
     base_svn = str_dos2unix(request.POST.get('qw_basesvn'))
     newconfip = str_dos2unix(request.POST.get('new_conf_ip'))
@@ -394,8 +389,8 @@ def qw_automation_add(request):
         return HttpResponse(json.dumps(ret))
 
 
-@auth
-def qw_automation(request, page_id):
+# @auth
+def automation(request, page_id):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
     if page_id == '':
@@ -406,23 +401,9 @@ def qw_automation(request, page_id):
     current_page = int(current_page)
     page_obj = pagination.Page(current_page, len(task_list), 16, 9)
     data = task_list[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("/qw_automation")
+    page_str = page_obj.page_str("webqw/automation")
 
-    business_lst = layout.Business.objects.all()
-    app_lst = layout.Application.objects.all()
-    user_app_lst = layout.UserToApp.objects.filter(user_name_id=user_id)
-    app_id_lst = list()
-    for appid in user_app_lst:
-        app_id_lst.append(appid.app_id_id)
-    if 7 in app_id_lst:
-        return render(request, 'qw_automation.html',
-                      {'business_lst': business_lst, 'user_id': user_id, 'user_app_lst': user_app_lst,
-                       'app_lst': app_lst, 'businame': 'Webqw', 'app_name': "webqw性能对比自动化", 'li': data,
-                       'page_str': page_str})
-    else:
-        return render(request, 'no_limit.html',
-                      {'business_lst': business_lst, 'user_app_lst': user_app_lst, 'user_id': user_id,
-                       'app_lst': app_lst, 'businame': 'Webqw', 'app_name': "webqw性能对比自动化"})
+    return render(request, 'webqw/automation.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
 
 def get_now_time():
