@@ -31,7 +31,7 @@ def debug(request):
     user_id = "zhangjingjun"
     # user_id = request.COOKIES.get('uid')
     if request.method == 'GET':
-        req_lst = models.Debug.objects.filter(user_fk_id=user_id)
+        req_lst = models.DebugQw.objects.filter(user_fk_id=user_id)
         return render(request, 'webqw/debug.html', {'user_id': user_id, 'req_lst': req_lst, })
     elif request.method == 'POST':
         ret = {
@@ -97,7 +97,7 @@ def debug_del(request):
     ret = {'status': True, 'error': None, 'data': None}
     req_id = request.POST.get('line_id')
     try:
-        models.Debug.objects.filter(id=req_id).delete()
+        models.DebugQw.objects.filter(id=req_id).delete()
     except Exception as e:
         ret['status'] = False
         ret['error'] = "Error:" + str(e)
@@ -122,7 +122,7 @@ def debug_save(request):
     # result = request.POST.get('result')
 
     try:
-        models.Debug.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
+        models.DebugQw.objects.create(host_ip=inputHost, exp_id=inputExpId, query_from=query_from, query=query,
                                     user_fk_id=user_id)
         ret['inputHost'] = inputHost
         ret['inputExpId'] = inputExpId

@@ -46,7 +46,7 @@ class Diff(models.Model):
     diff_fk = models.ForeignKey(to="Qps", to_field='id', on_delete=models.CASCADE)
 
 
-class Debug(models.Model):
+class DebugQw(models.Model):
     host_ip = models.CharField(max_length=128)
     exp_id = models.CharField(max_length=8)
     query_from = models.CharField(max_length=4,default="")
