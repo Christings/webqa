@@ -1,4 +1,4 @@
-{% extends 'father.html' %}{% block content %}{% load tag_tools %}{% load static %}
+{% extends 'main.html' %}{% block content %}{% load tag_tools %}{% load static %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -16,6 +16,12 @@
 						<label class="control-label col-md-2">GpuID</label>
 						<div class="col-md-2">
 							<input type="text" class="form-control" id="gpuid" name="gpuid" placeholder="gpuid" >
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">Process</label>
+						<div class="col-md-6">
+							<input type="text" class="form-control" id="processname" name="processname" placeholder="process" >
 						</div>
 					</div>
 					<div class="form-group row">
@@ -181,6 +187,7 @@
 				var monitoruser = $("#monitoruser").val()
 				var monitorpassw = $("#monitorpassw").val()
 				var gpuid = $("#gpuid").val()
+				var processname = $("#processname")
 				if(monitorip != "" && monitoruser != "" && monitorpassw!="") {
 					$.ajax({
 						type: "POST",
@@ -192,6 +199,7 @@
 							'monitoruser': monitoruser,
 							'monitorpassw': monitorpassw,
 							'gpuid':gpuid,
+							'processname':processname,
 						},
 						dataType: 'JSON',
 						success: function(obj) {

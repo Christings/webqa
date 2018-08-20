@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-import M2Crypto
+# import M2Crypto
 import urllib
 import json
 import base64
@@ -263,10 +263,10 @@ def gpu_del_host(request):
     return HttpResponse(json.dumps(ret))
 
 
-@auth
+# @auth
 def gpu(request):
-    # uid = 'zhangjingjun'
-    uid = request.COOKIES['uid']
+    uid = 'zhangjingjun'
+    # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         task_id = request.GET.get('taskid')
@@ -295,12 +295,13 @@ def gpu(request):
         monitor_user = request.POST.get('monitoruser')
         monitor_passw = request.POST.get('monitorpassw')
         gpuid = request.POST.get('gpuid')
+        processname = request.POST.get('processname')
         if gpuid == '':
             gpuid = 0
         try:
             nameisExist = models.Host.objects.filter(ip=ip, gpuid=gpuid)
             if nameisExist.exists() == False:
-                models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid),user_fk_id=uid)
+                models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid),processname=processname,user_fk_id=uid)
             else:
                 ret['error'] = "Error:ip已存在，请勿重新添加"
                 ret['status'] = False
