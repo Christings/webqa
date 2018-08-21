@@ -222,7 +222,7 @@ def debug_del(request):
 
 
 @auth
-def automation_cancel(request):
+def auto_cancel(request):
     ret = {'status': True, 'error': None, 'data': None}
     try:
         re_add_task_d = request.POST.get('task_id')
@@ -234,7 +234,7 @@ def automation_cancel(request):
 
 
 @auth
-def automation_restart(request):
+def auto_restart(request):
     # user_id='gongyanli'
     user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'error': None, 'data': None}
@@ -279,7 +279,7 @@ def automation_restart(request):
 
 
 @auth
-def automation_detail(request, task_id):
+def auto_detail(request, task_id):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
     task_detail = models.Qps.objects.filter(id=task_id)
@@ -294,12 +294,12 @@ def automation_detail(request, task_id):
 
     if testitem.first()['testitem'] == 1:
 
-        return render(request, 'webqo/automation_detail.html',
+        return render(request, 'webqo/auto_detail.html',
                       {'user_id': user_id, 'task_detail': task_detail})
     elif testitem.first()['testitem'] == 0:
         page_obj = pagination.Page(current_page, len(diff_detail), 3, 9)
         data = diff_detail[page_obj.start:page_obj.end]
-        page_str = page_obj.page_str('automation_detail_' + task_id + '.html?page=')
+        page_str = page_obj.page_str('auto_detail_' + task_id + '.html?page=')
 
         return render(request, 'webqo/diff_detail.html',
                       {'user_id': user_id, 'task_detail': task_detail, 'diff_detail': diff_detail, 'li': data,
@@ -307,7 +307,7 @@ def automation_detail(request, task_id):
 
 
 @auth
-def automation_add(request):
+def auto_add(request):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
     ret = {'status': True, 'errro': None, 'data': None}
@@ -383,7 +383,7 @@ def automation_add(request):
 
 
 @auth
-def automation(request, page_id):
+def auto(request, page_id):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
     if page_id == '':
@@ -393,9 +393,9 @@ def automation(request, page_id):
     current_page = int(current_page)
     page_obj = pagination.Page(current_page, len(task_list), 16, 9)
     data = task_list[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("webqo/automation")
+    page_str = page_obj.page_str("webqo/auto")
 
-    return render(request, 'webqo/automation.html',
+    return render(request, 'webqo/auto.html',
                   {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
 

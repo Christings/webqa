@@ -5,7 +5,6 @@
     <div class="app-title" xmlns="http://www.w3.org/1999/html">
         <div>
             <h1><i class="fa fa-th-list"></i>SogouTest</h1>
-            <p>Basic bootstrap tables</p>
         </div>
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
@@ -139,12 +138,25 @@
 
 {% block js %}
     <script>
+        //判断ajax里面的方法是get还是post
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        //只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader('X-CSRFtoken', $.cookie('csrftoken'))
+                }
+            }
+        });
         //cancel task
         $('#cancel_automation').click(function () {
             var task_id = $(this).attr('task_id');
             $.ajax({
                 type: "POST",
-                url: "/automation_cancel",
+                url: "/webqo/auto/cancel",
                 async: true,
                 traditional: true,
                 data: {
@@ -169,7 +181,7 @@
             var task_id = $(this).attr('task_id');
             $.ajax({
                 type: "POST",
-                url: "/automation_restart",
+                url: "//webqo/auto/restart",
                 async: true,
                 traditional: true,
                 data: {
@@ -179,7 +191,7 @@
                 success: function (obj) {
                     if (obj.status) {
                         //location.reload();
-                        window.location.href = '/webqo/automation';
+                        window.location.href = '/webqo/auto';
                     } else {
                         $('#error_xml').text(obj.error);
                     }

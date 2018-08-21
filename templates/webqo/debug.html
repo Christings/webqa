@@ -139,7 +139,7 @@
             if (query != "" && inputHost != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqo/debug_save",
+                    url: "/webqo/debug/save",
                     async: true,
                     traditional: true,
                     data: {
@@ -228,7 +228,7 @@
             if (query != "" && inputHost != "" && inputHost_diff != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqo/debug_diff",
+                    url: "/webqo/debug/diff",
                     async: true,
                     traditional: true,
                     data: {
@@ -299,7 +299,7 @@
             var line_id = $(this).parent().parent().attr('req_id');
             $.ajax({
                 type: "POST",
-                url: "/webqo/debug_del",
+                url: "/webqo/debug/del",
                 async: true,
                 data: {
                     'line_id': line_id
