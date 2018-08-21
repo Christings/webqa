@@ -186,7 +186,8 @@ def gpu_detail(request):
     ret['max_gpuused'] = max_gpuused
     ret['min_gpuused'] = min_gpuused
     ret['avg_gpuused'] = avg_gpuused
-    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail,'ret':ret})
+    loginfo = str_unix2br(task_detail.errorlog)
+    return render(request, 'fanyi/gpu_detail.html',{'user_id': user_id,'task_detail': task_detail, 'loginfo':loginfo, 'ret':ret})
 
 
 def gpu_del_task(request):
