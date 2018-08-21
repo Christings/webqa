@@ -187,7 +187,7 @@
                             <td>{{ item.press_rate }}</td>
                             <td>{{ item.testtag }}</td>
                             <td>
-                                <a href="/webqw/automation_detail_{{ item.id }}.html">
+                                <a href="/webqw/auto/auto_detail_{{ item.id }}.html">
                                     {% ifequal item.status 0 %}
                                         <font color="gray">Waiting</font>
                                     {% endifequal %}
@@ -270,7 +270,7 @@
             if (qw_base_svn != "" || qw_text_svn != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/automation_add",
+                    url: "/webqw/auto/add",
                     async: true,
                     traditional: true,
                     data: $('#form_automation').serialize(),

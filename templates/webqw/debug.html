@@ -4,7 +4,6 @@
     <div class="app-title">
         <div>
             <h1><i class="fa fa-th-list"></i>SogouTest</h1>
-            <p>Basic bootstrap tables</p>
         </div>
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
@@ -139,7 +138,7 @@
             if (query != "" && inputHost != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/debug_save",
+                    url: "/webqw/debug/save",
                     async: true,
                     traditional: true,
                     data: {
@@ -228,7 +227,7 @@
             if (query != "" && inputHost != "" && inputHost_diff != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/debug_diff",
+                    url: "/webqw/debug/diff",
                     async: true,
                     traditional: true,
                     data: {
@@ -299,7 +298,7 @@
             var line_id = $(this).parent().parent().attr('req_id');
             $.ajax({
                 type: "POST",
-                url: "/webqw/debug_del",
+                url: "/webqw/debug/del",
                 async: true,
                 data: {
                     'line_id': line_id
