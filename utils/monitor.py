@@ -48,7 +48,7 @@ def set_status(stat):
         db.rollback()
         pass
     if stat == 2:
-        remove_stat = "UPDATE %s set status=0,runningPID='' where id=%d" % ('fanyi_host', host_id)
+        remove_stat = "UPDATE %s set status=0,runningPID='' where id=%d" % ('fanyi_host', int(host_id))
         try:
             cursor.execute(remove_stat)
             db.commit()
@@ -178,6 +178,7 @@ if __name__ == '__main__':
             update_errorlog("[%s] Insert a new task sql is : %s \n" % (get_now_time(),sql))
             logInfo.log_info('Insert a new task sql is '+ sql)
         except Exception as e:
+            print(e)
             db.rollback()
             update_errorlog("[%s] Insert a new task failed \n" % get_now_time())
             logInfo.log_info('Insert a new task failed')
