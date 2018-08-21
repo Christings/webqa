@@ -24,7 +24,7 @@ from django import template
 from django.utils.safestring import mark_safe
 register = template.Library()
 import requests
-import html
+import html,os
 
 @register.simple_tag
 def formatTime(intime):
@@ -52,6 +52,15 @@ def getRate(finishNum,diffNum):
     if finishNum!=0:
         result = round(float(diffNum)/float(finishNum)*100,2)
     return result
+
+@register.simple_tag
+def processName(pathstr):
+    if pathstr.strip():
+        pName = os.path.basename(pathstr.strip())
+    else:
+        pName = ""
+    return pName
+
 
 
 if __name__ == '__main__':

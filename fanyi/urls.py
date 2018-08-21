@@ -39,6 +39,7 @@ urlpatterns = [
     re_path(r'^gpu/del_host/$', views.gpu_del_host),
     re_path(r'^gpu/task_start/$', views.gpu_task_start),
     re_path(r'^gpu/task_stop/$', views.gpu_task_stop),
+    re_path(r'^gpu/task_edit/$', views.gpu_task_edit),
     # man eval
     re_path(r'^man_eval/$', views.man_eval),
     re_path(r'^man_eval/detail/$', views.man_eval_detail),

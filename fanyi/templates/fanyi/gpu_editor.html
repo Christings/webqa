@@ -1,0 +1,89 @@
+{% extends 'father.html' %}{% load tag_tools %}{% block content %}{% load static %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<h3 class="tile-title">编辑服务&nbsp;&nbsp;&nbsp;<span style="color:red;font-size:15px;" id="error_xml"></span></h3>
+			<div class="tile-body">
+				<form class="form-horizontal" method="POST" id="form_xml">
+					{% csrf_token %}
+					<div class="form-group row">
+						<label class="control-label col-md-2">HostIP</label>
+						<div class="col-md-6">
+							<input style="display:none" type="text"  id="hostid" name="hostid" value='{{host_info.id}}'>
+							<input class="form-control" type="text"  id="monitorip" name="monitorip" value='{{host_info.ip}}' readonly >
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">GpuID</label>
+						<div class="col-md-2">
+							<input type="text" class="form-control" id="gpuid" name="gpuid" value='{{host_info.gpuid}}' readonly >
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">Process</label>
+						<div class="col-md-6">
+							<input type="text" class="form-control" id="processname" name="processname" placeholder="process" >
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="tile-footer">
+				<div class="row">
+					<div class="col-md-9 col-md-offset-2">
+						<button class="btn btn-primary" type="button" id="add_host"><i class="fa fa-fw fa-lg fa-check-circle"></i>Add</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock %} {% block js %}
+
+<script>
+	$(function(){
+		//判断ajax里面的方法是get还是post
+		function csrfSafeMethod(method){
+			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		}
+		
+		//只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
+		$.ajaxSetup({
+			beforeSend:function(xhr,settings){
+				if(!csrfSafeMethod(settings.type)&&!this.crossDomain){
+					xhr.setRequestHeader('X-CSRFtoken',$.cookie('csrftoken'))
+				}    				
+			}
+		});
+			//edit_host
+			$('#add_host').click(function() {
+				var hostid = $("#hostid").val()
+				var processname = $("#processname").val()
+				$.ajax({
+					type: "POST",
+					url: "/fanyi/gpu/task_edit/",
+					async: true,
+					traditional: true,
+					data: {
+						'hostid': hostid,
+						'processname':processname,
+					},
+					dataType: 'JSON',
+					success: function(obj) {
+						if(obj.status) {
+							window.location.href='/fanyi/gpu/';
+						} else {
+							$('#error_xml').text(obj.error);
+						}
+					},
+					error: function() {
+	
+					},
+				});
+			})
+					
+		})
+</script>
+{% endblock %}

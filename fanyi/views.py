@@ -199,6 +199,25 @@ def gpu_del_task(request):
         ret['error'] = "Error:" + str(e)
     return HttpResponse(json.dumps(ret))
 
+# @auth
+def gpu_task_edit(request):
+    user_id = 'zhangjingjun'
+    #user_id = request.COOKIES.get('uid')
+    if request.method == 'GET':
+        taskid = request.GET.get('taskid')
+        host_info = models.Host.objects.filter(id=taskid).first()
+        return render(request, 'fanyi/gpu_editor.html',{'user_id': user_id, 'host_info': host_info})
+    elif request.method == 'POST':
+        ret = {'status': True, 'error': None, 'data': None}
+        hostid = request.POST.get('hostid')
+        processname = request.POST.get('processname')
+        try:
+            models.Host.objects.filter(id=hostid).update(processname=processname)
+        except Exception as e:
+            ret['status'] = False
+            ret['error'] = "Error:" + str(e)
+        return HttpResponse(json.dumps(ret))
+
 
 def gpu_task_stop(request):
     ret = {'status': True, 'error': None, 'data': None}
@@ -296,11 +315,14 @@ def gpu(request):
         monitor_passw = request.POST.get('monitorpassw')
         gpuid = request.POST.get('gpuid')
         processname = request.POST.get('processname')
+        if processname.strip():
+            processname = os.path.basename(processname.strip())
+        print(processname)
         if gpuid == '':
             gpuid = 0
         try:
-            nameisExist = models.Host.objects.filter(ip=ip, gpuid=gpuid)
-            if nameisExist.exists() == False:
+            nameisExist = models.Host.objects.filter(ip=ip, gpuid=gpuid, processname=processname,user_fk_id=uid)
+            if not nameisExist.exists():
                 models.Host.objects.create(ip=ip, user=monitor_user, passw=monitor_passw, gpuid=int(gpuid),processname=processname,user_fk_id=uid)
             else:
                 ret['error'] = "Error:ip已存在，请勿重新添加"

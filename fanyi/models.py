@@ -13,7 +13,7 @@ class ReqInfo(models.Model):
 
 
 class Host(models.Model):
-    ip = models.GenericIPAddressField(db_index=True)
+    ip = models.GenericIPAddressField()
     user = models.CharField(max_length=500, default="")
     passw = models.CharField(max_length=500, default="")
     status = models.IntegerField(default=0)

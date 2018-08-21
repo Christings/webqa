@@ -1,4 +1,4 @@
-{% extends 'main.html' %}{% block content %}{% load tag_tools %}{% load static %}
+{% extends 'father.html' %}{% load tag_tools %}{% block content %}{% load static %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -56,6 +56,7 @@
 										<td style="display: none;">user</td>
 										<td style="display: none;">password</td>
 										<td>GpuID</td>
+										<td>Process</td>
 										<td>Ctrl</td>
 										<td>Filter</td>
 									</tr>
@@ -67,13 +68,17 @@
 										<td style="display: none;">{{item.user}}</td>
 										<td style="display: none;">{{item.passw}}</td>
 										<td>{{item.gpuid}}</td>
+										<td>{{item.processname}}</td>
 										<td>
 											{% ifequal item.status 0 %}
-											<button class="btn btn-success btn-sm startMonitor" style="color: black;">START</button>
-											<button class="btn btn-danger btn-sm del_line" style="color: black;" >DEL</button>
+											<button class="btn btn-success btn-sm startMonitor" style="color: black;">Start</button>
+											<a href="/fanyi/gpu/task_edit?taskid={{item.id}}">
+											<button class="btn btn-success btn-sm" style="color: black;">Edit</button>
+											</a>
+											<button class="btn btn-danger btn-sm del_line" style="color: black;" >Del</button>
 											{% endifequal%}				
 											{% ifequal item.status 1 %}
-											<button class="btn btn-warning btn-sm stopMonitor" style="color: black;">STOP&nbsp;&nbsp;</button>								
+											<button class="btn btn-warning btn-sm stopMonitor" style="color: black;">Stop&nbsp;&nbsp;</button>								
 											{% endifequal%}						
 										</td>
 										<td><a href="/fanyi/gpu/?taskid={{item.id}}"><button class="btn btn-outline-info btn-sm" style="color: black;">Filter</button></a></td>
@@ -100,9 +105,9 @@
 						<td>EndTime</td>
 						<td style="">IP</td>
 						<td>GpuID</td>
-						<td>User</td>
-						<td style="width: 100px;">Stauts</td>
-						<td style="width: 80px;">Ctrl</td>
+						<td style="display:none">User</td>
+						<td>Stauts</td>
+						<td>Ctrl</td>
 					</tr>
 				</thead>
 				<tbody style="cursor: pointer;" id="reqBody">
@@ -113,7 +118,7 @@
 						<td>{{item.end_time}}</td>
 						<td>{{item.monitorip}}</td>
 						<td>{{item.gpuid}}</td>
-						<td>{{item.user}}</td>
+						<td style="display:none">{{item.user}}</td>
 						<td>
 							<a href="/fanyi/gpu/detail/?taskid={{item.id}}">
 								{% ifequal item.status 0 %}
@@ -187,7 +192,7 @@
 				var monitoruser = $("#monitoruser").val()
 				var monitorpassw = $("#monitorpassw").val()
 				var gpuid = $("#gpuid").val()
-				var processname = $("#processname")
+				var processname = $("#processname").val()
 				if(monitorip != "" && monitoruser != "" && monitorpassw!="") {
 					$.ajax({
 						type: "POST",
@@ -304,11 +309,9 @@
 							$('#error_xml').text(obj.error);
 						}
 					},
-					error: function() {
-		
+					error: function() {		
 					}
-				});
-		
+				});		
 			})
 			
 			//stop Monitor
