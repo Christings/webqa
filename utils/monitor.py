@@ -41,8 +41,20 @@ def set_status(stat):
     db = pymysql.connect(database_host,database_user,database_pass,database_data)
     cursor = db.cursor()
     sql = "UPDATE %s set status=%d where id=%d" % (database_table, stat, monitor_id)
-    cursor.execute(sql)
-    db.commit()
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        pass
+    if stat == 2:
+        remove_stat = "UPDATE %s set status=0,runningPID='' where id=%d" % ('fanyi_host', host_id)
+        try:
+            cursor.execute(remove_stat)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            pass
 
 
 # 主方法
@@ -53,8 +65,8 @@ def ssh_command(user, host, password, command):
     if i == 0:
         logInfo.log_info('ERROR!')
         logInfo.log_info('SSH could not login. Here is what SSH said:')
-        logInfo.log_info(child.before, child.after)
-        update_errorlog("[%s] SSH login error: %s %s \n" % (get_now_time(),child.before,child.after))
+        errorinfo = (child.before).decode('utf-8') + (child.after).decode('utf-8')
+        update_errorlog("[%s] SSH login error: %s \n" % (get_now_time(),errorinfo))
         return None
     if i == 1:
         child.sendline('yes')
@@ -63,8 +75,8 @@ def ssh_command(user, host, password, command):
         if i == 0:
             logInfo.log_info('ERROR!')
             logInfo.log_info('SSH could not login. Here is what SSH said:')
-            logInfo.log_info(child.before, child.after)
-            update_errorlog("[%s] SSH login error: %s %s \n" % (get_now_time(),child.before,child.after))
+            errorinfo = (child.before).decode('utf-8') + (child.after).decode('utf-8')
+            update_errorlog("[%s] SSH login error: %s %s \n" % (get_now_time(),errorinfo))
             return None
     child.sendline(password)
     return child
@@ -106,13 +118,15 @@ def gpu_info(host_id):
     else:
         while True:
             command_line_one = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
+            print('command_line_one',command_line_one)
             child_one = ssh_command("root", host_ip, passw, command_line_one)
             child_one.expect(pexpect.EOF)
             gpuinfo_one = (child_one.before).decode('utf-8')
             gpu_lst_one = gpuinfo_one.strip().split('\r\n')
             g_used=gpu_lst_one[0].split()[12].split('%')[0]
 
-            command_line_two = "nvidia-smi | grep '"+ processname +"'"
+            command_line_two = "nvidia-smi | grep '"+ processname +"'| grep '[[:space:]]" + str(gpuid)+"[[:space:]]'"
+            print('command_line_two',command_line_two)
             child_two = ssh_command("root", host_ip, passw, command_line_two)
             child_two.expect(pexpect.EOF)
             gpuinfo_two = (child_two.before).decode('utf-8')
@@ -121,10 +135,7 @@ def gpu_info(host_id):
                 update_errorlog("[%s] Find process %s failed \n" % (get_now_time(),processname))
                 logInfo.log_info("[%s] Find process %s failed \n" % (get_now_time(),processname))
                 sys.exit()
-            gpu_lst_two = gpuinfo_two.strip().split('\r\n')
-            for item in gpu_lst_two:
-                if item.split()[1] == str(gpuid):
-                    g_mem=item.split()[5].split('MiB')[0]
+            g_mem=gpuinfo_two.split()[5].split('MiB')[0]
             g_mem_list = g_mem + ","
             g_used_list = g_used + ","
             timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
