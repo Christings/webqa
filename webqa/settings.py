@@ -93,7 +93,7 @@ DATABASES = {
         'NAME': 'sogowebqa',
         'USER': 'root',
         'PASSWORD': 'Websearch@qa66',
-        'HOST': '10.134.110.163',
+        'HOST': '10.144.120.30',
         'PORT': '3306',
         'OPTIONS': {
             'autocommit': True,
