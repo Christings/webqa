@@ -19,6 +19,32 @@ host_id = sys.argv[2]
 
 logInfo = logUtils.logutil(monitor_id)
 
+def get_now_time():
+    timeArray = time.localtime()
+    return  time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+
+
+def update_errorlog(log):
+    log = log.replace("'", "\\'")
+    db = pymysql.connect(database_host,database_user,database_pass,database_data)
+    cursor = db.cursor()
+    sql = "UPDATE %s set errorlog=CONCAT(errorlog, '%s') where id=%d;" % (database_table, log, monitor_id)
+    cursor.execute(sql)
+    data = cursor.fetchone()
+    try:
+        db.commit()
+    except:
+        logInfo.log_info('Insert log error')
+
+
+def set_status(stat):
+    db = pymysql.connect(database_host,database_user,database_pass,database_data)
+    cursor = db.cursor()
+    sql = "UPDATE %s set status=%d where id=%d" % (database_table, stat, monitor_id)
+    cursor.execute(sql)
+    db.commit()
+
+
 # 主方法
 def ssh_command(user, host, password, command):
     ssh_new_key = 'Are you sure you want to continue connecting'
@@ -28,6 +54,7 @@ def ssh_command(user, host, password, command):
         logInfo.log_info('ERROR!')
         logInfo.log_info('SSH could not login. Here is what SSH said:')
         logInfo.log_info(child.before, child.after)
+        update_errorlog("[%s] SSH login error: %s %s \n" % (get_now_time(),child.before,child.after))
         return None
     if i == 1:
         child.sendline('yes')
@@ -37,6 +64,7 @@ def ssh_command(user, host, password, command):
             logInfo.log_info('ERROR!')
             logInfo.log_info('SSH could not login. Here is what SSH said:')
             logInfo.log_info(child.before, child.after)
+            update_errorlog("[%s] SSH login error: %s %s \n" % (get_now_time(),child.before,child.after))
             return None
     child.sendline(password)
     return child
@@ -45,7 +73,7 @@ def ssh_command(user, host, password, command):
 def gpu_info(host_id):
     db = pymysql.connect(database_host, database_user, database_pass, database_data)
     cursor = db.cursor()
-    sql = "SELECT ip,passw,gpuid FROM fanyi_host where id='%d'" % int(host_id)
+    sql = "SELECT ip,passw,gpuid,processname FROM fanyi_host where id='%d'" % int(host_id)
     cursor.execute(sql)
     (host_ip,passw,gpuid,processname) = cursor.fetchone()
     if not processname.strip():
@@ -71,17 +99,32 @@ def gpu_info(host_id):
                 db.commit()
             except:
                 db.rollback()
+                update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
                 logInfo.log_info('Insert a piece of data failed')
+                sys.exit()
             time.sleep(5)
     else:
         while True:
-            command_line = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
-            child = ssh_command("root", host_ip, passw, command_line)
-            child.expect(pexpect.EOF)
-            gpuinfo = (child.before).decode('utf-8')
-            gpu_lst = gpuinfo.strip().split('\r\n')
-            g_mem=gpu_lst[0].split()[8].split('MiB')[0]
-            g_used=gpu_lst[0].split()[12].split('%')[0]
+            command_line_one = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
+            child_one = ssh_command("root", host_ip, passw, command_line_one)
+            child_one.expect(pexpect.EOF)
+            gpuinfo_one = (child_one.before).decode('utf-8')
+            gpu_lst_one = gpuinfo_one.strip().split('\r\n')
+            g_used=gpu_lst_one[0].split()[12].split('%')[0]
+
+            command_line_two = "nvidia-smi | grep '"+ processname +"'"
+            child_two = ssh_command("root", host_ip, passw, command_line_two)
+            child_two.expect(pexpect.EOF)
+            gpuinfo_two = (child_two.before).decode('utf-8')
+            if len(gpuinfo_two.strip())==0:
+                set_status(2)
+                update_errorlog("[%s] Find process %s failed \n" % (get_now_time(),processname))
+                logInfo.log_info("[%s] Find process %s failed \n" % (get_now_time(),processname))
+                sys.exit()
+            gpu_lst_two = gpuinfo_two.strip().split('\r\n')
+            for item in gpu_lst_two:
+                if item.split()[1] == str(gpuid):
+                    g_mem=item.split()[5].split('MiB')[0]
             g_mem_list = g_mem + ","
             g_used_list = g_used + ","
             timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
@@ -96,11 +139,15 @@ def gpu_info(host_id):
                 db.commit()
             except:
                 db.rollback()
+                set_status(2)
+                update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
                 logInfo.log_info('Insert a piece of data failed')
+                sys.exit()
             time.sleep(5)
 
 
 def sig_handler(sig, frame):
+    update_errorlog("[%s] Revice close signal and exit monitor \n" % get_now_time())
     logInfo.log_info('Revice close signal and exit monitor')
     sys.exit()
 
@@ -117,11 +164,17 @@ if __name__ == '__main__':
         cursor.execute(sql)
         try:
             db.commit()
+            update_errorlog("[%s] Insert a new task sql is : %s \n" % (get_now_time(),sql))
             logInfo.log_info('Insert a new task sql is '+ sql)
         except Exception as e:
             db.rollback()
+            update_errorlog("[%s] Insert a new task failed \n" % get_now_time())
             logInfo.log_info('Insert a new task failed')
+            sys.exit()
         gpu_info(host_id)
 
     except Exception as e:
+        set_status(2)
+        update_errorlog("[%s] Start Monitor failed, error: %s \n" % (get_now_time(),str(e)))
         logInfo.log_info('Start Monitor failed'+str(e))
+        sys.exit()
