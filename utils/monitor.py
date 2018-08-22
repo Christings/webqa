@@ -9,7 +9,7 @@ import signal
 import os
 import logUtils
 
-database_host="10.134.110.163"
+database_host="10.144.120.30"
 database_data="sogowebqa"
 database_table="fanyi_gpumonitor"
 database_user="root"
