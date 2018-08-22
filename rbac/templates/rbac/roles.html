@@ -16,7 +16,7 @@
             <td>{{ role.title }}</td>
             <td>
                 {% for item in role.permissions.all %}
-                <button class="btn btn-outline-success" type="button">{{ item.title }}</button>
+                <button class="btn btn-outline-success btn-sm" type="button">{{ item.title }}</button>
                 {% endfor %}
             </td>
             <td><a href="/rbac/roles/edit/{{ role.id }}">编辑</a></td>

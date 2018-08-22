@@ -16,7 +16,7 @@
             <td>{{ user.username }}</td>
             <td>
                 {% for item in user.roles.all %}
-                <button class="btn btn-outline-success" type="button">{{ item.title }}</button>
+                <button class="btn btn-outline-success btn-sm" type="button">{{ item.title }}</button>
                 {% endfor %}
             </td>
             <td><a href="/rbac/users/edit/{{ user.id }}">编辑</a></td>
