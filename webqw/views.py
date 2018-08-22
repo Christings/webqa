@@ -36,7 +36,7 @@ def debug(request):
             current_page = int(page)
         try:
             # req_list = models.DebugQw.objects.filter(user_fk_id=user_id)
-            req_list = models.DebugQw.objects.filter('id')[::-1]
+            req_list = models.DebugQw.objects.order_by('id')[::-1]
             page_obj = pagination.Page(current_page, len(req_list), 8, 5)
             data = req_list[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("webqw/debug?page=")
@@ -44,6 +44,7 @@ def debug(request):
             print(e)
             pass
         return render(request, 'webqw/debug.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
+
     elif request.method == 'POST':
         ret = {
             'status': True,
