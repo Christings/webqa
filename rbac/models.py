@@ -53,11 +53,6 @@ class UserInfo(models.Model):
     """
     用户：划分角色
     """
-    # REQUIRED_FIELDS = ('username',)
-    # USERNAME_FIELD = 'email'
-
-    # REQUIRED_FIELDS = ['username']
-
     username = models.CharField(max_length=32, unique=True)
     # password = models.CharField(max_length=64)
     # nickname = models.CharField(max_length=32)
