@@ -92,6 +92,7 @@ def gpu_info(host_id):
     if not processname.strip():
         while True:
             try:
+                time.sleep(5)
                 command_line = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
                 child = ssh_command("root", host_ip, passw, command_line)
                 child.expect(pexpect.EOF)
@@ -116,47 +117,54 @@ def gpu_info(host_id):
                     update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
                     logInfo.log_info('Insert a piece of data failed')
                     pass
-                time.sleep(5)
-            except Exceptions
+            except Exception as e:
+                update_errorlog("[%s] SSH  failed e: %s \n" % (get_now_time(),str(e)))
+                logInfo.log_info('SSH  failed'+str(e))
+                pass
     else:
         while True:
-            command_line_one = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
-            print('command_line_one',command_line_one)
-            child_one = ssh_command("root", host_ip, passw, command_line_one)
-            child_one.expect(pexpect.EOF)
-            gpuinfo_one = (child_one.before).decode('utf-8')
-            gpu_lst_one = gpuinfo_one.strip().split('\r\n')
-            g_used=gpu_lst_one[0].split()[12].split('%')[0]
-
-            command_line_two = "nvidia-smi | grep '"+ processname +"'| grep '[[:space:]]" + str(gpuid)+"[[:space:]]'"
-            print('command_line_two',command_line_two)
-            child_two = ssh_command("root", host_ip, passw, command_line_two)
-            child_two.expect(pexpect.EOF)
-            gpuinfo_two = (child_two.before).decode('utf-8')
-            if len(gpuinfo_two.strip())==0:
-                set_status(2)
-                update_errorlog("[%s] Find process %s failed \n" % (get_now_time(),processname))
-                logInfo.log_info("[%s] Find process %s failed \n" % (get_now_time(),processname))
-                sys.exit()
-            g_mem=gpuinfo_two.split()[5].split('MiB')[0]
-            g_mem_list = g_mem + ","
-            g_used_list = g_used + ","
-            timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
-            gpumeminfo = timedata+","+g_mem+'],\n'
-            gpumemused = timedata+","+g_used+'],\n'
-            db = pymysql.connect(database_host, database_user, database_pass, database_data)
-            cursor = db.cursor()
-            sql = "UPDATE %s set gpumem=CONCAT(gpumem, '%s'),gpumemused=CONCAT(gpumemused, '%s') ,gpumem_list=CONCAT(gpumem_list, '%s'),gpumemused_list=CONCAT(gpumemused_list, '%s') where id=%d;" % (database_table, gpumeminfo, gpumemused,g_mem_list,g_used_list,monitor_id)
-            logInfo.log_info('gpu mem is '+g_mem+' and gpu mem used is '+g_used)
-            cursor.execute(sql)
             try:
-                db.commit()
-            except:
-                db.rollback()
-                update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
-                logInfo.log_info('Insert a piece of data failed')
+                time.sleep(5)
+                command_line_one = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
+                print('command_line_one',command_line_one)
+                child_one = ssh_command("root", host_ip, passw, command_line_one)
+                child_one.expect(pexpect.EOF)
+                gpuinfo_one = (child_one.before).decode('utf-8')
+                gpu_lst_one = gpuinfo_one.strip().split('\r\n')
+                g_used=gpu_lst_one[0].split()[12].split('%')[0]
+
+                command_line_two = "nvidia-smi | grep '"+ processname +"'| grep '[[:space:]]" + str(gpuid)+"[[:space:]]'"
+                print('command_line_two',command_line_two)
+                child_two = ssh_command("root", host_ip, passw, command_line_two)
+                child_two.expect(pexpect.EOF)
+                gpuinfo_two = (child_two.before).decode('utf-8')
+                if len(gpuinfo_two.strip())==0:
+                    set_status(2)
+                    update_errorlog("[%s] Find process %s failed \n" % (get_now_time(),processname))
+                    logInfo.log_info("[%s] Find process %s failed \n" % (get_now_time(),processname))
+                    sys.exit()
+                g_mem=gpuinfo_two.split()[5].split('MiB')[0]
+                g_mem_list = g_mem + ","
+                g_used_list = g_used + ","
+                timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
+                gpumeminfo = timedata+","+g_mem+'],\n'
+                gpumemused = timedata+","+g_used+'],\n'
+                db = pymysql.connect(database_host, database_user, database_pass, database_data)
+                cursor = db.cursor()
+                sql = "UPDATE %s set gpumem=CONCAT(gpumem, '%s'),gpumemused=CONCAT(gpumemused, '%s') ,gpumem_list=CONCAT(gpumem_list, '%s'),gpumemused_list=CONCAT(gpumemused_list, '%s') where id=%d;" % (database_table, gpumeminfo, gpumemused,g_mem_list,g_used_list,monitor_id)
+                logInfo.log_info('gpu mem is '+g_mem+' and gpu mem used is '+g_used)
+                cursor.execute(sql)
+                try:
+                    db.commit()
+                except:
+                    db.rollback()
+                    update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
+                    logInfo.log_info('Insert a piece of data failed')
+                    pass
+            except Exception as e:
+                update_errorlog("[%s] SSH  failed e: %s \n" % (get_now_time(), str(e)))
+                logInfo.log_info('SSH  failed' + str(e))
                 pass
-            time.sleep(5)
 
 
 def sig_handler(sig, frame):
