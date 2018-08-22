@@ -4,11 +4,12 @@
     <div class="app-title">
         <div>
             <h1><i class="fa fa-th-list"></i>SogouTest</h1>
+            <p>Basic bootstrap tables</p>
         </div>
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
             <li class="breadcrumb-item">sogouTest</li>
-            <li class="breadcrumb-item active"><a href="#">webqw</a></li>
+            <li class="breadcrumb-item active"><a href="#">webqo</a></li>
         </ul>
     </div>
     <div class="row">
@@ -22,7 +23,7 @@
                         <div class="form-group col-md-6">
                             <label class="control-label">Single:</label>
                             <input class="form-control" type="text" id="inputHost" name="inputHost"
-                                   value="http://webqw01.web.djt.ted:8019/request">
+                                   value="http://webqo01.web.djt.ted:8012/request">
                         </div>
                         <div class="form-group col-md-3">
                             <label class="control-label">&nbsp;</label>
@@ -38,7 +39,7 @@
                         <div class="form-group col-md-6">
                             <label class="control-label">Diff:</label>
                             <input class="form-control" type="text" id="inputHost_diff" name="inputHost_diff"
-                                   value="http://webqw01.web.djt.ted:8019/request">
+                                   value="http://webqo01.web.djt.ted:8012/request">
                         </div>
                         <div class="form-group col-md-3">
                             <label class="control-label">&nbsp;</label>
@@ -84,7 +85,7 @@
                     </thead>
                     <tbody id="reqBody">
                     {% for item in req_lst %}
-                        <tr req_id="{{ item.id }}" class="table-info" id="get_data">
+                        <tr req_id="{{ item.id }}" class="get_data">
                             <td>{{ item.c_time | date:"Y/m/d H:i" }}</td>
                             <td>{{ item.host_ip }}</td>
                             <td>{{ item.exp_id }}</td>
@@ -138,7 +139,7 @@
             if (query != "" && inputHost != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/debug/save",
+                    url: "/webqo/debug/save",
                     async: true,
                     traditional: true,
                     data: {
@@ -161,7 +162,7 @@
                 });
                 $('#error_xml').text('');
             } else {
-                if (reqtext == '') {
+                if (query == '') {
                     $('#error_xml').text('Request不可为空。');
                 } else if (inputHost == '') {
                     $('#error_xml').text('Host不可为空。');
@@ -181,7 +182,7 @@
             if (query != "" && inputHost != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/debug/",
+                    url: "/webqo/debug/",
                     async: true,
                     traditional: true,
                     data: $('#form_xml').serialize(),
@@ -203,7 +204,7 @@
                 });
                 $('#error_xml').text('');
             } else {
-                if (reqtext == '') {
+                if (query == '') {
                     $('#error_xml').text('Request不可为空');
                 } else if (inputHost == '') {
                     $('#error_xml').text('Host不可为空');
@@ -227,7 +228,7 @@
             if (query != "" && inputHost != "" && inputHost_diff != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/webqw/debug/diff",
+                    url: "/webqo/debug/diff",
                     async: true,
                     traditional: true,
                     data: {
@@ -254,7 +255,7 @@
                 });
                 $('#error_xml').text('');
             } else {
-                if (reqtext == '') {
+                if (query == '') {
                     $('#error_xml').text('Request不可为空');
                 } else if (inputHost == '') {
                     $('#error_xml').text('Host不可为空');
@@ -298,7 +299,7 @@
             var line_id = $(this).parent().parent().attr('req_id');
             $.ajax({
                 type: "POST",
-                url: "/webqw/debug/del",
+                url: "/webqo/debug/del",
                 async: true,
                 data: {
                     'line_id': line_id
@@ -324,10 +325,10 @@
             hostip = $(linelst[1]).text();
             expid = $(linelst[2]).text();
             query_from = $(linelst[3]).text();
-            reqtext = $(linelst[4]).text();
+            query = $(linelst[4]).text();
             $('#inputHost').val(hostip);
             $('#inputExpId').val(expid);
-            $('#reqtext').val(reqtext);
+            $('#query').val(query);
             $('#query_from').val(query_from);
         })
 
