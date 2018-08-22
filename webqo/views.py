@@ -29,10 +29,21 @@ def debug(request):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
     if request.method == 'GET':
-        req_lst = models.DebugQo.objects.filter(user_fk_id=user_id)
+        page = request.GET.get('page')
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            # req_list = models.DebugQo.objects.filter(user_fk_id=user_id)
+            req_list = models.DebugQo.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(req_list), 8, 5)
+            data = req_list[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/webqo/debug?page=")
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'webqo/debug.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
-        return render(request, 'webqo/debug.html',
-                      {'user_id': user_id, 'req_lst': req_lst, })
     elif request.method == 'POST':
         ret = {
             'status': True,
