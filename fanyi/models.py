@@ -10,6 +10,7 @@ class ReqInfo(models.Model):
     result = models.CharField(max_length=2000)
     user_fk = models.ForeignKey(to=UserInfo,to_field='username',on_delete=models.CASCADE)
     reqtype = models.CharField(max_length=20)
+    reqfield = models.CharField(max_length=20,default="")
 
 
 class Host(models.Model):
