@@ -113,6 +113,12 @@
               </div>
             </div>
             <div class="form-group row">
+            	<label class="control-label col-md-2">oriResult</label>
+              	<div class="col-md-9">                  	
+                <textarea class="form-control" rows="4" style="resize: none;" id="oriresult" name="oriresult" readonly></textarea>
+              </div>
+            </div>
+            <div class="form-group row">
             	<label class="control-label col-md-2">OutInfo</label>
               	<div class="col-md-9">                  	
                 <pre id="debugInfo" style="white-space: pre-wrap;word-wrap: break-word;"></pre>
@@ -203,6 +209,14 @@
 							<option value="bn" style="display: none;"> 孟加拉语 </option>
 						</select>-->
 					</td>
+					<td>
+						<select style="width:80px" id="reqfield" name="reqfield" onchange="window.location.href='/fanyi/debug/?field='+this.value" class="form-control">
+							<option value="all"> Field </option>
+							{% for fieldname in req_field %}
+							<option value="{{fieldname.reqfield}}"> {{fieldname.reqfield}} </option>
+							{% endfor %}
+						</select>
+					</td>
 					<td>Request</td>
 					<td style="display: none;">Result</td>
 					<td>Ctrl</td>
@@ -214,9 +228,11 @@
 					<td style="">{{item.reqtype}}</td>
 					<td style="display: none;">{% formatIp item.host_ip %}</td>
 					<td>{{item.trans_direct}}</td>
+					<td>{{item.reqfield}}</td>
 					<td>{{item.req_text}}</td>
 					<td style="display: none;">{{item.result}}</td>
 					<td style="display: none;">{{item.isfromzh}}</td>
+					<td style="display: none;">{{item.oriresult}}</td>
 					<td style="">
 						<button class="btn btn-danger btn-sm del_line" type="button">Del</button>
 					</td>
@@ -258,7 +274,24 @@
     					xhr.setRequestHeader('X-CSRFtoken',$.cookie('csrftoken'))
     				}    				
     			}
-    		});   		
+    		});
+    		
+    		function getQueryString(name) {
+			    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			    var r = window.location.search.substr(1).match(reg);
+			    if (r != null)
+			        return unescape(r[2]);
+			    return null;
+			}
+    		
+			var field_name = getQueryString("field");
+			if(field_name){
+				$('#reqfield').val(getQueryString("field"));
+				
+			}else{
+				$('#reqfield').val('all');
+			}
+    		
     		//save
 			$('#save_xml').click(function() {
 				var reqtext = $('#reqtext').val()
@@ -336,6 +369,7 @@
 								$('#result').val(result_str)
 //								$('#debugInfo').val(debugInfo_str);
 								$('#debugInfo').text(debugInfo_str);
+								$('#oriresult').text(obj.oriresult);
 								$('#error_xml').text('');
 							} else {
 								$('#error_xml').text(obj.error);
@@ -388,13 +422,15 @@
 				reqtype = $(linelst[0]).text();
 				hostip = "http://"+$(linelst[1]).text();
 				direction = $(linelst[2]).text();
-				reqtext = $(linelst[3]).text();
-				result = $(linelst[4]).text();
-				isfromzh = $(linelst[5]).text();
+				reqtext = $(linelst[4]).text();
+				result = $(linelst[5]).text();
+				isfromzh = $(linelst[6]).text();
+				oriresult = $(linelst[7]).text();
 				$('#inputHost').val(hostip);
 				$('#reqtype').val(reqtype);
 				$('#lan_sel').val(direction);
 				$('#reqtext').val(reqtext);
+				$('#oriresult').val(oriresult);
 				if(isfromzh == 'fromzh') {
 					$('#inlineRadio2').prop("checked", 'checked');
 					$('#inlineRadio1').removeAttr("checked");

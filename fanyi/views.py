@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-import M2Crypto
+# import M2Crypto
 import urllib
 import json
 import base64
@@ -456,19 +456,29 @@ def debug(request):
     # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
+        fieldname = request.GET.get('field')
+        if fieldname is None or fieldname=='all':
+            fieldname=""
+        print(fieldname)
         current_page = 1
         if page:
             current_page = int(page)
         try:
-            req_list = models.ReqInfo.objects.filter(user_fk_id=uid).order_by('id')[::-1]
-            req_list = models.ReqInfo.objects.order_by('id')[::-1]
-            page_obj = pagination.Page(current_page, len(req_list), 12, 5)
+            # req_list = models.ReqInfo.objects.filter(user_fk_id=uid).order_by('id')[::-1]
+            if fieldname:
+                req_list = models.ReqInfo.objects.filter(reqfield=fieldname).order_by('id')[::-1]
+            else:
+                req_list = models.ReqInfo.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(req_list), 10, 7)
             data = req_list[page_obj.start:page_obj.end]
-            page_str = page_obj.page_str("/fanyi/debug?page=")
+            page_str = page_obj.page_str("/fanyi/debug?field=%s&page=" % fieldname)
+
+            req_field = models.ReqInfo.objects.values('reqfield').distinct()
+
         except Exception as e:
             print(e)
             pass
-        return render(request, 'fanyi/debug.html',{'user_id': uid,'li': data,'page_str': page_str})
+        return render(request, 'fanyi/debug.html',{'user_id': uid,'li': data,'page_str': page_str,'req_field':req_field})
     elif request.method == 'POST':
         ret = {'status': True, 'errro': None, 'data': None}
         inputHost = request.POST.get('inputHost')
@@ -496,6 +506,11 @@ def debug(request):
             ret['lan_sel'] = lan_sel
             ret['host'] = inputHost
             ret['reqtype'] = reqtype
+            oriresult = models.ReqInfo.objects.filter(reqtype=reqtype,req_text=reqtext,trans_direct=lan_sel,isfromzh=fromto).first()
+            if oriresult:
+                ret['oriresult'] = oriresult.oriresult
+            else:
+                ret['oriresult'] = ""
         except Exception as e:
             print(e)
             ret['error'] = "Error:" + str(e)
