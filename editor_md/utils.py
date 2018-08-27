@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# __author__ = "chao.fang"
+# __author__ = "gongyanli"
 from django.conf import settings
 
 editor_settings = {

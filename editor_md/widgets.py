@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# __author__ = "chao.fang"
+# __author__ = "gongyanli"
 from __future__ import unicode_literals, print_function, division
 
 from django import forms
@@ -29,7 +29,7 @@ class EditorMdWidget(forms.Textarea):
 
         super(EditorMdWidget, self).__init__(attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         # todo: set imageFormats from django.conf.setting
         if value is None:
             value = self.context["default"]
