@@ -16,7 +16,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in li %}
+                        {% for item in form %}
                             <tr class="table-info">
                                 <td><a href="/wiki/wiki_detail_{{ item.id }}"
                                        style="cursor: pointer;">{{ item.wikititle }}</a></td>
@@ -28,7 +28,7 @@
                                         wiki_id={{ item.id }}>[删除]</a></span>
 
                                     <span class="badge" style="float: right;"><a style="color: aliceblue"
-                                                                                 href="/wiki/edit_blog?id={{ item.id }}&flag=edit">[编辑]</a></span>
+                                                                                 href="/wiki/edit_blog?id={{ item.id }}">[编辑]</a></span>
                                     {% ifequal item.status 0 %}
                                         <span class="badge" style="float: right;color:white">[草稿]</span>
                                     {% endifequal %}

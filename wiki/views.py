@@ -1,11 +1,14 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
 from fanyi import models as layout
+from rbac import models
 from wiki import models
 from django.db.models import Q
 from utils import pagination
 from utils import resizeImg
 import json, time, markdown2, os
 from django.views.decorators.csrf import csrf_exempt
+from .forms import EditorTestForm
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -161,7 +164,8 @@ def del_wiki(request):
     ret = {'status': True, 'error': None, 'data': None}
     req_id = request.POST.get('line_id')
     try:
-        models.Wikistore.objects.filter(id=req_id).update(status=2)
+        # models.Wikistore.objects.filter(id=req_id).update(status=2)
+        models.Wikistore.objects.filter(id=req_id).delete()
     except Exception as e:
         ret['status'] = False
         ret['error'] = "Error:" + str(e)
@@ -211,6 +215,13 @@ def wiki_list(request, page_id='1'):
                   {'user_id': user_id,
                    'req_lst': req_lst,
                    'li': data, 'page_str': page_str, 'taglist': taglist})
+
+
+def wiki(request):
+    if request.method == "GET":
+        b = models.Wikistore.objects.all()
+        # form = EditorTestForm(instance=b)
+        return render(request, 'wiki/wiki_list.html', {'form': b})
 
 
 # save blog
@@ -274,6 +285,32 @@ def edit_blog(request):
                    'edit_content': edit_content, 'taglist': taglist})
 
 
+def edit_test(request):
+    # user_id=request.COOKIES.get('uid')
+    user_id = 'gongyanli'
+    edit_id = request.GET.get('id')
+    edit_content = models.Wikistore.objects.get(id=edit_id)
+
+    if request.method == "GET":
+        # b = models.UserInfo.objects.filter(user_fk_id=user_id)
+        edit_content = models.Wikistore.objects.get(id=edit_id)
+
+        form = EditorTestForm(instance=edit_content)
+        return render(request, 'wiki/wiki_add_blog.html', {'form': form})
+    if request.method == "POST":
+        form = EditorTestForm(request.POST, instance=edit_content)
+        if form.is_valid():
+            form.save(commit=False)
+            # form.wikititle = request.POST.get('title')
+            form.user = user_id
+            form.save()
+            return HttpResponseRedirect('wiki/')
+
+            # return JsonResponse(dict(success=1, message="submit success!"))
+        else:
+            return JsonResponse(dict(success=0, message="submit error"))
+
+
 # add blog
 @csrf_exempt
 @auth
@@ -300,6 +337,25 @@ def add_wiki(request):
                   {'user_id': user_id,
                    'req_lst': req_lst,
                    'taglist': taglist})
+
+
+def editor_md_test(request):
+    user_id = 'gongyanli'
+    if request.method == "POST":
+        form = EditorTestForm(request.POST)
+        if form.is_valid():
+            form.save(commit=False)
+            # form.wikititle = request.POST.get('title')
+            # form.user = user_id
+            form.save()
+            return HttpResponseRedirect('wiki/')
+            # return render(request, 'wiki/wiki_list.html', {'form': form})
+            # return JsonResponse(dict(success=1, message="submit success!"))
+        else:
+            return JsonResponse(dict(success=0, message="submit error"))
+    else:
+        form = EditorTestForm()
+        return render(request, 'wiki/wiki_add_blog.html', {'form': form})
 
 
 def get_now_time():

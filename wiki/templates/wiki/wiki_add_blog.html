@@ -1,30 +1,32 @@
 {% extends 'main.html' %} {% load static %} {% block content %}
-    <ol class="breadcrumb">
-        <li style="color: red;"></li>
-    </ol>
     <div class="row">
         <div class="col-md-12">
             <div class="tile">
                 <div class="tile-body">
                     <span id="error_xml" style="color:red;font-size:15px;"></span>
                     <form class="form-horizontal" method="post" id="markdown_form">
+                        {% csrf_token %}
                         <div class="form-group">
-                            <input name="title" id="title" type="text" class="form-control" placeholder="标题"/>
+                            {#                            <input name="title" id="title" type="text" class="form-control" placeholder="标题"/>#}
                         </div>
-                        <div class="form-group"><input name="wikitag" id="wikitag" type="text" class="form-control"
-                                                         placeholder="Tag1--Tag2--Tag3"/></div>
+                        <div class="form-group">
+                            {{ form.media }}
+                            {{ form.as_ul }}
+                            {#                            <input name="wikitag" id="wikitag" type="text" class="form-control"#}
+                            {#                                   placeholder="Tag1--Tag2--Tag3"/></div>#}
 
-                        <!--<textarea name="summary" id="summary" class="form-control" style="resize: none;" rows="1" placeholder="摘要"></textarea>
-                        <hr />-->
-                        <textarea name="content" class="form-control" data-provide="markdown" rows="18"
-                                  id="editor"></textarea>
+                            <!--<textarea name="summary" id="summary" class="form-control" style="resize: none;" rows="1" placeholder="摘要"></textarea>
+                            <hr />-->
+                            {#                        <textarea name="content" class="form-control" data-provide="markdown" rows="18"#}
+                            {#                                  id="editor"></textarea>#}
 
-                        <label class="btn btn-default" id="add_blog">发布</label>
-                        <label class="btn btn-default" id="save_draft">保存草稿</label>
-                        <label>图片链接前缀http://frontqa.web.sjs.ted:8080/wiki/upload/{{ user_id }}/{img_name}<a
-                                href="/wiki_img"
-                                style="cursor: pointer;">
-                            &nbsp;&nbsp;上传图片</a></label>
+{#                            <label class="btn btn-default" id="add_blog" type="">发布</label>#}
+                            <button type="submit" value="Submit">发布</button>
+{#                            <label class="btn btn-default" id="save_draft">保存草稿</label>#}
+{#                            <label>图片链接前缀http://frontqa.web.sjs.ted:8080/wiki/upload/{{ user_id }}/{img_name}<a#}
+{#                                    href="/wiki_img"#}
+{#                                    style="cursor: pointer;">#}
+{#                                &nbsp;&nbsp;上传图片</a></label>#}
                     </form>
 
                 </div>
@@ -97,7 +99,7 @@
         $('#save_draft').click(function () {
             var title = $('#title').val()
 //      var summary = $('#summary').val()
-            var content = $('#editor').val()
+            {#            var content = $('#editor').val()#}
             var wikitag = $('#wikitag').val()
             $.ajax({
                 type: "POST",
@@ -107,7 +109,7 @@
                 data: {
                     'title': title,
 //              'summary':summary,
-                    'content': content,
+                    {#                    'content': content,#}
                     'wikitag': wikitag,
                     'flag': 'draft',
                 },
@@ -128,21 +130,22 @@
         $('#add_blog').click(function () {
             var title = $('#title').val()
 //      var summary = $('#summary').val()
-            var content = $('#editor').val()
+            {#            var content = $('#editor').val()#}
             var wikitag = $('#wikitag').val()
-            if (title != "" && content != "" && wikitag != "") {
+            if (title != "" && wikitag != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/wiki/save_blog",
+                    url: "/wiki/adds",
                     async: true,
                     traditional: true,
-                    data: {
-                        'title': title,
-//              'summary':summary,
-                        'content': content,
-                        'wikitag': wikitag,
-                        'flag': 'add',
-                    },
+                    data: $('#markdown_form').serialize(),
+                    {#                    data: {#}
+                    {#                        'title': title,#}
+                    {#//              'summary':summary,#}
+                    {#                        'content': content,#}
+                    {#                        'wikitag': wikitag,#}
+                    {#                        'flag': 'add',#}
+                    {#                    },#}
                     dataType: 'JSON',
                     success: function (obj) {
                         if (obj.status) {
