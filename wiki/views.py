@@ -285,25 +285,24 @@ def edit_blog(request):
                    'edit_content': edit_content, 'taglist': taglist})
 
 
-def edit_test(request):
-    # user_id=request.COOKIES.get('uid')
+def edit_wiki(request):
     user_id = 'gongyanli'
+    # user_id=request.COOKIES.get('uid')
     edit_id = request.GET.get('id')
+    # b = models.UserInfo.objects.filter(user_fk_id=user_id)
     edit_content = models.Wikistore.objects.get(id=edit_id)
 
     if request.method == "GET":
-        # b = models.UserInfo.objects.filter(user_fk_id=user_id)
-        edit_content = models.Wikistore.objects.get(id=edit_id)
-
         form = EditorTestForm(instance=edit_content)
         return render(request, 'wiki/wiki_add_blog.html', {'form': form})
     if request.method == "POST":
         form = EditorTestForm(request.POST, instance=edit_content)
         if form.is_valid():
-            form.save(commit=False)
+            wiki = form.save(commit=False)
             # form.wikititle = request.POST.get('title')
-            form.user = user_id
-            form.save()
+            wiki.update_time = get_now_time()
+            wiki.update_user=user_id
+            wiki.save()
             return HttpResponseRedirect('wiki/')
 
             # return JsonResponse(dict(success=1, message="submit success!"))
@@ -312,37 +311,39 @@ def edit_test(request):
 
 
 # add blog
-@csrf_exempt
-@auth
+# @csrf_exempt
+# @auth
+# def add_wiki(request):
+#     user_id = 'zhangjingjun'
+#     # user_id = request.COOKIES.get('uid')
+#     try:
+#         req_lst = layout.ReqInfo.objects.filter(user_fk_id=user_id)
+#
+#         wikitags = models.Wikistore.objects.exclude(status=2).filter(Q(status=1) | Q(user=user_id)).values('wikitag')
+#         taglist = list()
+#         for item in wikitags:
+#             if '--' in item['wikitag']:
+#                 tagsp = item['wikitag'].split('--')
+#                 taglist += tagsp
+#             else:
+#                 taglist.append(item['wikitag'])
+#         taglist = list(set(taglist))
+#     except Exception as e:
+#         print(e)
+#         pass
+#
+#     return render(request, 'wiki/wiki_add_blog.html',
+#                   {'user_id': user_id,
+#                    'req_lst': req_lst,
+#                    'taglist': taglist})
+
+
 def add_wiki(request):
-    user_id = 'zhangjingjun'
-    # user_id = request.COOKIES.get('uid')
-    try:
-        req_lst = layout.ReqInfo.objects.filter(user_fk_id=user_id)
-
-        wikitags = models.Wikistore.objects.exclude(status=2).filter(Q(status=1) | Q(user=user_id)).values('wikitag')
-        taglist = list()
-        for item in wikitags:
-            if '--' in item['wikitag']:
-                tagsp = item['wikitag'].split('--')
-                taglist += tagsp
-            else:
-                taglist.append(item['wikitag'])
-        taglist = list(set(taglist))
-    except Exception as e:
-        print(e)
-        pass
-
-    return render(request, 'wiki/wiki_add_blog.html',
-                  {'user_id': user_id,
-                   'req_lst': req_lst,
-                   'taglist': taglist})
-
-
-def editor_md_test(request):
     user_id = 'gongyanli'
+    # user_id = request.COOKIES.get('uid')
     if request.method == "POST":
-        form = EditorTestForm(request.POST)
+        obj = models.Wikistore.objects.create(user=user_id, create_time=get_now_time(), update_time=get_now_time())
+        form = EditorTestForm(request.POST, instance=obj)
         if form.is_valid():
             form.save(commit=False)
             # form.wikititle = request.POST.get('title')
