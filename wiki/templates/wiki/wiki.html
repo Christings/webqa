@@ -1,0 +1,89 @@
+{% extends 'main.html' %} {% load static %}  {% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="tile">
+                <div class="tile-body">
+                    <span style="color:red;font-size:15px;" id="error_xml"></span>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>User</th>
+                            <th>更新时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in form %}
+                            <tr class="table-info">
+                                <td><a href="/wiki/wiki_detail_{{ item.id }}">{{ item.wikititle }}</a></td>
+                                <td>{{ item.user }}</td>
+                                <td>{{ item.update_time }}</td>
+                                <td>
+                                    <a href="/wiki/edit_blog?id={{ item.id }}">[编辑]</a>
+                                    <a class="del_line" wiki_id={{ item.id }} style="cursor: pointer">[删除]</a>
+
+                                    {% ifequal item.status 0 %}
+                                        <span class="badge" style="float: right;color:white">[草稿]</span>
+                                    {% endifequal %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {{ page_str }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-4">
+            <div class="form-group">
+                <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                        href="//wiki_list?tag=all" style="text-decoration: none;">&nbsp;All&nbsp;</a></span>
+                <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                        href="/wiki_list?status=0" style="text-decoration: none;">&nbsp;所有草稿&nbsp;</a></span>
+                {% for tag in taglist %}
+                    <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                            href="/wiki_list?tag={{ tag }}" style="text-decoration: none;">{{ tag }}</a></span>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %} {% block js %}
+    <script>
+        //del
+        $('.del_line').click(function () {
+            var line_id = $(this).attr('wiki_id');
+            console.log(line_id)
+            if (confirm('确定删除吗？')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/wiki/del_wiki",
+                    async: true,
+                    data: {
+                        'line_id': line_id
+                    },
+                    dataType: 'JSON',
+                    success: function (obj) {
+                        if (obj.status) {
+                            location.reload();
+                        } else {
+                            $('#error_xml').text(obj.error);
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        })
+    </script>
+{% endblock %}
