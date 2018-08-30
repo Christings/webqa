@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect, get_object_or_404
 from fanyi import models as layout
 from rbac import models
 from wiki import models
@@ -217,11 +217,21 @@ def wiki_list(request, page_id='1'):
                    'li': data, 'page_str': page_str, 'taglist': taglist})
 
 
-def wiki(request):
+def wiki(request, page_id='1'):
+    if page_id == '':
+        page_id = 1
     if request.method == "GET":
-        b = models.Wikistore.objects.all()
         # form = EditorTestForm(instance=b)
-        return render(request, 'wiki/wiki_list.html', {'form': b})
+        wiki_list = models.Wikistore.objects.all()
+        category_list = models.Wikistore.objects.values('category').distinct()
+        tag_list = models.Wikistore.objects.values('wikitag').distinct()
+
+        current_page = int(page_id)
+        page_obj = pagination.Page(current_page, len(wiki_list), 10, 9)
+        data = wiki_list[page_obj.start:page_obj.end]
+        page_str = page_obj.page_str('wiki/wiki')
+        return render(request, 'wiki/wiki.html',
+                      {'form': data, 'page_str': page_str, 'category_list': category_list, 'tag_list': tag_list})
 
 
 # save blog
@@ -301,7 +311,7 @@ def edit_wiki(request):
             wiki = form.save(commit=False)
             # form.wikititle = request.POST.get('title')
             wiki.update_time = get_now_time()
-            wiki.update_user=user_id
+            wiki.update_user = user_id
             wiki.save()
             return HttpResponseRedirect('wiki/')
 
@@ -342,12 +352,10 @@ def add_wiki(request):
     user_id = 'gongyanli'
     # user_id = request.COOKIES.get('uid')
     if request.method == "POST":
+
         obj = models.Wikistore.objects.create(user=user_id, create_time=get_now_time(), update_time=get_now_time())
         form = EditorTestForm(request.POST, instance=obj)
         if form.is_valid():
-            form.save(commit=False)
-            # form.wikititle = request.POST.get('title')
-            # form.user = user_id
             form.save()
             return HttpResponseRedirect('wiki/')
             # return render(request, 'wiki/wiki_list.html', {'form': form})
