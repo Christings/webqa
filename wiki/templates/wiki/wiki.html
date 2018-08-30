@@ -44,19 +44,38 @@
         </div>
 
         <div class="col-sm-4">
-            <div class="form-group">
-                <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                        href="//wiki_list?tag=all" style="text-decoration: none;">&nbsp;All&nbsp;</a></span>
-                <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                        href="/wiki_list?status=0" style="text-decoration: none;">&nbsp;所有草稿&nbsp;</a></span>
-                {% for tag in taglist %}
-                    <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                            href="/wiki_list?tag={{ tag }}" style="text-decoration: none;">{{ tag }}</a></span>
-                {% endfor %}
+            <div class="tile">
+                <div class="tile-body">
+                    <div class="form-group">
+                        <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                href="//wiki_list?tag=all" style="text-decoration: none;">&nbsp;All&nbsp;</a>
+                        </span>
+                        <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                href="/wiki_list?status=0" style="text-decoration: none;">&nbsp;所有草稿&nbsp;</a></span>
+                        <label>分类</label>
 
+                        {% for tag in tag_list %}
+                            <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                    href="/wiki/wiki?tag={{ tag.wikitag }}"
+                                    style="text-decoration: none;">{{ tag.wikitag }}</a></span>
+                        {% endfor %}<label class="form-">标签</label>
+
+                        {% for category in category_list %}
+                            <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                    href="/wiki/wiki?category={{ category.category }}"
+                                    style="text-decoration: none;">{{ category.category }}</a></span>
+                        {% endfor %}
+
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
+
+
+
+
 
 {% endblock %} {% block js %}
     <script>
