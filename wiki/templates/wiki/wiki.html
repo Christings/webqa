@@ -21,11 +21,7 @@
                                 <td>{{ item.update_time }}</td>
                                 <td>
                                     <a href="/wiki/edit_blog?id={{ item.id }}">[编辑]</a>
-                                    <a class="del_line" wiki_id={{ item.id }} style="cursor: pointer">[删除]</a>
-
-                                    {% ifequal item.status 0 %}
-                                        <span class="badge" style="float: right;color:white">[草稿]</span>
-                                    {% endifequal %}
+                                    <a class="del_line" href="" wiki_id={{ item.id }}>[删除]</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -48,24 +44,43 @@
                 <div class="tile-body">
                     <div class="form-group">
                         <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                href="//wiki_list?tag=all" style="text-decoration: none;">&nbsp;All&nbsp;</a>
+                                href="/wiki/wiki" style="text-decoration: none;">&nbsp;All&nbsp;</a>
                         </span>
-                        <span class="label label-success" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                href="/wiki_list?status=0" style="text-decoration: none;">&nbsp;所有草稿&nbsp;</a></span>
-                        <label>分类</label>
+                    </div>
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile-body">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label>分类</label>
+                        </div>
+                        <div class="form-group">
+                            {% for category in category_list %}
+                                <span class="label label-info"
+                                      style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                        href="/wiki/wiki?category={{ category.category }}"
+                                        style="text-decoration: none;">&nbsp;&nbsp;{{ category.category }}&nbsp;&nbsp;</a></span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile-body">
+                    <div class="form-group">
 
-                        {% for tag in tag_list %}
-                            <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                    href="/wiki/wiki?tag={{ tag.wikitag }}"
-                                    style="text-decoration: none;">{{ tag.wikitag }}</a></span>
-                        {% endfor %}<label class="form-">标签</label>
-
-                        {% for category in category_list %}
-                            <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                    href="/wiki/wiki?category={{ category.category }}"
-                                    style="text-decoration: none;">{{ category.category }}</a></span>
-                        {% endfor %}
-
+                        <div class="form-group">
+                            <label>标签</label>
+                        </div>
+                        <div class="form-group">
+                            {% for tag in tag_list %}
+                                <span class="label label-info"
+                                      style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
+                                        href="/wiki/wiki?tag={{ tag.wikitag }}"
+                                        style="text-decoration: none;">&nbsp;&nbsp;{{ tag.wikitag }}&nbsp;&nbsp;</a></span>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

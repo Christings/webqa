@@ -127,12 +127,15 @@ def wiki(request, page_id='1'):
         # form = EditorTestForm(instance=b)
         tag = request.GET.get('tag')
         category = request.GET.get('category')
+
         if tag and category == None:
             data = models.Wikistore.objects.filter(wikitag=tag)
+
             return render(request, 'wiki/wiki.html',
                           {'form': data})
         elif tag == None and category:
             data = models.Wikistore.objects.filter(category=category)
+
             return render(request, 'wiki/wiki.html',
                           {'form': data})
         elif tag == None and category == None:
