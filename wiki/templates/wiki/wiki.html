@@ -16,11 +16,11 @@
                         <tbody>
                         {% for item in form %}
                             <tr class="table-info">
-                                <td><a href="/wiki/wiki_detail_{{ item.id }}">{{ item.wikititle }}</a></td>
+                                <td><a href="/wiki/wiki_detail_{{ item.id }}">{{ item.title }}</a></td>
                                 <td>{{ item.user }}</td>
                                 <td>{{ item.update_time }}</td>
                                 <td>
-                                    <a href="/wiki/edit_blog?id={{ item.id }}">[编辑]</a>
+                                    <a href="/wiki/edit?id={{ item.id }}">[编辑]</a>
                                     <a class="del_line" href="" wiki_id={{ item.id }}>[删除]</a>
                                 </td>
                             </tr>
@@ -74,11 +74,11 @@
                             <label>标签</label>
                         </div>
                         <div class="form-group">
-                            {% for tag in tag_list %}
+                            {% for tags in tag_list %}
                                 <span class="label label-info"
                                       style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                        href="/wiki/wiki?tag={{ tag.wikitag }}"
-                                        style="text-decoration: none;">&nbsp;&nbsp;{{ tag.wikitag }}&nbsp;&nbsp;</a></span>
+                                        href="/wiki/wiki?tag={{ tags.tag }}"
+                                        style="text-decoration: none;">&nbsp;&nbsp;{{ tags.tag }}&nbsp;&nbsp;</a></span>
                             {% endfor %}
                         </div>
                     </div>
@@ -101,7 +101,7 @@
             if (confirm('确定删除吗？')) {
                 $.ajax({
                     type: "POST",
-                    url: "/wiki/del_wiki",
+                    url: "/wiki/del",
                     async: true,
                     data: {
                         'line_id': line_id
