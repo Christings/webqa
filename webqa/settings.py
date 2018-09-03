@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -25,8 +24,7 @@ SECRET_KEY = '+y!y#j+guc+r8#51yxlx83jrbkbenyegj)1z6$vl)%6s)*cv8@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.144.120.30','webqa.web.sjs.ted','127.0.0.1']
-
+ALLOWED_HOSTS = ['10.144.120.30', 'webqa.web.sjs.ted', '127.0.0.1']
 
 # Application definition
 
@@ -43,6 +41,7 @@ INSTALLED_APPS = [
     'webqo.apps.WebqoConfig',
     'webqw.apps.WebqwConfig',
     'wiki.apps.WikiConfig',
+    'editor_md',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webqa.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -101,7 +99,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -120,7 +117,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -134,7 +130,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
@@ -143,7 +138,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = "/search/odin/pypro/static/"
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR,'static'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
 # 定义session 键：
@@ -158,10 +153,9 @@ PERMISSION_MENU_KEY = 'k2'
 
 LOGIN_URL = '/login/'
 
-#REGEX_URL = r'^{url}$'  # url作严格匹配
+# REGEX_URL = r'^{url}$'  # url作严格匹配
 
 REGEX_URL = r'^{url}'
-
 
 # 配置url权限白名单
 SAFE_URL = [
@@ -172,4 +166,6 @@ SAFE_URL = [
     '/favicon.ico'
 ]
 
-# AUTH_USER_MODEL = 'rbac.UserInfo'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+ImageFormats = ["jpg", "jpeg", "png"]
