@@ -131,7 +131,7 @@ def edit_wiki(request):
             wiki.update_time = get_now_time()
             wiki.update_user = user_id
             wiki.save()
-            return HttpResponseRedirect('wiki/wiki/')
+            return HttpResponseRedirect('/wiki/wiki/')
 
             # return JsonResponse(dict(success=1, message="submit success!"))
         else:
