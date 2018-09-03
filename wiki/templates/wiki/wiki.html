@@ -16,11 +16,11 @@
                         <tbody>
                         {% for item in form %}
                             <tr class="table-info">
-                                <td><a href="/wiki/wiki_detail_{{ item.id }}">{{ item.title }}</a></td>
+                                <td><a href="/wiki/wiki/wiki_detail_{{ item.id }}">{{ item.title }}</a></td>
                                 <td>{{ item.user }}</td>
                                 <td>{{ item.update_time }}</td>
                                 <td>
-                                    <a href="/wiki/edit?id={{ item.id }}">[编辑]</a>
+                                    <a href="/wiki/wiki/edit?id={{ item.id }}">[编辑]</a>
                                     <a class="del_line" href="" wiki_id={{ item.id }}>[删除]</a>
                                 </td>
                             </tr>
@@ -101,7 +101,7 @@
             if (confirm('确定删除吗？')) {
                 $.ajax({
                     type: "POST",
-                    url: "/wiki/del",
+                    url: "/wiki/wiki/del",
                     async: true,
                     data: {
                         'line_id': line_id
