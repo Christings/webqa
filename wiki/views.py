@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect, get_object_or_404
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from fanyi import models as layout
 from rbac import models
 from wiki import models
@@ -85,8 +85,7 @@ def wiki(request, page_id='1'):
 
         if tag and category == None:
             # data = models.Wiki.objects.filter(tag=tag)
-            data = models.Wiki.objects.filter(Q(tag__icontains=tag))
-            # data = models.Wiki.objects.filter(tag=tag)
+            data = models.Wiki.objects.filter(Q(tag__icontains=tag)) # 模糊查询
 
             return render(request, 'wiki/wiki.html',
                           {'form': data})
