@@ -84,7 +84,9 @@ def wiki(request, page_id='1'):
         category = request.GET.get('category')
 
         if tag and category == None:
-            data = models.Wiki.objects.filter(tag=tag)
+            # data = models.Wiki.objects.filter(tag=tag)
+            data = models.Wiki.objects.filter(Q(tag__icontains=tag))
+            # data = models.Wiki.objects.filter(tag=tag)
 
             return render(request, 'wiki/wiki.html',
                           {'form': data})
@@ -96,7 +98,15 @@ def wiki(request, page_id='1'):
         elif tag == None and category == None:
             wiki_list = models.Wiki.objects.all()
             category_list = models.Wiki.objects.values('category').distinct()
-            tag_list = models.Wiki.objects.values('tag').distinct()
+            taglist = models.Wiki.objects.values('tag').distinct()
+
+            tag_list = list()
+            for item in taglist:
+                if ',' in item['tag']:
+                    tag_list += item['tag'].split(',')
+                else:
+                    tag_list.append(item['tag'])
+            tag_list = list(set(tag_list))
 
             current_page = int(page_id)
             page_obj = pagination.Page(current_page, len(wiki_list), 10, 9)
@@ -130,15 +140,22 @@ def edit_wiki(request):
         else:
             return JsonResponse(dict(success=0, message="submit error"))
 
+
 def add_wiki(request):
     user_id = 'gongyanli'
     # user_id = request.COOKIES.get('uid')
     if request.method == "POST":
-
         obj = models.Wiki.objects.create(user=user_id, create_time=get_now_time(), update_time=get_now_time())
         form = EditorTestForm(request.POST, instance=obj)
+
         if form.is_valid():
-            form.save()
+            # form.save()
+            xx = form.save(commit=False)
+            # xx.save()
+            xx.user = user_id
+            xx.create_time = get_now_time()
+            xx.save()
+            form.save_m2m()
             return HttpResponseRedirect('wiki/')
             # return render(request, 'wiki/wiki_list.html', {'form': form})
             # return JsonResponse(dict(success=1, message="submit success!"))
