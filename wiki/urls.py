@@ -30,8 +30,8 @@ urlpatterns = [
     # re_path(r'^list/$', views.list),
     re_path(r'^wiki(?P<page_id>\d*)/$', views.wiki),
     re_path(r'^adds', views.add_wiki),
-    re_path(r'^del$', views.del_wiki),
-    re_path(r'^wiki_detail_(?P<task_id>\d+)$', views.wiki_detail),
-    re_path(r'^edit$', views.edit_wiki),
+    re_path(r'^wiki/del$', views.del_wiki),
+    re_path(r'^wiki/wiki_detail_(?P<task_id>\d+)$', views.wiki_detail),
+    re_path(r'^wiki/edit$', views.edit_wiki),
 
 ]
