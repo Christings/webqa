@@ -131,7 +131,7 @@ def edit_wiki(request):
             wiki.update_time = get_now_time()
             wiki.update_user = user_id
             wiki.save()
-            return HttpResponseRedirect('wiki/')
+            return HttpResponseRedirect('wiki/wiki/')
 
             # return JsonResponse(dict(success=1, message="submit success!"))
         else:
@@ -154,7 +154,7 @@ def add_wiki(request):
             xx.create_time = get_now_time()
             xx.save()
             form.save_m2m()
-            return HttpResponseRedirect('wiki/')
+            return HttpResponseRedirect('wiki/wiki/')
             # return render(request, 'wiki/wiki_list.html', {'form': form})
             # return JsonResponse(dict(success=1, message="submit success!"))
         else:
