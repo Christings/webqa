@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, redirect
 from fanyi import models as layout
 from rbac import models
 from wiki import models
@@ -12,17 +12,15 @@ from django.http import JsonResponse
 
 
 # Create your views here.
-
 def auth(func):
     def inner(request, *args, **kwargs):
-        # login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/&targetUrl="
-        # try:
-        #     user_id = request.COOKIES.get('uid')
-        #     if not user_id:
-        #         return redirect(login_url)
-        # except:
-        #     return redirect(login_url)
-        # v = request.COOKIES.get('username111')
+        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
+        try:
+            user_id = request.COOKIES.get('uid')
+            if not user_id:
+                return redirect(login_url)
+        except:
+            return redirect(login_url)
         return func(request, *args, **kwargs)
 
     return inner
@@ -31,11 +29,10 @@ def auth(func):
 # wiki detail
 @auth
 def wiki_detail(request, task_id):
-    # user_id = 'zhangjingjun'
-    user_id = request.COOKIES.get('uid')
+    user_id = 'zhangjingjun'
+    # user_id = request.COOKIES.get('uid')
     try:
         req_lst = layout.ReqInfo.objects.filter(user_fk_id=user_id)
-        app_id_lst = list()
 
         wikidetail = models.Wiki.objects.filter(id=task_id).values()
         format_md = markdown2.markdown(wikidetail[0]['content'])
@@ -85,7 +82,7 @@ def wiki(request, page_id='1'):
 
         if tag and category == None:
             # data = models.Wiki.objects.filter(tag=tag)
-            data = models.Wiki.objects.filter(Q(tag__icontains=tag)) # 模糊查询
+            data = models.Wiki.objects.filter(Q(tag__icontains=tag))  # 模糊查询
 
             return render(request, 'wiki/wiki.html',
                           {'form': data})
@@ -115,9 +112,10 @@ def wiki(request, page_id='1'):
                           {'form': data, 'page_str': page_str, 'category_list': category_list, 'tag_list': tag_list})
 
 
+@auth
 def edit_wiki(request):
-    user_id = 'gongyanli'
-    # user_id=request.COOKIES.get('uid')
+    # user_id = 'gongyanli'
+    user_id = request.COOKIES.get('uid')
     edit_id = request.GET.get('id')
     # b = models.UserInfo.objects.filter(user_fk_id=user_id)
     edit_content = models.Wiki.objects.get(id=edit_id)
@@ -140,9 +138,10 @@ def edit_wiki(request):
             return JsonResponse(dict(success=0, message="submit error"))
 
 
+@auth
 def add_wiki(request):
-    user_id = 'gongyanli'
-    # user_id = request.COOKIES.get('uid')
+    # user_id = 'gongyanli'
+    user_id = request.COOKIES.get('uid')
     if request.method == "POST":
         obj = models.Wiki.objects.create(user=user_id, create_time=get_now_time(), update_time=get_now_time())
         form = EditorTestForm(request.POST, instance=obj)
