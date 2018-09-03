@@ -154,7 +154,7 @@ def add_wiki(request):
             xx.create_time = get_now_time()
             xx.save()
             form.save_m2m()
-            return HttpResponseRedirect('wiki/wiki/')
+            return HttpResponseRedirect('/wiki/wiki/')
             # return render(request, 'wiki/wiki_list.html', {'form': form})
             # return JsonResponse(dict(success=1, message="submit success!"))
         else:
