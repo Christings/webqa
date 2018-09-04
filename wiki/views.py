@@ -92,7 +92,7 @@ def wiki(request, page_id='1'):
             return render(request, 'wiki/wiki.html',
                           {'form': data})
         elif tag == None and category == None:
-            wiki_list = models.Wiki.objects.all()
+            wiki_list = models.Wiki.objects.all().order_by('-update_time')
             category_list = models.Wiki.objects.values('category').distinct()
             taglist = models.Wiki.objects.values('tag').distinct()
 
@@ -105,9 +105,9 @@ def wiki(request, page_id='1'):
             tag_list = list(set(tag_list))
 
             current_page = int(page_id)
-            page_obj = pagination.Page(current_page, len(wiki_list), 20, 9)
+            page_obj = pagination.Page(current_page, len(wiki_list), 18, 9)
             data = wiki_list[page_obj.start:page_obj.end]
-            page_str = page_obj.page_str('/wiki/wiki')
+            page_str = page_obj.page_str('/wiki/wiki/')
             return render(request, 'wiki/wiki.html',
                           {'form': data, 'page_str': page_str, 'category_list': category_list, 'tag_list': tag_list})
 
