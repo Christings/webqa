@@ -105,7 +105,7 @@ def wiki(request, page_id='1'):
             tag_list = list(set(tag_list))
 
             current_page = int(page_id)
-            page_obj = pagination.Page(current_page, len(wiki_list), 10, 9)
+            page_obj = pagination.Page(current_page, len(wiki_list), 20, 9)
             data = wiki_list[page_obj.start:page_obj.end]
             page_str = page_obj.page_str('/wiki/wiki')
             return render(request, 'wiki/wiki.html',
