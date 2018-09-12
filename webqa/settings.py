@@ -163,7 +163,9 @@ SAFE_URL = [
     '/admin/.*',
     '/index/',
     r'/logout/',
-    '/favicon.ico'
+    '/favicon.ico',
+    '/upload/.*',
+    '/media/.*',
 ]
 
 MEDIA_URL = '/media/'

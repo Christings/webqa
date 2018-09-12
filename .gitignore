@@ -9,3 +9,4 @@ fanyi/__pycache__/
 script/*.log
 script/uwsgi.pid
 log/
+media/
