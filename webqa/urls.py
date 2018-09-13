@@ -35,5 +35,5 @@ urlpatterns = [
     re_path(r'wiki/', include('wiki.urls')),
 
     re_path(r'', include('editor_md.urls')),
-    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    re_path(r"^static/media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 ]

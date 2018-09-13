@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'rbac.middleware.rbac.RbacMiddleware',
+    # 'rbac.middleware.rbac.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'webqa.urls'
@@ -168,6 +168,6 @@ SAFE_URL = [
     '/media/.*',
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 ImageFormats = ["jpg", "jpeg", "png"]
