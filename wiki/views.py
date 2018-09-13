@@ -15,48 +15,42 @@ from django.http import JsonResponse
 def auth(func):
     def inner(request, *args, **kwargs):
         login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
-        # try:
-        #     user_id = request.COOKIES.get('uid')
-        #     if not user_id:
-        #         return redirect(login_url)
-        # except:
-        #     return redirect(login_url)
+        try:
+            user_id = request.COOKIES.get('uid')
+            if not user_id:
+                return redirect(login_url)
+        except:
+            return redirect(login_url)
         return func(request, *args, **kwargs)
 
     return inner
 
 
 # wiki detail
-@auth
 def wiki_detail(request, task_id):
-    user_id = 'zhangjingjun'
-    # user_id = request.COOKIES.get('uid')
     try:
-        req_lst = layout.ReqInfo.objects.filter(user_fk_id=user_id)
+        info = models.Wiki.objects.filter(id=task_id)
 
-        wikidetail = models.Wiki.objects.filter(id=task_id).values()
-        format_md = markdown2.markdown(wikidetail[0]['content'])
+        b = models.Wiki.objects.get(id=task_id)
+        form = EditorTestForm(instance=b)
 
         wikitags = models.Wiki.objects.filter(id=task_id).values('tag')
         taglist = list()
         for item in wikitags:
-            if '--' in item['tag']:
-                tagsp = item['tag'].split('--')
+            if ',' in item['tag']:
+                tagsp = item['tag'].split(',')
                 taglist += tagsp
             else:
                 taglist.append(item['tag'])
         taglist = list(set(taglist))
 
+        return render(request, 'wiki/wiki_detail.html',
+                      {'form': form, 'taglist': taglist, 'info': info})
     except Exception as e:
         print(e)
         pass
-    return render(request, 'wiki/wiki_detail.html',
-                  {'user_id': user_id,
-                   'req_lst': req_lst,
-                   'wikidetail': wikidetail, 'format_md': format_md, 'taglist': taglist})
 
 
-# del wiki
 @csrf_exempt
 @auth
 def del_wiki(request):

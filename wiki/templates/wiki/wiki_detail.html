@@ -1,56 +1,80 @@
 {% extends 'father.html' %} {% load static %} {% block content %}
     <div class="row">
         <span id="error_xml"></span>
-        <div class="col-sm-8">
-            <div style="margin: 0px;padding: 0px; font-size: 14px;font-family: 'verdana, geneva, arial, helvetica, sans-serif';">
-                <h2 style="text-align: center;">{{ wikidetail.0.wikititle }}</h2>
-                <div style="margin-top: 2px;margin-bottom: 20px;color: #707070;text-align: center;">
-                    创建人：<span>{{ wikidetail.0.user }}</span>&nbsp; 更新人：{{ wikidetail.0.update_user }}
-                    &nbsp;<span>{{ wikidetail.0.update_time }}</span><span
-                        style="color: #008CFF;">&nbsp;&nbsp;tag:</span>
-                    {% for item in taglist %}
-                        <span>{{ item }}</span>
-                    {% endfor %}
-                </div>
-                <div style="box-sizing: border-box;margin: 0;padding: 15px 20px 20px;line-height: 1.7;outline: none;word-wrap: break-word;">
-                    {{ format_md|safe }}
+        {{ form.media }}
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <h1 style="text-align: center;">{{ form.title.value }}</h1>
+                    <div style="margin-top: 2px;margin-bottom: 20px;color: #707070;text-align: center;">
+                        创建人：<span>{{ info.0.user }}</span>&nbsp;
+                        更新人：<span>{{ info.0.update_user }}</span>
+                        &nbsp;更新时间：<span>{{ info.0.update_time }}</span>
+                        <span>&nbsp;&nbsp;Tag:</span>
+                        {% for item in taglist %}
+                            <span>{{ item }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <textarea id="markdown" style="display: none">{{ form.content.value }}</textarea>
+
+                    <div id="EditorMdHtml">
+                        <textarea id="markdown_html" style="display: none;"></textarea>
+                    </div>
+
                 </div>
             </div>
 
         </div>
+
     </div>
 
 
 {% endblock %} {% block js %}
     <script>
 
-        //table hover
         $(function () {
-            function showBox(obj, box) {
-                var timer = null;
-                $(obj).on("mouseover", function (e) {
-                    clearTimeout(timer);
-                    var clientX = e.clientX;
-                    var clientY = e.clientY;
-                    var y = clientY + 20;
-                    var txt = $(this).text();
-                    timer = setTimeout(function () {
-                        $(box).css("left", clientX).css("top", y);
-                        if (txt == "") {
-                            $(box).hide();
-                        } else {
-                            $(box).show();
-                            $(box).html(txt);
-                        }
-                    }, 300);
-                });
-                $(obj).on("mouseout", function () {
-                    clearTimeout(timer);
-                    $(box).hide();
-                });
-            }
-
-            showBox("#reqData > tbody td", "#showDiv");
+            var $markdown_html = $("#markdown_html");
+            var $markdown = $("#markdown");
+            var content = $markdown.text();
+            $markdown_html.text(content);
+            testEditormdView2 = editormd.markdownToHTML("EditorMdHtml", {
+                htmlDecode: "style,script,iframe",
+                emoji: true,
+                taskList: true,
+                tex: true,
+                flowChart: true,
+                sequenceDiagram: true,
+            });
         });
+
+        //table hover
+        {#        $(function () {#}
+        {#            function showBox(obj, box) {#}
+        {#                var timer = null;#}
+        {#                $(obj).on("mouseover", function (e) {#}
+        {#                    clearTimeout(timer);#}
+        {#                    var clientX = e.clientX;#}
+        {#                    var clientY = e.clientY;#}
+        {#                    var y = clientY + 20;#}
+        {#                    var txt = $(this).text();#}
+        {#                    timer = setTimeout(function () {#}
+        {#                        $(box).css("left", clientX).css("top", y);#}
+        {#                        if (txt == "") {#}
+        {#                            $(box).hide();#}
+        {#                        } else {#}
+        {#                            $(box).show();#}
+        {#                            $(box).html(txt);#}
+        {#                        }#}
+        {#                    }, 300);#}
+        {#                });#}
+        {#                $(obj).on("mouseout", function () {#}
+        {#                    clearTimeout(timer);#}
+        {#                    $(box).hide();#}
+        {#                });#}
+        {#            }#}
+        {##}
+        {#            showBox("#reqData > tbody td", "#showDiv");#}
+        {#        });#}
     </script>
 {% endblock %}
