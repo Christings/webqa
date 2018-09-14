@@ -166,6 +166,7 @@ SAFE_URL = [
     '/favicon.ico',
     '/upload/.*',
     '/media/.*',
+    '/wiki/.*'
 ]
 
 MEDIA_URL = '/static/media/'
