@@ -93,7 +93,7 @@ def gpu_info(host_id):
         while True:
             try:
                 time.sleep(5)
-                command_line = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMK]40'| grep -v 'Tesla'"
+                command_line = "nvidia-smi | egrep -A 1 '"+ str(gpuid) +".*[PMKV][14]0'| grep -v 'Tesla'"
                 child = ssh_command("root", host_ip, passw, command_line)
                 child.expect(pexpect.EOF)
                 gpuinfo = (child.before).decode('utf-8')
