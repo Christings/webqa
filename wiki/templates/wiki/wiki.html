@@ -1,4 +1,4 @@
-{% extends 'father.html' %} {% load static %}  {% block content %}
+{% extends 'main.html' %} {% load static %}  {% block content %}
     <div class="row">
         <div class="col-md-8">
             <div class="tile">
@@ -27,8 +27,6 @@
                         {% endfor %}
                         </tbody>
                     </table>
-
-
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             {{ page_str }}
@@ -58,9 +56,9 @@
                         <div class="form-group">
                             {% for category in category_list %}
                                 <span class="label label-info"
-                                      style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
-                                        href="/wiki/wiki?category={{ category.category }}"
-                                        style="text-decoration: none;">&nbsp;&nbsp;{{ category.category }}&nbsp;&nbsp;</a></span>
+                                      style="font-size: 15px;cursor: pointer;line-height: 40px;">
+                                      <a href="/wiki/wiki?category={{ category.category }}"
+                                        style="text-decoration: none;">{{ category.category }}&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
                             {% endfor %}
                         </div>
                     </div>
@@ -78,7 +76,7 @@
                                 <span class="label label-info"
                                       style="font-size: 15px;cursor: pointer;line-height: 40px;"><a
                                         href="/wiki/wiki?tag={{ tags }}"
-                                        style="text-decoration: none;">&nbsp;&nbsp;{{ tags }}&nbsp;&nbsp;</a></span>
+                                        style="text-decoration: none;">{{ tags }}&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
                             {% endfor %}
                         </div>
                     </div>
