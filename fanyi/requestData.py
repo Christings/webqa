@@ -202,6 +202,8 @@ def parseXmlRes(xml_str):
                 result_dic['transRes']=''
             if body.find('child:DebugInfo',ns) is not None:
                 result_dic['DebugInfo']=body.find('child:DebugInfo',ns).text
+            else:
+                result_dic['DebugInfo']=''
     return result_dic
 
 def getUniNum(string):

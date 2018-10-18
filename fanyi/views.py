@@ -593,6 +593,8 @@ def logout(request):
     response = redirect('https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl=')
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
+    if ('sessionid' in request.COOKIES):
+        response.delete_cookie("sessionid")
     return response
 
 
