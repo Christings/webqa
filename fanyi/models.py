@@ -12,6 +12,7 @@ class ReqInfo(models.Model):
     user_fk = models.ForeignKey(to=UserInfo,to_field='username',on_delete=models.CASCADE)
     reqtype = models.CharField(max_length=20)
     reqfield = models.CharField(max_length=20,default="")
+    json_chn_query = models.CharField(max_length=256,default="")
 
 
 class Host(models.Model):

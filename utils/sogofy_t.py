@@ -46,11 +46,11 @@ class sgThread(Thread):
         Thread.join(self)
         return self._return
 
-def getResult_sg(inputHost,fromlan,tolan,reqtext,reqtype):
+def getResult_sg(inputHost,fromlan,tolan,reqtext,reqtype,chinese_query):
     ret = {'status': True, 'errro': None, 'data': None}
     try:
         if reqtype == 'xml':
-            xmldata = '''<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://api.microsofttranslator.com/V2"><soapenv:Header/><soapenv:Body><v2:Translate><v2:appId></v2:appId><v2:debug>true</v2:debug><v2:text>{_reqtext}</v2:text><v2:from>{_fromlan}</v2:from><v2:to>{_tolan}</v2:to><v2:contentType>text/plain</v2:contentType><v2:category>general</v2:category></v2:Translate></soapenv:Body></soapenv:Envelope>'''.format(_reqtext=reqtext, _fromlan=fromlan, _tolan=tolan)
+            xmldata = '''<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://api.microsofttranslator.com/V2"><soapenv:Header/><soapenv:Body><v2:Translate><v2:appId></v2:appId><v2:text>{_reqtext}</v2:text><v2:from>{_fromlan}</v2:from><v2:to>{_tolan}</v2:to><v2:contentType>text/plain</v2:contentType><v2:category>general</v2:category></v2:Translate></soapenv:Body></soapenv:Envelope>'''.format(_reqtext=reqtext, _fromlan=fromlan, _tolan=tolan)
             resp = requests.post(inputHost + '/' + reqtype, data=xmldata.encode('utf-8'))
             result = requestData.parseXmlRes(resp.text)
             ret['data'] = result['transRes']
@@ -78,6 +78,34 @@ def getResult_sg(inputHost,fromlan,tolan,reqtext,reqtype):
             ret['data'] = requestData.parseAlljRes(resp.text)
             ret['debugInfo'] = resp.text
             ret['requestStr'] = alljquery
+        elif reqtype == 'json':
+            print("000000000000",chinese_query)
+            if chinese_query.strip() !='':
+                reqlist = reqtext.strip().split('\r\n')
+                head_jsondata = '''{"translate_struct": {"chinese_query": "''' + chinese_query + '''","english_query": "test","docs": ['''
+                temp_len = 1
+                suffix = ""
+                jsondata=""
+                for req in reqlist:
+                    if '|||' not in req:
+                        ret['error'] = "Error:请求结构错误，每行由title|||abstract构成"
+                        ret['status'] = False
+                        return ret
+                    elif temp_len == len(reqlist):
+                        suffix += '''{"title": "''' + req.split('|||')[0] + '''","abstract": "''' + req.split('|||')[1] + '''","link": "http://www.sogou.com","id": "'''+str(temp_len)+'''","showurl": "www.sogou.com","imgsrc": ""}]}}'''
+
+                    else:
+                        suffix += '''{"title": "''' + req.split('|||')[0] + '''","abstract": "''' + req.split('|||')[1] + '''","link": "http://www.sogou.com","id": "'''+str(temp_len)+'''","showurl": "www.sogou.com","imgsrc": ""},'''
+                    temp_len += 1
+                jsondata += head_jsondata + suffix
+                print(11111,jsondata)
+                resp = requests.post(inputHost + '/' + reqtype, data=jsondata.encode('utf-8'))
+                ret['data'] = requestData.parseJsonRes(resp.text)
+                ret['debugInfo'] = ""
+                ret['requestStr'] = jsondata
+            else:
+                ret['error'] = "Error:chinese_query不可为空,json请求格式错误"
+                ret['status'] = False
         else:
             ret['error'] = "Error:未知的请求类型"
             ret['status'] = False

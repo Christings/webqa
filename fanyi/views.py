@@ -10,7 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
-import M2Crypto
+#import M2Crypto
 import urllib
 import json
 import base64
@@ -369,6 +369,7 @@ def bbk(request):
         lan_sel = request.POST.get('lan_sel')
         fromto = request.POST.get('inlineRadioOptions')
         reqtext = request.POST.get('reqtext')
+        chinese_query = request.POST.get('Chn_query')
         if fromto == 'tozh':
             fromlan = lan_sel
             tolan = 'zh-CHS'
@@ -378,7 +379,7 @@ def bbk(request):
         try:
             threads = []
             # Sogou
-            t_sg = sogofy_t.sgThread(target=sogofy_t.getResult_sg,args=(inputHost,fromlan,tolan,reqtext,reqtype))
+            t_sg = sogofy_t.sgThread(target=sogofy_t.getResult_sg,args=(inputHost,fromlan,tolan,reqtext,reqtype,chinese_query))
             threads.append(t_sg)
             # Baidu
             t_bd = baidufy_t.bdThread(target=baidufy_t.getResult_bd, args=(fromlan, tolan, reqtext))
@@ -445,11 +446,13 @@ def req_info_save(request):
     fromto = request.POST.get('inlineRadioOptions')
     reqtext = request.POST.get('reqtext')
     result = request.POST.get('result')
+    json_chn_query = request.POST.get('Chinese_query')
+    req_field = request.POST.get('req_field')
     if result is None:
         result=""
     reqtype = request.POST.get('reqtype')
     try:
-        models.ReqInfo.objects.create(host_ip=inputHost, trans_direct=lan_sel, isfromzh=fromto, req_text=reqtext,result=result, user_fk_id=user_id,reqtype=reqtype)
+        models.ReqInfo.objects.create(host_ip=inputHost, trans_direct=lan_sel, isfromzh=fromto, req_text=reqtext,result=result, user_fk_id=user_id,reqtype=reqtype,json_chn_query=json_chn_query,reqfield=req_field)
         ret['inputHost']=inputHost
         ret['lan_sel']=lan_sel
         ret['fromto']=fromto
@@ -465,7 +468,7 @@ def req_info_save(request):
 
 @auth
 def debug(request):
-    uid = 'zhangjingjun'
+    # uid = 'zhangjingjun'
     uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
@@ -498,6 +501,7 @@ def debug(request):
         lan_sel = request.POST.get('lan_sel')
         fromto = request.POST.get('inlineRadioOptions')
         reqtext = request.POST.get('reqtext')
+        chinese_query = request.POST.get('Chn_query')
         if fromto == 'tozh':
             fromlan = lan_sel
             tolan = 'zh-CHS'
@@ -505,7 +509,7 @@ def debug(request):
             fromlan = 'zh-CHS'
             tolan = lan_sel
         try:
-            t_sg = sogofy_t.getResult_sg(inputHost, fromlan, tolan, reqtext, reqtype)
+            t_sg = sogofy_t.getResult_sg(inputHost, fromlan, tolan, reqtext, reqtype,chinese_query)
             if t_sg['status'] is False:
                 ret['status'] = False
                 ret['error'] = t_sg['error']
