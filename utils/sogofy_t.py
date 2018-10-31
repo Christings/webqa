@@ -79,7 +79,6 @@ def getResult_sg(inputHost,fromlan,tolan,reqtext,reqtype,chinese_query):
             ret['debugInfo'] = resp.text
             ret['requestStr'] = alljquery
         elif reqtype == 'json':
-            print("000000000000",chinese_query)
             if chinese_query.strip() !='':
                 reqlist = reqtext.strip().split('\r\n')
                 head_jsondata = '''{"translate_struct": {"chinese_query": "''' + chinese_query + '''","english_query": "test","docs": ['''
@@ -98,7 +97,6 @@ def getResult_sg(inputHost,fromlan,tolan,reqtext,reqtype,chinese_query):
                         suffix += '''{"title": "''' + req.split('|||')[0] + '''","abstract": "''' + req.split('|||')[1] + '''","link": "http://www.sogou.com","id": "'''+str(temp_len)+'''","showurl": "www.sogou.com","imgsrc": ""},'''
                     temp_len += 1
                 jsondata += head_jsondata + suffix
-                print(11111,jsondata)
                 resp = requests.post(inputHost + '/' + reqtype, data=jsondata.encode('utf-8'))
                 ret['data'] = requestData.parseJsonRes(resp.text)
                 ret['debugInfo'] = ""
