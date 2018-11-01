@@ -30,6 +30,50 @@ def auth(func):
         return func(request,*args,**kwargs)
     return inner
 
+# interface eval
+@auth
+def interface(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            task_list = models.InterfaceEval.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(task_list), 16, 9)
+            data = task_list[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/interface?page=")
+
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'fanyi/interface.html', {'user_id': user_id, 'li': data, 'page_str': page_str})
+    elif request.method == 'POST':
+        ret = {'status': True, 'errro': None, 'data': None}
+        test_url = str_dos2unix(request.POST.get('test_url'))
+        base_url = str_dos2unix(request.POST.get('base_url'))
+        reqtype = str_dos2unix(request.POST.get('reqtype'))
+        queryip = str_dos2unix(request.POST.get('query_data_ip'))
+        queryuser = str_dos2unix(request.POST.get('query_data_user'))
+        querypassw = str_dos2unix(request.POST.get('query_data_pass'))
+        querypath = str_dos2unix(request.POST.get('query_data_path'))
+        testtag = str_dos2unix(request.POST.get('testtag'))
+
+        try:
+            a = models.InterfaceEval.objects.create(start_time=get_now_time(), user=user_id, test_url=test_url,
+                                                base_url=base_url, queryip=queryip,reqtype=reqtype,
+                                                queryuser=queryuser,
+                                                querypassw=querypassw, querypath=querypath,
+                                                testtag=testtag)
+            print(a.id)
+            # os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
+        except Exception as e:
+            ret['error'] = 'error:' + str(e)
+            ret['status'] = False
+        return HttpResponse(json.dumps(ret))
+
 
 # man eval
 @auth
