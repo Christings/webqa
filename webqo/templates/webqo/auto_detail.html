@@ -75,9 +75,9 @@
                     </tr>
                     </thead>
                     <tbody id="reqBody">
-                    <tr req_id="{{ automation_detail.id }}" class="get_data">
-                        <td>{{ automation_detail.0.testsvn }}</td>
-                        <td>{{ automation_detail.0.basesvn }}</td>
+                    <tr req_id="{{ task_detail.id }}" class="get_data">
+                        <td>{{ task_detail.0.testsvn }}</td>
+                        <td>{{ task_detail.0.basesvn }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -92,8 +92,8 @@
                 <h3 class="tile-title">Log Info</h3>
                 <table class="table">
                     <tbody id="reqBody">
-                    <tr req_id="{{ automation_detail.id }}" class="get_data">
-                        <td>{{ automation_detail.0.errorlog }}</td>
+                    <tr req_id="{{ task_detail.id }}" class="get_data">
+                        <td>{{ task_detail.0.errorlog }}</td>
                     </tr>
                     </tbody>
                 </table>
