@@ -65,47 +65,36 @@ def del_wiki(request):
         ret['error'] = "Error:" + str(e)
     return HttpResponse(json.dumps(ret))
 
-
 def wiki(request):
     if request.method == "GET":
         page = request.GET.get('page')
         # form = EditorTestForm(instance=b)
         tag = request.GET.get('tag')
         category = request.GET.get('category')
-
         current_page = 1
         if page:
             current_page = int(page)
-
         if tag and category == None:
-            # data = models.Wiki.objects.filter(tag=tag)
-            data = models.Wiki.objects.filter(Q(tag__icontains=tag))  # 模糊查询
-
-            return render(request, 'wiki/wiki.html',
-                          {'form': data})
+            wiki_list = models.Wiki.objects.filter(Q(tag__icontains=tag)).order_by('-update_time')  # 模糊查询
         elif tag == None and category:
-            data = models.Wiki.objects.filter(category=category)
-
-            return render(request, 'wiki/wiki.html',
-                          {'form': data})
-        elif tag == None and category == None:
+            wiki_list = models.Wiki.objects.filter(category=category).order_by('-update_time')
+        else:
             wiki_list = models.Wiki.objects.all().order_by('-update_time')
-            category_list = models.Wiki.objects.values('category').distinct()
-            taglist = models.Wiki.objects.values('tag').distinct()
 
-            tag_list = list()
-            for item in taglist:
-                if ',' in item['tag']:
-                    tag_list += item['tag'].split(',')
-                else:
-                    tag_list.append(item['tag'])
-            tag_list = list(set(tag_list))
-
-            page_obj = pagination.Page(current_page, len(wiki_list), 18, 9)
-            data = wiki_list[page_obj.start:page_obj.end]
-            page_str = page_obj.page_str('/wiki/wiki?page=')
-            return render(request, 'wiki/wiki.html',
-                          {'form': data, 'page_str': page_str, 'category_list': category_list, 'tag_list': tag_list})
+        category_list = models.Wiki.objects.values('category').distinct()
+        taglist = models.Wiki.objects.values('tag').distinct()
+        tag_list = list()
+        for item in taglist:
+            if ',' in item['tag']:
+                item['tag']=item['tag'].replace('，',',')
+                tag_list += item['tag'].split(',')
+            else:
+                tag_list.append(item['tag'])
+        tag_list = list(set(tag_list))
+        page_obj = pagination.Page(current_page, len(wiki_list), 18, 9)
+        data = wiki_list[page_obj.start:page_obj.end]
+        page_str = page_obj.page_str('/wiki/wiki?page=')
+        return render(request, 'wiki/wiki.html',{'form': data, 'page_str': page_str, 'category_list': category_list, 'tag_list': tag_list})
 
 
 @auth

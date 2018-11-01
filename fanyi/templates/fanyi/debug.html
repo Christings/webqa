@@ -18,7 +18,18 @@
                 <select id="reqtype" name="reqtype" class="form-control" style="cursor: pointer;">
 					<option value="xml" selected=""> xml </option>
 					<option value="alltrans_json"> alltrans_json </option>
-					<option value="json" style="display: none;"> json </option>						
+					<option value="json"> json </option>
+				</select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="control-label col-md-2">ReqField</label>
+              <div class="col-md-4">
+                <select id="field" name="field" class="form-control" style="cursor: pointer;">
+					<option value="others" selected=""> others </option>
+					{% for fieldname in req_field %}
+					<option value="{{fieldname.reqfield}}"> {{fieldname.reqfield}} </option>
+					{% endfor %}
 				</select>
               </div>
             </div>
@@ -99,6 +110,13 @@
 		 	 			<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="fromzh"> From-zh
 					</label>
 				</div>
+            </div>
+            <div class="form-group row hide" id="Chinese_query">
+              	<label class="control-label col-md-2">Chinese_query</label>
+				<div class="col-md-6">
+	                <input class="form-control" type="text" id="Chn_query" name="Chn_query" placeholder="Chinese_query">
+	                <h4><span style="color:red;font-size:15px;" id="error_xml">Json请求格式：每行一个请求，多个多行，格式title|||abstract</span><h4>
+	            </div>
             </div>
             <div class="form-group row">
               <label class="control-label col-md-2">Request</label>
@@ -219,6 +237,7 @@
 					</td>
 					<td>Request</td>
 					<td style="display: none;">Result</td>
+					<td style="display: none;">Chn_query</td>
 					<td>Ctrl</td>
 				</tr>
 			</thead>
@@ -233,6 +252,7 @@
 					<td style="display: none;">{{item.result}}</td>
 					<td style="display: none;">{{item.isfromzh}}</td>
 					<td style="display: none;">{{item.oriresult}}</td>
+					<td style="display: none;">{{item.json_chn_query}}</td>
 					<td style="">
 						<button class="btn btn-danger btn-sm del_line" type="button">Del</button>
 					</td>
@@ -262,6 +282,24 @@
 {% block js %}
 <script>	
 	$(function(){
+		
+			$("#reqtype").change(function(){
+			    var opt=$("#reqtype").val();
+			    if(opt == 'json') {
+			    	$('#Chinese_query').removeClass('hide');
+			    	$('#lan_sel').val('en');
+			    	$('#lan_sel')[0].disabled=true;
+			    	$('#inlineRadio1')[0].disabled=true;
+			    	$('#inlineRadio2')[0].disabled=true;
+					$('#inlineRadio1').prop("checked", 'checked');
+					$('#inlineRadio2').removeAttr("checked");			    	
+				} else {
+					$('#Chinese_query').addClass('hide');
+					$('#lan_sel')[0].disabled=false;
+					$('#inlineRadio1')[0].disabled=false;
+					$('#inlineRadio2')[0].disabled=false;
+				}
+			});
     		//判断ajax里面的方法是get还是post
     		function csrfSafeMethod(method){
     			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -300,6 +338,9 @@
 				var inlineRadioOptions = $("input[name='inlineRadioOptions']:checked").val()
 				var result = $('#result').val()
 				var reqtpye = $('#reqtype').val()
+				var Chinese_query = $('#Chn_query').val()
+				var req_field = $('#field').val()
+				console.log(Chinese_query)
 				if(reqtext != "" && inputHost != "") {
 					$.ajax({
 						type: "POST",
@@ -313,6 +354,8 @@
 							'reqtext': reqtext,
 							'result': result,
 							'reqtype':reqtpye,
+							'Chinese_query':Chinese_query,
+							'req_field':req_field,
 						},
 						dataType: 'JSON',
 						success: function(obj) {
@@ -360,6 +403,14 @@
 									}
 //									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
 									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'
+								}else if(obj.reqtype=='json'){
+									resultSplit=(obj.transResult).split('^^^');
+									result_str=""
+									for(i=0;i<resultSplit.length;i++){
+										result_str+=(resultSplit[i]+'\r\n')
+									}
+//									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
+									debugInfo_str="请求串:\r\n"+obj.requestStr
 								}else{
 									result_str=obj.transResult
 									
@@ -420,12 +471,30 @@
 			$('.get_data').dblclick(function() {
 				var linelst = $(this).children();
 				reqtype = $(linelst[0]).text();
+				if(reqtype == 'json'){
+					$('#Chinese_query').removeClass('hide');
+			    	$('#lan_sel').val('en');
+			    	$('#lan_sel')[0].disabled=true;
+			    	$('#inlineRadio1')[0].disabled=true;
+			    	$('#inlineRadio2')[0].disabled=true;
+					$('#inlineRadio1').prop("checked", 'checked');
+					$('#inlineRadio2').removeAttr("checked");
+				}else{
+					$('#Chinese_query').addClass('hide');
+					$('#lan_sel')[0].disabled=false;
+					$('#inlineRadio1')[0].disabled=false;
+					$('#inlineRadio2')[0].disabled=false;
+				}
 				hostip = "http://"+$(linelst[1]).text();
 				direction = $(linelst[2]).text();
+				reqfield = $(linelst[3]).text();
 				reqtext = $(linelst[4]).text();
 				result = $(linelst[5]).text();
 				isfromzh = $(linelst[6]).text();
 				oriresult = $(linelst[7]).text();
+				chnquery = $(linelst[8]).text();
+				$('#Chn_query').val(chnquery);
+				$('#field').val(reqfield);
 				$('#inputHost').val(hostip);
 				$('#reqtype').val(reqtype);
 				$('#lan_sel').val(direction);

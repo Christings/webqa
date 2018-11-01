@@ -12,6 +12,7 @@ class ReqInfo(models.Model):
     user_fk = models.ForeignKey(to=UserInfo,to_field='username',on_delete=models.CASCADE)
     reqtype = models.CharField(max_length=20)
     reqfield = models.CharField(max_length=20,default="")
+    json_chn_query = models.CharField(max_length=256,default="")
 
 
 class Host(models.Model):
@@ -82,3 +83,20 @@ class ManEvalDiff(models.Model):
     diff_task = models.ForeignKey(to="ManEval", to_field='id', on_delete=models.CASCADE)
 
 
+class InterfaceEval(models.Model):
+    start_time = models.CharField(max_length=50, default="")
+    end_time = models.CharField(max_length=50, default="")
+    test_url = models.CharField(max_length=500, default="")
+    base_url = models.CharField(max_length=500, default="")
+    reqtype = models.CharField(max_length=30, default="")
+    user = models.CharField(max_length=50)
+    queryip = models.CharField(max_length=500, default="")
+    queryuser = models.CharField(max_length=500, default="")
+    querypassw = models.CharField(max_length=500, default="")
+    querypath = models.CharField(max_length=500, default="")
+    status = models.IntegerField(default=0)
+    errorlog = models.TextField(default="")
+    testtag = models.CharField(max_length=500, default="")
+    finished = models.IntegerField(default=0)
+    diffnum = models.IntegerField(default=0)
+    runningPID = models.CharField(max_length=20, default="")

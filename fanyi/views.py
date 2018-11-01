@@ -30,6 +30,50 @@ def auth(func):
         return func(request,*args,**kwargs)
     return inner
 
+# interface eval
+@auth
+def interface(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            task_list = models.InterfaceEval.objects.order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(task_list), 16, 9)
+            data = task_list[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/interface?page=")
+
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'fanyi/interface.html', {'user_id': user_id, 'li': data, 'page_str': page_str})
+    elif request.method == 'POST':
+        ret = {'status': True, 'errro': None, 'data': None}
+        test_url = str_dos2unix(request.POST.get('test_url'))
+        base_url = str_dos2unix(request.POST.get('base_url'))
+        reqtype = str_dos2unix(request.POST.get('reqtype'))
+        queryip = str_dos2unix(request.POST.get('query_data_ip'))
+        queryuser = str_dos2unix(request.POST.get('query_data_user'))
+        querypassw = str_dos2unix(request.POST.get('query_data_pass'))
+        querypath = str_dos2unix(request.POST.get('query_data_path'))
+        testtag = str_dos2unix(request.POST.get('testtag'))
+
+        try:
+            a = models.InterfaceEval.objects.create(start_time=get_now_time(), user=user_id, test_url=test_url,
+                                                base_url=base_url, queryip=queryip,reqtype=reqtype,
+                                                queryuser=queryuser,
+                                                querypassw=querypassw, querypath=querypath,
+                                                testtag=testtag)
+            print(a.id)
+            # os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
+        except Exception as e:
+            ret['error'] = 'error:' + str(e)
+            ret['status'] = False
+        return HttpResponse(json.dumps(ret))
+
 
 # man eval
 @auth
@@ -369,6 +413,7 @@ def bbk(request):
         lan_sel = request.POST.get('lan_sel')
         fromto = request.POST.get('inlineRadioOptions')
         reqtext = request.POST.get('reqtext')
+        chinese_query = request.POST.get('Chn_query')
         if fromto == 'tozh':
             fromlan = lan_sel
             tolan = 'zh-CHS'
@@ -378,7 +423,7 @@ def bbk(request):
         try:
             threads = []
             # Sogou
-            t_sg = sogofy_t.sgThread(target=sogofy_t.getResult_sg,args=(inputHost,fromlan,tolan,reqtext,reqtype))
+            t_sg = sogofy_t.sgThread(target=sogofy_t.getResult_sg,args=(inputHost,fromlan,tolan,reqtext,reqtype,chinese_query))
             threads.append(t_sg)
             # Baidu
             t_bd = baidufy_t.bdThread(target=baidufy_t.getResult_bd, args=(fromlan, tolan, reqtext))
@@ -445,11 +490,13 @@ def req_info_save(request):
     fromto = request.POST.get('inlineRadioOptions')
     reqtext = request.POST.get('reqtext')
     result = request.POST.get('result')
+    json_chn_query = request.POST.get('Chinese_query')
+    req_field = request.POST.get('req_field')
     if result is None:
         result=""
     reqtype = request.POST.get('reqtype')
     try:
-        models.ReqInfo.objects.create(host_ip=inputHost, trans_direct=lan_sel, isfromzh=fromto, req_text=reqtext,result=result, user_fk_id=user_id,reqtype=reqtype)
+        models.ReqInfo.objects.create(host_ip=inputHost, trans_direct=lan_sel, isfromzh=fromto, req_text=reqtext,result=result, user_fk_id=user_id,reqtype=reqtype,json_chn_query=json_chn_query,reqfield=req_field)
         ret['inputHost']=inputHost
         ret['lan_sel']=lan_sel
         ret['fromto']=fromto
@@ -465,7 +512,7 @@ def req_info_save(request):
 
 @auth
 def debug(request):
-    uid = 'zhangjingjun'
+    # uid = 'zhangjingjun'
     uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
@@ -498,6 +545,7 @@ def debug(request):
         lan_sel = request.POST.get('lan_sel')
         fromto = request.POST.get('inlineRadioOptions')
         reqtext = request.POST.get('reqtext')
+        chinese_query = request.POST.get('Chn_query')
         if fromto == 'tozh':
             fromlan = lan_sel
             tolan = 'zh-CHS'
@@ -505,7 +553,7 @@ def debug(request):
             fromlan = 'zh-CHS'
             tolan = lan_sel
         try:
-            t_sg = sogofy_t.getResult_sg(inputHost, fromlan, tolan, reqtext, reqtype)
+            t_sg = sogofy_t.getResult_sg(inputHost, fromlan, tolan, reqtext, reqtype,chinese_query)
             if t_sg['status'] is False:
                 ret['status'] = False
                 ret['error'] = t_sg['error']
@@ -593,6 +641,8 @@ def logout(request):
     response = redirect('https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl=')
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
+    if ('sessionid' in request.COOKIES):
+        response.delete_cookie("sessionid")
     return response
 
 

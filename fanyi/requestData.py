@@ -167,6 +167,22 @@ qq_language_dict = {
                         'auto':'自动检测',
 }
 
+def parseJsonRes(xml_str):
+    resparse = json.loads(xml_str)
+    result = resparse['translate_result']['docs']
+    result_dict=dict()
+    resultstr=""
+    temlen=1
+    for sub_res in result:
+        result_dict[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
+    for i in range(1,len(result_dict)+1):
+        if temlen == len(result_dict):
+            resultstr += result_dict[str(i)]
+        else:
+            resultstr += (result_dict[str(i)] + "^^^")
+        temlen += 1
+    return resultstr
+
 
 def parseAlljRes(xml_str):
     resparse = json.loads(xml_str)
@@ -202,6 +218,8 @@ def parseXmlRes(xml_str):
                 result_dic['transRes']=''
             if body.find('child:DebugInfo',ns) is not None:
                 result_dic['DebugInfo']=body.find('child:DebugInfo',ns).text
+            else:
+                result_dic['DebugInfo']=''
     return result_dic
 
 def getUniNum(string):
