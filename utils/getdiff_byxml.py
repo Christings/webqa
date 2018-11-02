@@ -30,10 +30,13 @@ def get_now_time():
     timeArray = time.localtime()
     return  time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
 
-def insert_finished(finished,diff_task_id):
+def insert_finished(finished,diff_task_id,end_time=''):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    up_sql = "UPDATE %s set finished=%d where id=%d" % ('fanyi_interfaceeval', finished ,diff_task_id)
+    if end_time == '':
+        up_sql = "UPDATE %s set finished=%d where id=%d" % ('fanyi_interfaceeval', finished ,diff_task_id)
+    else:
+        up_sql = "UPDATE %s set finished=%d,end_time='%s' where id=%d" % ('fanyi_interfaceeval', finished ,end_time,diff_task_id)
     try:
         cursor.execute(up_sql)
         db.commit()
@@ -42,7 +45,7 @@ def insert_finished(finished,diff_task_id):
         pass
     db.close()
 
-def insert_diff_data(diffcontent,diffnum,diff_task_id):
+def insert_diff_data(diffcontent,diffnum,diff_task_id,reqtype):
     db = pymysql.connect(database_host,database_user,database_pass,database,charset='utf8')
     cursor = db.cursor()
     
@@ -54,7 +57,7 @@ def insert_diff_data(diffcontent,diffnum,diff_task_id):
         print(e)
         db.rollback()
         pass
-    sql = "INSERT INTO %s(create_time,user,diff_content,diff_task_id) VALUES ('%s','%s','%s',%d)" % ('fanyi_ifevaldiff', 'zhangjingjun',get_now_time() ,diffcontent,diff_task_id)
+    sql = "INSERT INTO %s(user,create_time,diff_content,diff_task_id,diff_type) VALUES ('%s','%s','%s',%d,'%s')" % ('fanyi_ifevaldiff', 'zhangjingjun',get_now_time() ,diffcontent,diff_task_id,reqtype)
    
     try:
         cursor.execute(sql)
@@ -149,6 +152,7 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
     diffnum = 0
     with open(query_tools_path+'query/'+filename,'r') as fin,open(query_tools_path+'result_log/'+'base_res_'+str(mission_id),'wb+') as fw_base,open(query_tools_path+'result_log/'+'test_res_'+str(mission_id),'wb+') as fw_test,open(query_tools_path+'result_log/'+'all_req_'+str(mission_id),'wb+') as allo:
         set_status(2)
+        if reqtype == 'xml':
         for item in fin.readlines():
             finished +=1
             item = item.strip()
@@ -189,7 +193,7 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                 escape_str = cgi.escape(str(parse_html.table),quote=True)
                 #b = decodeHtml(a)
                 #print 'bbbbb'+b.encode('utf-8')
-                insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id)
+                insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id,reqtype)
                 base_diff_content=''
                 test_diff_content=''
                 tmp=0
@@ -202,10 +206,10 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
         #b = decodeHtml(a)
         #print 'bbbbb'+b.encode('utf-8')
         try:
-            insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id)
+            insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id,reqtype)
         except Exception as e:
             print(e)
-        insert_finished(finished,mission_id)
+        insert_finished(finished,mission_id,get_now_time())
         set_status(4)
 
 def getInfoFromDb(task_id):
