@@ -75,6 +75,29 @@
     <div class="row">
         <div class="col-md-12">
             <div class="tile">
+                <h3 class="tile-title">Cost Status</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Test</td>
+                        <td>Base</td>
+                    </tr>
+                    </thead>
+                    <tbody id="reqBody">
+                    <tr req_id="{{ automation_detail.id }}" class="get_data">
+                        <td>{{ automation_detail.0.testsvn }}</td>
+                        <td>{{ automation_detail.0.basesvn }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div id="showDiv"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
                 <h3 class="tile-title">SVN Info</h3>
                 <table class="table">
                     <thead>
