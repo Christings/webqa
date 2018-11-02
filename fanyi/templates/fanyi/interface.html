@@ -1,4 +1,4 @@
-{% extends 'father.html' %} {% load tag_tools %} {% block content %}
+{% extends 'main.html' %} {% load tag_tools %} {% block content %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -93,7 +93,7 @@
 						<td>{{ item.reqtype }}</td>
 						<td>{{ item.testtag }}</td>
 						<td>
-							<a href="/fanyi/man_eval/detail/?tasknum={{ item.id }}">
+							<a href="/fanyi/interface/detail/?tasknum={{ item.id }}">
 								{% ifequal item.status 0 %}
 								<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Waiting</button>
 								{% endifequal %} 

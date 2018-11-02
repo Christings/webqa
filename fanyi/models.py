@@ -100,3 +100,11 @@ class InterfaceEval(models.Model):
     finished = models.IntegerField(default=0)
     diffnum = models.IntegerField(default=0)
     runningPID = models.CharField(max_length=20, default="")
+
+
+class IfEvalDiff(models.Model):
+    create_time = models.CharField(max_length=50, default="")
+    user = models.CharField(max_length=50)
+    diff_content = models.TextField(default="")
+    diff_type = models.CharField(max_length=30, default="")
+    diff_task = models.ForeignKey(to="InterfaceEval", to_field='id', on_delete=models.CASCADE)

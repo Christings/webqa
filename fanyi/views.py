@@ -31,7 +31,26 @@ def auth(func):
     return inner
 
 # interface eval
-@auth
+def if_eval_detail(request):
+    user_id="zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
+    task_id = request.GET.get('tasknum')
+    page = request.GET.get('page')
+    current_page = 1
+    if page:
+        current_page = int(page)
+    task_detail = models.InterfaceEval.objects.filter(id=task_id).first()
+    task_diff_detail = models.IfEvalDiff.objects.filter(diff_task_id=task_id).order_by('id')[::-1]
+    page_obj = pagination.Page(current_page, len(task_diff_detail), 4, 9)
+    data = task_diff_detail[page_obj.start:page_obj.end]
+    page_str = page_obj.page_str("/interface/detail/?tasknum=" + task_id + '&page=')
+    loginfo = str_unix2br(task_detail.errorlog)
+    return render(request, 'fanyi/if_eval_detail.html',
+                  {'user_id': user_id, 'task_detail': task_detail,
+                   'loginfo': loginfo, 'li': data, 'page_str': page_str})
+
+
+# @auth
 def interface(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')
@@ -45,7 +64,6 @@ def interface(request):
             page_obj = pagination.Page(current_page, len(task_list), 16, 9)
             data = task_list[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/interface?page=")
-
         except Exception as e:
             print(e)
             pass
@@ -67,8 +85,7 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            print(a.id)
-            # os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
+            os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
         except Exception as e:
             ret['error'] = 'error:' + str(e)
             ret['status'] = False

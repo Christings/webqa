@@ -10,3 +10,4 @@ script/*.log
 script/uwsgi.pid
 log/
 media/
+diff.html

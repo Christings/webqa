@@ -47,7 +47,7 @@ urlpatterns = [
     re_path(r'^man_eval/readd/$', views.man_eval_readd),
     # interface eval
     re_path(r'^interface/$', views.interface),
-    re_path(r'^man_eval/detail/$', views.man_eval_detail),
+    re_path(r'^interface/detail/$', views.if_eval_detail),
     re_path(r'^man_eval/cancel/$', views.man_eval_cancal),
     re_path(r'^man_eval/readd/$', views.man_eval_readd),
 ]
