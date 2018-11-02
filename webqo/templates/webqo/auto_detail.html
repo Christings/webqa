@@ -49,8 +49,7 @@
                         {% endifequal %}
                         <td class="tabletd">{{ task_detail.0.user }}</td>
                         <td class="tabletd">
-                            <button class="del_line" id="restart_automation" task_id="{{ task_detail.0.id }}">Restart
-                            </button>
+                            <button class="del_line" id="restart_automation" task_id="{{ task_detail.0.id }}">Restart</button>
                             {% ifequal task_detail.0.status 2 %}
                                 <button class="del_line" id="cancel_automation" task_id="{{ task_detail.0.id }}">Cancel
                                 </button>
@@ -65,40 +64,45 @@
         <div class="clearfix"></div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="tile">
-                <h3 class="tile-title">SVN Info</h3>
+                <h3 class="tile-title">Cost Status</h3>
                 <table class="table">
                     <thead>
                     <tr>
-                        <td>Base SVN</td>
+                        <td>Test</td>
+                        <td>Base</td>
                     </tr>
                     </thead>
                     <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td>
-                            <pre>{{ task_detail.0.basesvn }}</pre>
-                        </td>
+                    <tr req_id="{{ task_detail.id }}">
+                        <td class="col-md-6"><pre>{{ task_detail.0.cost_test }}</pre></td>
+                        <td class="col-md-6"><pre>{{ task_detail.0.cost_base }}</pre></td>
                     </tr>
                     </tbody>
                 </table>
                 <div id="showDiv"></div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="clearfix"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="tile">
                 <h3 class="tile-title">SVN Info</h3>
                 <table class="table">
                     <thead>
                     <tr>
                         <td>Test SVN</td>
+                        <td>Base SVN</td>
                     </tr>
                     </thead>
                     <tbody id="reqBody">
                     <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td>
-                            <pre>{{ task_detail.0.testsvn }}</pre>
-                        </td>
+                        <td class="col-md-6">{{ task_detail.0.testsvn }}</td>
+                        <br/>
+                        <td class="col-md-6">{{ task_detail.0.basesvn }}</td>
+                        <br/>
                     </tr>
                     </tbody>
                 </table>
@@ -114,9 +118,7 @@
                 <table class="table">
                     <tbody id="reqBody">
                     <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td>
-                            <pre>{{{ task_detail.0.errorlog }}</pre>
-                        </td>
+                        <td><pre>{{ task_detail.0.errorlog }}</pre></td>
                     </tr>
                     </tbody>
                 </table>
