@@ -23,7 +23,7 @@ database="sogowebqa"
 database_user="root"
 database_pass="Websearch@qa66"
 root_path = '/search/odin/daemon/fanyi/tools/'
-database_table = 'fanyi_fyxmldiff'
+database_table = 'fanyi_interfaceeval'
 task_id = int(sys.argv[1])
 
 def get_now_time():
@@ -31,9 +31,9 @@ def get_now_time():
     return  time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
 
 def insert_finished(finished,diff_task_id):
-    db = pymysql.connect('10.134.110.163','root','Zhangjj@sogou123','sogotest')
+    db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    up_sql = "UPDATE %s set finished=%d where id=%d" % ('fanyi_fyxmldiff', finished ,diff_task_id)
+    up_sql = "UPDATE %s set finished=%d where id=%d" % ('fanyi_interfaceeval', finished ,diff_task_id)
     try:
         cursor.execute(up_sql)
         db.commit()
@@ -43,10 +43,10 @@ def insert_finished(finished,diff_task_id):
     db.close()
 
 def insert_diff_data(diffcontent,diffnum,diff_task_id):
-    db = pymysql.connect('10.134.110.163','root','Zhangjj@sogou123','sogotest',charset='utf8')
+    db = pymysql.connect(database_host,database_user,database_pass,database,charset='utf8')
     cursor = db.cursor()
     
-    update_sql = "UPDATE %s set diffnum=%d where id=%d" % ('fanyi_fyxmldiff',diffnum,diff_task_id)
+    update_sql = "UPDATE %s set diffnum=%d where id=%d" % ('fanyi_interfaceeval',diffnum,diff_task_id)
     try:
         cursor.execute(update_sql)
         db.commit()
@@ -54,7 +54,7 @@ def insert_diff_data(diffcontent,diffnum,diff_task_id):
         print(e)
         db.rollback()
         pass
-    sql = "INSERT INTO %s(create_time,user,diff_content,diff_task_id) VALUES ('%s','%s','%s',%d)" % ('fanyi_xmldiffcontent', 'zhangjingjun',get_now_time() ,diffcontent,diff_task_id)
+    sql = "INSERT INTO %s(create_time,user,diff_content,diff_task_id) VALUES ('%s','%s','%s',%d)" % ('fanyi_ifevaldiff', 'zhangjingjun',get_now_time() ,diffcontent,diff_task_id)
    
     try:
         cursor.execute(sql)
@@ -113,7 +113,7 @@ def parseXmlRes(xml_str):
             for body in node.findall('child:TranslateResponse',ns):
                 if body.find('child:TranslateResult',ns) is not None:
                     if body.find('child:TranslateResult',ns).text is not None:
-                        result_dic['transRes']=body.find('child:TranslateResult',ns).text
+                        result_dic['transRes']=body.find('child:TranslateResult',ns).text + str(tempNum)
                     else:
                         result_dic['transRes']='Error request'
                 else:
@@ -147,7 +147,7 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
     tmp = 0
     finished = 0
     diffnum = 0
-    with open(query_tools_path+'query/'+filename,'r') as fin,open(query_tools_path+'result_log/'+'base_res_'+str(mission_id),'w') as fw_base,open(query_tools_path+'result_log/'+'test_res_'+str(mission_id),'w') as fw_test,open(query_tools_path+'result_log/'+'all_req_'+str(mission_id),'w') as allo:
+    with open(query_tools_path+'query/'+filename,'r') as fin,open(query_tools_path+'result_log/'+'base_res_'+str(mission_id),'wb+') as fw_base,open(query_tools_path+'result_log/'+'test_res_'+str(mission_id),'wb+') as fw_test,open(query_tools_path+'result_log/'+'all_req_'+str(mission_id),'wb+') as allo:
         set_status(2)
         for item in fin.readlines():
             finished +=1
@@ -159,12 +159,8 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
             result_base=dict()
             result_test=dict()
             try:
-                print(11111111111111111)
                 resp_base = requests.post('http://'+base_url+'/xml', data=xmldata)
-                print(resp_base.status)
                 result_base = parseXmlRes(resp_base.text)
-                print(result_base)
-                print(2222222222222222222222)
             except Exception as e :
                 result_base['transRes']='base request http error'
                 pass
@@ -174,14 +170,16 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
             except Exception as e :
                 result_test['transRes']='test request http error'
                 pass
-            allo.write('Query:'+item+'\n')
-            allo.write('base:'+resp_base.text+'result:'+result_base['transRes']+'\n')
-            allo.write('test:'+resp_test.text+'result:'+result_test['transRes']+'\n')
+            allo.write(('Query:'+item+'\n').encode('utf-8'))
+            allo.write(('base:'+resp_base.text+'result:'+result_base['transRes']+'\n').encode('utf-8'))
+            allo.write(('test:'+resp_test.text+'result:'+result_test['transRes']+'\n').encode('utf-8'))
             if (result_base['transRes'] != result_test['transRes']):
-                base_diff_content += ('Query:'+reqInfo['qtext']+' from:'+reqInfo['qfrom']+' to:'+reqInfo['qto']+'\n'+result_base['transRes'].decode('utf-8')+'\n')
-                test_diff_content += ('Query:'+reqInfo['qtext']+' from:'+reqInfo['qfrom']+' to:'+reqInfo['qto']+'\n'+result_test['transRes'].decode('utf-8')+'\n')
-                fw_base.write('Query:'+reqInfo['qtext']+'from:'+reqInfo['qfrom']+'to:'+reqInfo['qto']+'\n'+result_base['transRes']+'\n')
-                fw_test.write('Query:'+reqInfo['qtext']+'from:'+reqInfo['qfrom']+'to:'+reqInfo['qto']+'\n'+result_test['transRes']+'\n')
+                base_info = 'Query:'+reqInfo['qtext'].decode()+' from:'+reqInfo['qfrom'].decode()+' to:'+reqInfo['qto'].decode()+'\n'+result_base['transRes']+'\n'
+                test_info = 'Query:'+reqInfo['qtext'].decode()+' from:'+reqInfo['qfrom'].decode()+' to:'+reqInfo['qto'].decode()+'\n'+result_test['transRes']+'\n'
+                base_diff_content += base_info
+                test_diff_content += test_info
+                fw_base.write(base_info.encode('utf-8'))
+                fw_test.write(test_info.encode('utf-8'))
                 tmp+=1
                 diffnum+=1
             if tmp == 50:
@@ -215,8 +213,7 @@ def getInfoFromDb(task_id):
     try:
         db = pymysql.connect(database_host,database_user,database_pass,database)
         cursor = db.cursor()
-        sql = "SELECT test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath FROM %s where id='%d'" % ('fanyi_interfaceeval',task_id)
-        print(sql)
+        sql = "SELECT test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath,user FROM %s where id='%d'" % ('fanyi_interfaceeval',task_id)
         cursor.execute(sql)
         data = cursor.fetchone()
         logstr.log_info("test_url:"+data[0]+'\n'+'base_url:'+data[1]+'\n'+'reqtype'+data[2]+'\n'+'queryip:'+data[3]+'\n'+'queryuser:'+data[4]+'\n'+'querypassw:'+data[5]+'\n'+'querypath:'+data[6])
@@ -339,13 +336,13 @@ if __name__ == '__main__':
     logstr = logUtils.logutil(task_id)
     subpid = os.getpid()
     set_subpid(subpid,1)
-    (test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath) = getInfoFromDb(task_id)
+    (test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath,user) = getInfoFromDb(task_id)
     filelist = getQueryFile(root_path)
     getDiff(root_path,filelist,task_id,base_url,test_url,reqtype)
     # send result by mail
-    db = pymysql.connect('10.134.110.163','root','Zhangjj@sogou123','sogotest')
+    db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    sql = "SELECT id,start_time,end_time,test_url,base_url,user,diffnum,finished,testtag FROM %s where id='%d'" % ('fanyi_fyxmldiff',task_id)
+    sql = "SELECT id,start_time,end_time,test_url,base_url,user,diffnum,finished,testtag FROM %s where id='%d'" % ('fanyi_interfaceeval',task_id)
     cursor.execute(sql)
     (id,start_time,end_time,test_url,base_url,task_user,diffnum,finished,testtag) = cursor.fetchone()
     attname=''
