@@ -99,10 +99,8 @@
                     </thead>
                     <tbody id="reqBody">
                     <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td class="col-md-6">{{ task_detail.0.testsvn }}</td>
-                        <br/>
-                        <td class="col-md-6">{{ task_detail.0.basesvn }}</td>
-                        <br/>
+                        <td><div style="width:520px;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.testsvn }}</pre></div></td>
+                        <td><div style="width:520px;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.basesvn }}</pre></div></td>
                     </tr>
                     </tbody>
                 </table>
