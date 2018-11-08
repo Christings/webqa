@@ -183,6 +183,26 @@ def parseJsonRes(xml_str):
         temlen += 1
     return resultstr
 
+def parseJsonReq(xml_str):
+    resparse = json.loads(xml_str)
+    chinese_query = resparse['translate_struct']['chinese_query']
+    english_query = resparse['translate_struct']['english_query']
+    result = resparse['translate_struct']['docs']
+    result_dict=dict()
+    resultstr=""
+    temlen=1
+    for sub_res in result:
+        result_dict[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
+    result_dict['chinese_query'] = chinese_query
+    result_dict['english_query'] = english_query
+    # for i in range(1,len(result_dict)+1):
+    #     if temlen == len(result_dict):
+    #         resultstr += result_dict[str(i)]
+    #     else:
+    #         resultstr += (result_dict[str(i)] + "^^^")
+    #     temlen += 1
+    return resultstr
+
 
 def parseAlljRes(xml_str):
     resparse = json.loads(xml_str)

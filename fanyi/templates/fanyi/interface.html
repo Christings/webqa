@@ -245,9 +245,7 @@
 				});
 		
 			})
-		
-			
-		
+						
 			$('#lan_filter').change(function() {
 				var sel_lang = $(this).val();
 				console.log(sel_lang)
@@ -271,52 +269,22 @@
 	//getData
 		$('.get_data').dblclick(function() {
 			var linelst = $(this).children();
-			testtag = $(linelst[5]).text();
-			hubsvn = $(linelst[8]).text();
-			sersvn = $(linelst[9]).text();
-			hubcfgip = $(linelst[10]).text();
-			hubcfguser = $(linelst[11]).text();
-			hubcfgpassw = $(linelst[12]).text();
-			hubcfgpath = $(linelst[13]).text();
-			hubdatapath = $(linelst[14]).text();
-			sercfgip = $(linelst[15]).text();
-			sercfguser = $(linelst[16]).text();
-			sercfgpassw = $(linelst[17]).text();
-			sercfgpath = $(linelst[18]).text();
-			serdatapath = $(linelst[19]).text();
-			queryip = $(linelst[20]).text();
-			queyruser = $(linelst[21]).text();
-			querypassw = $(linelst[22]).text();
-			querypath = $(linelst[23]).text();
-			isfromzh = $(linelst[24]).text();
-			lan_sel = $(linelst[25]).text();
-			console.log(testtag)
-			console.log(hubsvn)
-			$('#hub_svn').val(hubsvn);
-			$('#server_svn').val(sersvn);
-			$('#hub_conf_ip').val(hubcfgip);
-			$('#hub_conf_user').val(hubcfguser);
-			$('#hub_conf_pass').val(hubcfgpassw);
-			$('#hub_conf_path').val(hubcfgpath);
-			$('#hub_data_path').val(hubdatapath);
-			$('#ser_conf_ip').val(sercfgip);
-			$('#ser_conf_user').val(sercfguser);
-			$('#ser_conf_pass').val(sercfgpassw);
-			$('#ser_conf_path').val(sercfgpath);
-			$('#ser_data_path').val(serdatapath);
-			$('#query_ip').val(queryip);
-			$('#query_user').val(queyruser);
-			$('#query_pass').val(querypassw);
-			$('#query_path').val(querypath);
+			test_url = $(linelst[3]).text();
+			base_url = $(linelst[4]).text();
+			reqtype = $(linelst[5]).text();
+			testtag = $(linelst[6]).text();
+			queryip = $(linelst[9]).text();
+			queyruser = $(linelst[10]).text();
+			querypassw = $(linelst[11]).text();
+			querypath = $(linelst[12]).text();
+			$('#test_url').val(test_url);
+			$('#base_url').val(base_url);
+			$('#reqtype').val(reqtype);
+			$('#query_data_ip').val(queryip);
+			$('#query_data_user').val(queyruser);
+			$('#query_data_pass').val(querypassw);
+			$('#query_data_path').val(querypath);
 			$('#testtag').val(testtag);
-			$('#lan_sel').val(lan_sel);
-			if(isfromzh == 'fromzh') {
-				$('#inlineRadio2').attr("checked", 'checked');
-				$('#inlineRadio1').attr("checked", false);
-			} else {
-				$('#inlineRadio1').attr("checked", 'checked');
-				$('#inlineRadio2').attr("checked", false);
-			}
 		})
 </script>
 {% endblock %}
