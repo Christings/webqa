@@ -85,7 +85,7 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
+            os.system('/usr/bin/python2 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
         except Exception as e:
             ret['error'] = 'error:' + str(e)
             ret['status'] = False

@@ -15,7 +15,8 @@ import os
 import pexpect
 from xml.etree import ElementTree
 from bs4 import BeautifulSoup
-from fanyi import requestData
+#from fanyi import requestData
+import requestData
 
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
@@ -216,62 +217,76 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
             for item in fin.readlines():
                 finished += 1
                 item = item.strip()
-                reqInfo = parseXmlReq(item)
-                if reqInfo['qtext'] == 'parseWrong':
+                reqInfo = requestData.parseJsonReq(item)
+                if reqInfo['status'] is False:
                     continue
-                xmldata = item
+                jsondata = item
                 result_base = dict()
                 result_test = dict()
                 try:
-                    resp_base = requests.post('http://' + base_url + '/xml', data=xmldata)
-                    result_base = requestData.parseJsonRes(resp_base.text)
+                    resp_base = requests.post('http://' + base_url + '/json', data=jsondata)
+                    result_base = requestData.JsonResult(resp_base.text)
+                    if result_base['status'] is False:
+                        result_base['transRes'] = 'base request http error'
                 except Exception as e:
                     result_base['transRes'] = 'base request http error'
                     pass
                 try:
-                    resp_test = requests.post('http://' + test_url + '/xml', data=xmldata)
-                    result_test = parseXmlRes(resp_test.text)
+                    resp_test = requests.post('http://' + test_url + '/json', data=jsondata)
+                    result_test = requestData.JsonResult(resp_test.text)
+                    if result_test['status'] is False:
+                        result_test['transRes'] = 'base request http error'
                 except Exception as e:
                     result_test['transRes'] = 'test request http error'
                     pass
-                allo.write(('Query:' + item + '\n').encode('utf-8'))
-                allo.write(('base:' + resp_base.text + 'result:' + result_base['transRes'] + '\n').encode('utf-8'))
-                allo.write(('test:' + resp_test.text + 'result:' + result_test['transRes'] + '\n').encode('utf-8'))
-                if (result_base['transRes'] != result_test['transRes']):
-                    base_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
-                                reqInfo['qto'].decode() + '\n' + result_base['transRes'] + '\n'
-                    test_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
-                                reqInfo['qto'].decode() + '\n' + result_test['transRes'] + '\n'
-                    base_diff_content += base_info
-                    test_diff_content += test_info
-                    fw_base.write(base_info.encode('utf-8'))
-                    fw_test.write(test_info.encode('utf-8'))
-                    tmp += 1
-                    diffnum += 1
-                if tmp == 50:
-                    d = difflib.HtmlDiff()
-                    diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
-                    parse_html = BeautifulSoup(diff_html, "html.parser")
-                    escape_str = cgi.escape(str(parse_html.table), quote=True)
-                    # b = decodeHtml(a)
-                    # print 'bbbbb'+b.encode('utf-8')
-                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
-                    base_diff_content = ''
-                    test_diff_content = ''
-                    tmp = 0
-                if (finished % 1000) == 0:
-                    insert_finished(finished, mission_id)
-            d = difflib.HtmlDiff()
-            diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
-            parse_html = BeautifulSoup(diff_html, "html.parser")
-            escape_str = cgi.escape(str(parse_html.table), quote=True)
-            # b = decodeHtml(a)
-            # print 'bbbbb'+b.encode('utf-8')
-            try:
-                insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
-            except Exception as e:
-                print(e)
-            insert_finished(finished, mission_id, get_now_time())
+                reqstr = 'chinese_query:'+reqInfo['chinese_query']+' english_query:'+reqInfo['english_query']+'\n'
+                for value in reqInfo['docs']:
+                    reqstr += (str(value)+'\n')
+                allo.write(('Query:' + reqstr + '\n').encode('utf-8'))
+                resbase_str=''
+                for value in result_base['docs']:
+                    resbase_str+=(str(value)+'\n')
+                allo.write(('base:' + resbase_str + '\n').encode('utf-8'))
+                restest_str=''
+                for value in result_test['docs']:
+                    restest_str+=(str(value)+'\n')
+                allo.write(('test:' + restest_str + '\n').encode('utf-8'))
+#                allo.write(('test:' + resp_test.text + 'result:' + result_test['transRes'] + '\n').encode('utf-8'))
+#                if (result_base['transRes'] != result_test['transRes']):
+#                    base_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
+#                                reqInfo['qto'].decode() + '\n' + result_base['transRes'] + '\n'
+#                    test_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
+#                                reqInfo['qto'].decode() + '\n' + result_test['transRes'] + '\n'
+#                    base_diff_content += base_info
+#                    test_diff_content += test_info
+#                    fw_base.write(base_info.encode('utf-8'))
+#                    fw_test.write(test_info.encode('utf-8'))
+#                    tmp += 1
+#                    diffnum += 1
+#                if tmp == 50:
+#                    d = difflib.HtmlDiff()
+#                    diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+#                    parse_html = BeautifulSoup(diff_html, "html.parser")
+#                    escape_str = cgi.escape(str(parse_html.table), quote=True)
+#                    # b = decodeHtml(a)
+#                    # print 'bbbbb'+b.encode('utf-8')
+#                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+#                    base_diff_content = ''
+#                    test_diff_content = ''
+#                    tmp = 0
+#                if (finished % 1000) == 0:
+#                    insert_finished(finished, mission_id)
+#            d = difflib.HtmlDiff()
+#            diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+#            parse_html = BeautifulSoup(diff_html, "html.parser")
+#            escape_str = cgi.escape(str(parse_html.table), quote=True)
+#            # b = decodeHtml(a)
+#            # print 'bbbbb'+b.encode('utf-8')
+#            try:
+#                insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+#            except Exception as e:
+#                print(e)
+#            insert_finished(finished, mission_id, get_now_time())
             set_status(4)
 
 def getInfoFromDb(task_id):
