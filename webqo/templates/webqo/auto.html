@@ -169,7 +169,7 @@
                     </thead>
                     <tbody id="reqBody">
                     {% for item in req_lst %}
-                        <tr id="get_data">
+                        <tr class="get_data">
                             <td>{{ item.id }}</td>
                             <td style="display: none;">{{ item.create_time }}</td>
                             <td>{{ item.start_time }}</td>
@@ -234,7 +234,7 @@
             </div>
             <div id="showDiv"></div>
         </div>
-        <div class="clearfix"></div>
+{#        <div class="clearfix"></div>#}
     </div>
 {% endblock %}
 {% block js %}
@@ -339,7 +339,7 @@
         })
 
         //getData
-        $('#get_data').dblclick(function () {
+        $('.get_data').dblclick(function () {
             var linelst = $(this).children();
             press_expid = $(linelst[3]).text();
             press_rate = $(linelst[4]).text();
