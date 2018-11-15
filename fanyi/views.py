@@ -43,7 +43,7 @@ def if_eval_detail(request):
     task_diff_detail = models.IfEvalDiff.objects.filter(diff_task_id=task_id).order_by('id')[::-1]
     page_obj = pagination.Page(current_page, len(task_diff_detail), 4, 9)
     data = task_diff_detail[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("/interface/detail/?tasknum=" + task_id + '&page=')
+    page_str = page_obj.page_str("/fanyi/interface/detail/?tasknum=" + task_id + '&page=')
     loginfo = str_unix2br(task_detail.errorlog)
     return render(request, 'fanyi/if_eval_detail.html',
                   {'user_id': user_id, 'task_detail': task_detail,
@@ -85,7 +85,7 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            os.system('/usr/local/bin/python2 /search/odin/daemon/fanyi/sg_auto_server/lib/getdiff_byxml.py %d &' % a.id)
+            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
         except Exception as e:
             ret['error'] = 'error:' + str(e)
             ret['status'] = False

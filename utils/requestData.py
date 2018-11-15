@@ -22,6 +22,7 @@ __mtime__ = '2018/3/28'
 """
 from xml.etree import ElementTree
 import json
+import random
 language_dict = {
                         'en' : '英',
                         'fr' : '法',
@@ -184,28 +185,43 @@ def parseJsonRes(xml_str):
     return resultstr
 
 def parseJsonReq(xml_str):
-    print('11111111111')
-    print(xml_str)
-    resparse = json.loads(xml_str)
-    chinese_query = resparse['translate_struct']['chinese_query']
-    english_query = resparse['translate_struct']['english_query']
-    result = resparse['translate_struct']['docs']
-    result_dict=dict()
-    resultstr=""
-    temlen=1
-    for sub_res in result:
-        result_dict[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
-    result_dict['chinese_query'] = chinese_query
-    result_dict['english_query'] = english_query
-    print(result_dict)
-    # for i in range(1,len(result_dict)+1):
-    #     if temlen == len(result_dict):
-    #         resultstr += result_dict[str(i)]
-    #     else:
-    #         resultstr += (result_dict[str(i)] + "^^^")
-    #     temlen += 1
+    try:
+        resparse = json.loads(xml_str)
+        chinese_query = resparse['translate_struct']['chinese_query']
+        english_query = resparse['translate_struct']['english_query']
+        result = resparse['translate_struct']['docs']
+        result_dict=dict()
+        result_dict['docs']=list()
+        for sub_res in result:
+            result=dict()
+            result[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
+            result_dict['docs'].append(result)
+        result_dict['chinese_query'] = chinese_query
+        result_dict['english_query'] = english_query
+        result_dict['status'] = True
+    except Exception as e:
+        result_dict=dict()
+        result_dict['status'] = False
     return result_dict
 
+def JsonResult(json_str):
+    try:
+        resparse = json.loads(json_str)
+        result = resparse['translate_result']['docs']
+        result_dict=dict()
+        result_dict['docs']=list()
+        for sub_res in result:
+            tempNum = random.randint(1,3)
+            result=dict()
+            result[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
+            result_dict['docs'].append(result)
+        result_dict['status'] = True
+        result_dict['chinese_query'] = resparse['translate_result']['chinese_query']
+    except Exception as e:
+        result_dict=dict()
+        result_dict['status'] = False
+        
+    return result_dict
 
 def parseAlljRes(xml_str):
     resparse = json.loads(xml_str)
