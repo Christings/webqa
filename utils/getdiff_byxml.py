@@ -118,7 +118,7 @@ def parseXmlRes(xml_str):
             for body in node.findall('child:TranslateResponse',ns):
                 if body.find('child:TranslateResult',ns) is not None:
                     if body.find('child:TranslateResult',ns).text is not None:
-                        result_dic['transRes']=body.find('child:TranslateResult',ns).text + str(tempNum)
+                        result_dic['transRes']=body.find('child:TranslateResult',ns).text
                     else:
                         result_dic['transRes']='Error request'
                 else:
@@ -201,16 +201,17 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     tmp=0
                 if (finished%1000)==0:
                     insert_finished(finished,mission_id)
-            d = difflib.HtmlDiff()
-            diff_html = d.make_file(base_diff_content.splitlines(),test_diff_content.splitlines())
-            parse_html = BeautifulSoup(diff_html,"html.parser")
-            escape_str = cgi.escape(str(parse_html.table),quote=True)
-            #b = decodeHtml(a)
-            #print 'bbbbb'+b.encode('utf-8')
-            try:
-                insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id,reqtype)
-            except Exception as e:
-                print(e)
+            if base_diff_content.strip()!='' or test_diff_content.strip()!='':
+                d = difflib.HtmlDiff()
+                diff_html = d.make_file(base_diff_content.splitlines(),test_diff_content.splitlines())
+                parse_html = BeautifulSoup(diff_html,"html.parser")
+                escape_str = cgi.escape(str(parse_html.table),quote=True)
+                #b = decodeHtml(a)
+                #print 'bbbbb'+b.encode('utf-8')
+                try:
+                    insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id,reqtype)
+                except Exception as e:
+                    print(e)
             insert_finished(finished,mission_id,get_now_time())
             set_status(4)
         elif reqtype == 'json':
@@ -228,6 +229,8 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     result_base = requestData.JsonResult(resp_base.text)
                     if result_base['status'] is False:
                         result_base['transRes'] = 'base request http error'
+                        result_base['chinese_query'] = 'request error'
+                        result_base['docs'] = []
                 except Exception as e:
                     result_base['transRes'] = 'base request http error'
                     pass
@@ -236,13 +239,19 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     result_test = requestData.JsonResult(resp_test.text)
                     if result_test['status'] is False:
                         result_test['transRes'] = 'base request http error'
+                        result_test['chinese_query'] = 'request error'
+                        result_test['docs'] = []
                 except Exception as e:
                     result_test['transRes'] = 'test request http error'
                     pass
-                reqstr = 'chinese_query:'+reqInfo['chinese_query']+' english_query:'+reqInfo['english_query']+'\n'
+                head_info = ('chinese_query_base:'+result_base['chinese_query'] + '\n'+'chinese_query_test:'+result_test['chinese_query']+'\n')
+                englinsh_info = 'english_query:'+reqInfo['english_query']+'\n'
+                allo.write(head_info.encode('utf-8'))
+                allo.write(englinsh_info.encode('utf-8'))
+                reqstr = ''
                 for value in reqInfo['docs']:
                     reqstr += (str(value)+'\n')
-                allo.write(('Query:' + reqstr + '\n').encode('utf-8'))
+                allo.write(reqstr.encode('utf-8'))
                 resbase_str=''
                 for value in result_base['docs']:
                     resbase_str+=(str(value)+'\n')
@@ -251,42 +260,40 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                 for value in result_test['docs']:
                     restest_str+=(str(value)+'\n')
                 allo.write(('test:' + restest_str + '\n').encode('utf-8'))
-#                allo.write(('test:' + resp_test.text + 'result:' + result_test['transRes'] + '\n').encode('utf-8'))
-#                if (result_base['transRes'] != result_test['transRes']):
-#                    base_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
-#                                reqInfo['qto'].decode() + '\n' + result_base['transRes'] + '\n'
-#                    test_info = 'Query:' + reqInfo['qtext'].decode() + ' from:' + reqInfo['qfrom'].decode() + ' to:' + \
-#                                reqInfo['qto'].decode() + '\n' + result_test['transRes'] + '\n'
-#                    base_diff_content += base_info
-#                    test_diff_content += test_info
-#                    fw_base.write(base_info.encode('utf-8'))
-#                    fw_test.write(test_info.encode('utf-8'))
-#                    tmp += 1
-#                    diffnum += 1
-#                if tmp == 50:
-#                    d = difflib.HtmlDiff()
-#                    diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
-#                    parse_html = BeautifulSoup(diff_html, "html.parser")
-#                    escape_str = cgi.escape(str(parse_html.table), quote=True)
-#                    # b = decodeHtml(a)
-#                    # print 'bbbbb'+b.encode('utf-8')
-#                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
-#                    base_diff_content = ''
-#                    test_diff_content = ''
-#                    tmp = 0
-#                if (finished % 1000) == 0:
-#                    insert_finished(finished, mission_id)
-#            d = difflib.HtmlDiff()
-#            diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
-#            parse_html = BeautifulSoup(diff_html, "html.parser")
-#            escape_str = cgi.escape(str(parse_html.table), quote=True)
-#            # b = decodeHtml(a)
-#            # print 'bbbbb'+b.encode('utf-8')
-#            try:
-#                insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
-#            except Exception as e:
-#                print(e)
-#            insert_finished(finished, mission_id, get_now_time())
+                if (resbase_str != restest_str):
+                    base_info = head_info + englinsh_info + reqstr + resbase_str
+                    test_info = head_info + englinsh_info + reqstr + restest_str
+                    base_diff_content += base_info
+                    test_diff_content += test_info
+                    fw_base.write(base_info.encode('utf-8'))
+                    fw_test.write(test_info.encode('utf-8'))
+                    tmp += 1
+                    diffnum += 1
+                if tmp == 2:
+                    d = difflib.HtmlDiff()
+                    diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+                    parse_html = BeautifulSoup(diff_html, "html.parser")
+                    escape_str = cgi.escape(str(parse_html.table), quote=True)
+                    # b = decodeHtml(a)
+                    # print 'bbbbb'+b.encode('utf-8')
+                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+                    base_diff_content = ''
+                    test_diff_content = ''
+                    tmp = 0
+                if (finished % 100) == 0:
+                    insert_finished(finished, mission_id)
+            if base_diff_content.strip()!='' or test_diff_content.strip()!='':
+                d = difflib.HtmlDiff()
+                diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+                parse_html = BeautifulSoup(diff_html, "html.parser")
+                escape_str = cgi.escape(str(parse_html.table), quote=True)
+                # b = decodeHtml(a)
+                # print 'bbbbb'+b.encode('utf-8')
+                try:
+                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+                except Exception as e:
+                    print(e)
+            insert_finished(finished, mission_id, get_now_time())
             set_status(4)
 
 def getInfoFromDb(task_id):
@@ -310,28 +317,27 @@ def getQueryFile(root_path):
     # scp query to tools dir
     try:
         update_errorlog("[%s] %s\n" % (get_now_time(), "start try to scp query data"))
-        if(os.path.exists(root_path+'query')):
-            logstr.log_info('query dir is exist')
-            oldfile = os.listdir(root_path+'query')
-            timeArray = time.localtime()
-            filename = time.strftime("%Y-%m-%d_%H%M%S", timeArray)
-            if oldfile:
-                for item in oldfile:
-                    os.popen('mv %s %s' % (root_path+'query/'+item,root_path+'query_bak/'+filename+'_'+item))
+        #if(os.path.exists(root_path+'query')):
+        #    logstr.log_info('query dir is exist')
+        #    oldfile = os.listdir(root_path+'query')
+        #    timeArray = time.localtime()
+        #    filename = time.strftime("%Y-%m-%d_%H%M%S", timeArray)
+        #    if oldfile:
+        #        for item in oldfile:
+        #            os.popen('mv %s %s' % (root_path+'query/'+item,root_path+'query_bak/'+filename+'_'+item))
         if queryip!='' and queryuser!='' and querypassw!='' and querypath!='':
             scpres = scp_new_file(root_path+'query',queryip,queryuser,querypassw,querypath,'query_data')
         else:
             update_errorlog("[%s] %s\n" % (get_now_time(), "query data configure is wrong"))
             set_status(3)
             sys.exit()
-        filelist = os.listdir(root_path+'query')
+        #filelist = os.listdir(root_path+'query')
     except Exception as e:
         update_errorlog("[%s] Get query file error\n" % get_now_time())
         logstr.log_info("[%s] Get query file error ,error info:%s" % (get_now_time(),str(e)))
         set_status(3)
         sys.exit()
     update_errorlog("[%s] %s\n" % (get_now_time(), "query data scp local success"))
-    return filelist[0]
 
 def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filetype):
     update_errorlog("[%s] try scp rd %s to test enviroment\n" % (get_now_time(),filetype))
@@ -418,8 +424,10 @@ if __name__ == '__main__':
     subpid = os.getpid()
     set_subpid(subpid,1)
     (test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath,user) = getInfoFromDb(task_id)
-    filelist = getQueryFile(root_path)
-    getDiff(root_path,filelist,task_id,base_url,test_url,reqtype)
+    getQueryFile(root_path)
+    filename = os.path.basename(querypath)
+    print(filename)
+    getDiff(root_path,filename,task_id,base_url,test_url,reqtype)
     # send result by mail
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()

@@ -22,6 +22,7 @@ __mtime__ = '2018/3/28'
 """
 from xml.etree import ElementTree
 import json
+import random
 language_dict = {
                         'en' : '英',
                         'fr' : '法',
@@ -201,7 +202,6 @@ def parseJsonReq(xml_str):
     except Exception as e:
         result_dict=dict()
         result_dict['status'] = False
-    print(result_dict)
     return result_dict
 
 def JsonResult(json_str):
@@ -211,13 +211,16 @@ def JsonResult(json_str):
         result_dict=dict()
         result_dict['docs']=list()
         for sub_res in result:
+            tempNum = random.randint(1,3)
             result=dict()
             result[sub_res['id']] = sub_res['title'] + '|||' + sub_res['abstract']
             result_dict['docs'].append(result)
         result_dict['status'] = True
+        result_dict['chinese_query'] = resparse['translate_result']['chinese_query']
     except Exception as e:
         result_dict=dict()
         result_dict['status'] = False
+        
     return result_dict
 
 def parseAlljRes(xml_str):
