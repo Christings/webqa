@@ -252,7 +252,7 @@ def auto_cancel(request):
 @auth
 def auto_restart(request):
     user_id = request.COOKIES.get('uid')
-    ret = {'status': True, 'errro': None, 'data': None}
+    ret = {'status': True, 'error': None, 'data': None}
     re_add_task_id = request.POST.get('task_id')
     try:
         task_detail = models.Qps.objects.get(id=re_add_task_id)
@@ -297,6 +297,7 @@ def auto_detail(request, task_id):
     user_id = request.COOKIES.get('uid')
     task_detail = models.Qps.objects.filter(id=task_id)
     diff_detail = models.Diff.objects.filter(diff_fk_id=task_id)
+
 
     testitem = models.Qps.objects.filter(id=task_id).values('testitem')
 
@@ -411,7 +412,7 @@ def auto(request, page_id):
     current_page = int(current_page)
     page_obj = pagination.Page(current_page, len(task_list), 16, 9)
     data = task_list[page_obj.start:page_obj.end]
-    page_str = page_obj.page_str("webqw/auto")
+    page_str = page_obj.page_str("/webqw/auto?page=")
 
     return render(request, 'webqw/auto.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
