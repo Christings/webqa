@@ -416,6 +416,18 @@ def auto(request, page_id):
 
     return render(request, 'webqw/auto.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
 
+@auth
+def auto_del(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('line_id')
+    try:
+        models.Qps.objects.filter(id=req_id).delete()
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+        print(e)
+    return HttpResponse(json.dumps(ret))
+
 
 def get_now_time():
     timeArray = time.localtime()

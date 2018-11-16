@@ -168,7 +168,7 @@
                     </thead>
                     <tbody id="reqBody">
                     {% for item in req_lst %}
-                        <tr class="get_data">
+                        <tr req_id="{{ item.id }}" class="get_data">
                             <td>{{ item.id }}</td>
                             <td style="display: none;">{{ item.create_time }}</td>
                             <td>{{ item.start_time }}</td>
@@ -206,6 +206,7 @@
                                 <td>diff</td>
                             {% endifequal %}
                             <td>{{ item.user }}</td>
+                            <td><button class="del_line btn btn-primary">删除</button></td>
                             <td style="display: none;">{{ item.testsvn }}</td>
                             <td style="display: none;">{{ item.basesvn }}</td>
                             <td style="display: none;">{{ item.newconfip }}</td>
@@ -317,7 +318,7 @@
             var line_id = $(this).parent().parent().attr('req_id');
             $.ajax({
                 type: "POST",
-                url: "del_xml_line",
+                url: "/webqw/auto/del",
                 async: true,
                 data: {
                     'line_id': line_id
