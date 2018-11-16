@@ -42,7 +42,6 @@
 										<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Waiting</button>
 										{% endifequal %} 
 										{% ifequal task_detail.status 1 %}
-										<font color="cream">Ready</font>
 										<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Ready</button>
 										{% endifequal %} 
 										{% ifequal task_detail.status 2 %}
@@ -145,7 +144,7 @@
 			var task_id = $(this).attr('task_id');
 			$.ajax({
 				type: "POST",
-				url: "/fanyi/man_eval/cancel/",
+				url: "/fanyi/interface/cancel/",
 				async: true,
 				traditional: true,
 				data: {
