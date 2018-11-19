@@ -206,7 +206,6 @@
                                 <td>diff</td>
                             {% endifequal %}
                             <td>{{ item.user }}</td>
-                            <td><button class="del_line btn btn-primary">删除</button></td>
                             <td style="display: none;">{{ item.testsvn }}</td>
                             <td style="display: none;">{{ item.basesvn }}</td>
                             <td style="display: none;">{{ item.newconfip }}</td>
@@ -222,6 +221,8 @@
                             <td style="display: none;">{{ item.query_ip }}</td>
                             <td style="display: none;">{{ item.query_user }}</td>
                             <td style="display: none;">{{ item.query_pwd }}</td>
+                            <td><button class="del_line btn btn-primary">删除</button></td>
+
                         </tr>
                     {% endfor %}
                     </tbody>
