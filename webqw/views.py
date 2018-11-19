@@ -298,7 +298,6 @@ def auto_detail(request, task_id):
     task_detail = models.Qps.objects.filter(id=task_id)
     diff_detail = models.Diff.objects.filter(diff_fk_id=task_id)
 
-
     testitem = models.Qps.objects.filter(id=task_id).values('testitem')
 
     page = request.GET.get('page')
@@ -401,20 +400,22 @@ def auto_add(request):
 
 
 @auth
-def auto(request, page_id):
+def auto(request):
     # user_id = "zhangjingjun"
     user_id = request.COOKIES.get('uid')
-    if page_id == '':
-        page_id = 1
+    page = request.GET.get('page')
+    current_page = 1
+    if page:
+        current_page = int(page)
+
     task_list = models.Qps.objects.order_by('id')[::-1]
 
-    current_page = page_id
-    current_page = int(current_page)
     page_obj = pagination.Page(current_page, len(task_list), 16, 9)
     data = task_list[page_obj.start:page_obj.end]
     page_str = page_obj.page_str("/webqw/auto?page=")
 
     return render(request, 'webqw/auto.html', {'user_id': user_id, 'req_lst': data, 'page_str': page_str})
+
 
 @auth
 def auto_del(request):
