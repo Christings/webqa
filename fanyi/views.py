@@ -30,10 +30,24 @@ def auth(func):
         return func(request,*args,**kwargs)
     return inner
 
+# auto Bleu
+
 # interface eval
+def if_eval_cancal(request):
+    ret = {'status': True, 'errro': None, 'data': None}
+    try:
+        cancel_id = request.POST.get('task_id')
+        models.InterfaceEval.objects.filter(id=cancel_id).update(status=6)
+    except Exception as e:
+        ret['error'] = 'error:' + str(e)
+        ret['status'] = False
+    return HttpResponse(json.dumps(ret))
+
+
+@auth
 def if_eval_detail(request):
-    user_id="zhangjingjun"
-    # user_id = request.COOKIES.get('uid')
+    # user_id="zhangjingjun"
+    user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('tasknum')
     page = request.GET.get('page')
     current_page = 1
@@ -50,7 +64,7 @@ def if_eval_detail(request):
                    'loginfo': loginfo, 'li': data, 'page_str': page_str})
 
 
-# @auth
+@auth
 def interface(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')

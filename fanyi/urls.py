@@ -48,6 +48,10 @@ urlpatterns = [
     # interface eval
     re_path(r'^interface/$', views.interface),
     re_path(r'^interface/detail/$', views.if_eval_detail),
+    re_path(r'^interface/cancel/$', views.if_eval_cancal),
+    # auto Bleu
+    re_path(r'^interface/$', views.interface),
+    re_path(r'^interface/detail/$', views.if_eval_detail),
     re_path(r'^man_eval/cancel/$', views.man_eval_cancal),
     re_path(r'^man_eval/readd/$', views.man_eval_readd),
 ]

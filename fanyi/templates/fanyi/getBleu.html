@@ -1,0 +1,289 @@
+{% extends 'main.html' %} {% load tag_tools %} {% block content %}
+<div class="row">
+	<div class="col-md-5">
+		<div class="tile">
+			<h3 class="tile-title">添加服务&nbsp;&nbsp;&nbsp;<span style="color:red;font-size:15px;" id="error_xml"></span></h3>
+			<div class="tile-body">
+				<form class="form-horizontal" method="POST" id="form_interface_addtask">
+					{% csrf_token %}
+					<div class="form-group row">
+						<label class="control-label col-md-2">TestUrl</label>
+						<div class="col-md-10">
+							<input type="text" class="form-control" id="test_url" name="test_url" placeholder="http://ip:port">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">BaseUrl</label>
+						<div class="col-md-10">
+							<input type="text" class="form-control" id="base_url" name="base_url" placeholder="http://ip:port">
+						</div>
+					</div>
+					<div class="form-group row">
+		              	<label class="control-label col-md-2">ReqType</label>
+		              	<div class="col-md-4">
+		                <select id="reqtype" name="reqtype" class="form-control" style="cursor: pointer;">
+							<option value="xml" selected=""> xml </option>
+							<option value="alltrans_json" style="display: none;"> alltrans_json </option>
+							<option value="json"> json </option>
+						</select>
+		              </div>
+		            </div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">Query cfg</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" id="query_data_ip" name="query_data_ip" placeholder="ip addr">
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="query_data_user" name="query_data_user" placeholder="user">
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="query_data_pass" name="query_data_pass" placeholder="password">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">Query path</label>
+						<div class="col-md-10">
+							<input type="text" class="form-control" id="query_data_path" name="query_data_path" placeholder="/search/odin/daemon/fanyi/query(请求文件的绝对路径)">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2">Testtag</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="testtag" name="testtag" placeholder="当前测试的备注信息">
+						</div>
+					</div>
+					
+				</form>
+			</div>
+			<div class="tile-footer">
+				<div class="row">
+					<div class="col-md-9 col-md-offset-2">
+						<button class="btn btn-primary" type="button" id="add_fy_task"><i class="fa fa-fw fa-lg fa-check-circle"></i>Add</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-7">
+		<div class="tile">
+			<h3 class="tile-title">任务列表</h3>
+			<div class="tile-body">
+				<table class="table" id="reqData">
+				<thead>
+					<tr>
+						<td>ID</td>
+						<td>StartTime</td>
+						<td>EndTime</td>
+						<td>TestUrl</td>
+						<td>BaseUrl</td>
+						<td>ReqType</td>
+						<td>Testtag</td>
+						<td>Status</td>						
+						<td style="display: none;">User</td>						
+					</tr>
+				</thead>
+				<tbody style="cursor: pointer;" id="reqBody">
+					{% for item in li %}
+					<tr class="get_data">
+						<td>{{ item.id }}</td>
+						<td>{{ item.start_time }}</td>
+						<td>{{ item.end_time }}</td>
+						<td>{{ item.test_url }}</td>
+						<td>{{ item.base_url }}</td>
+						<td>{{ item.reqtype }}</td>
+						<td>{{ item.testtag }}</td>
+						<td>
+							<a href="/fanyi/interface/detail/?tasknum={{ item.id }}">
+								{% ifequal item.status 0 %}
+								<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Waiting</button>
+								{% endifequal %} 
+								{% ifequal item.status 1 %}
+								<button class="btn btn-outline-secondary btn-sm" style="color: cream;">Ready</button>
+								{% endifequal %} 
+								{% ifequal item.status 2 %}
+								<button class="btn btn-outline-parimary btn-sm" style="color: cream;">Running</button>
+								{% endifequal %} 
+								{% ifequal item.status 3 %}
+								<button class="btn btn-outline-danger btn-sm" style="color: red;">Error</button>
+								{% endifequal %} 
+								{% ifequal item.status 4 %}
+								<button class="btn btn-outline-success btn-sm" style="color: cream;">Finished</button>
+								{% endifequal %} 
+								{% ifequal item.status 5 %}
+								<button class="btn btn-outline-info btn-sm" style="color: green;">Canceled</button>
+								{% endifequal %} 
+								{% ifequal item.status 6 %}
+								<button class="btn btn-outline-info btn-sm" style="color: green;">Canceling</button>
+								{% endifequal %}							
+							</a>
+						</td>
+						<td style="display: none;">{{ item.user }}</td>
+						<td style="display: none;">{{ item.queryip }}</td>
+						<td style="display: none;">{{ item.queryuser }}</td>
+						<td style="display: none;">{{ item.querypassw }}</td>
+						<td style="display: none;">{{ item.querypath }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+			<div id="showDiv"></div>
+	        <div class="tile-footer">
+	        	<div class="row">
+	            <div class="col-md-9 col-md-offset-2">
+	            	<nav aria-label="Page navigation">
+						<ul class="pagination">
+				    		{{page_str}}
+						</ul>
+					</nav>
+	            </div>
+	         </div>        	
+	        </div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %} {% block js %}
+<script>
+	$(function(){
+    		//判断ajax里面的方法是get还是post
+    		function csrfSafeMethod(method){
+    			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    		}
+    		
+			//只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
+    		$.ajaxSetup({
+    			beforeSend:function(xhr,settings){
+    				if(!csrfSafeMethod(settings.type)&&!this.crossDomain){
+    					xhr.setRequestHeader('X-CSRFtoken',$.cookie('csrftoken'))
+    				}    				
+    			}
+    		});
+			
+		
+			//add task
+			$('#add_fy_task').click(function() {
+				var test_url = $('#test_url').val()
+				var base_url = $('#base_url').val()
+				if(test_url != "" && test_url != "") {
+					$.ajax({
+						type: "POST",
+						url: "/fanyi/interface/",
+						async: true,
+						traditional: true,
+						data: $('#form_interface_addtask').serialize(),
+						dataType: 'JSON',
+						success: function(obj) {
+							console.log(obj.status)
+							if(obj.status) {
+								location.reload();
+							} else {
+								$('#error_xml').text(obj.error);
+							}
+						},
+						error: function() {
+		
+						},
+					});
+					$('#error_xml').text('');
+				} else {
+					$('#error_xml').text('test_url/base_url都必填！');
+				}
+			})
+		
+			//table hover
+			$(function() {
+				function showBox(obj, box) {
+					var timer = null;
+					$(obj).on("mouseover", function(e) {
+						clearTimeout(timer);
+						var clientX = e.clientX;
+						var clientY = e.clientY;
+						var y = clientY + 20;
+						var txt = $(this).text();
+						timer = setTimeout(function() {
+							$(box).css("left", clientX).css("top", y);
+							if(txt == "") {
+								$(box).hide();
+							} else {
+								$(box).show();
+								$(box).html(txt);
+							}
+						}, 300);
+					});
+					$(obj).on("mouseout", function() {
+						clearTimeout(timer);
+						$(box).hide();
+					});
+				}
+				showBox("#reqData > tbody td", "#showDiv");
+			});
+		
+			//del
+			$('.del_line').click(function() {
+				var line_id = $(this).parent().parent().attr('req_id');
+				$.ajax({
+					type: "POST",
+					url: "del_xml_line",
+					async: true,
+					data: {
+						'line_id': line_id
+					},
+					dataType: 'JSON',
+					success: function(obj) {
+						if(obj.status) {
+							location.reload();
+						} else {
+							$('#error_xml').text(obj.error);
+						}
+					},
+					error: function() {
+		
+					}
+				});
+		
+			})
+						
+			$('#lan_filter').change(function() {
+				var sel_lang = $(this).val();
+				console.log(sel_lang)
+				if(sel_lang == 'all') {
+					$('#reqBody').children().each(function() {
+						$(this).removeClass('hide');
+					})
+				} else {
+					$('#reqBody').children().each(function() {
+						var line_lang = $(this).attr('lang_type');
+						if(sel_lang != line_lang) {
+							$(this).addClass('hide');
+						} else {
+							$(this).removeClass('hide');
+						}
+					})
+		
+				}
+			})
+		})
+	//getData
+		$('.get_data').dblclick(function() {
+			var linelst = $(this).children();
+			test_url = $(linelst[3]).text();
+			base_url = $(linelst[4]).text();
+			reqtype = $(linelst[5]).text();
+			testtag = $(linelst[6]).text();
+			queryip = $(linelst[9]).text();
+			queyruser = $(linelst[10]).text();
+			querypassw = $(linelst[11]).text();
+			querypath = $(linelst[12]).text();
+			$('#test_url').val(test_url);
+			$('#base_url').val(base_url);
+			$('#reqtype').val(reqtype);
+			$('#query_data_ip').val(queryip);
+			$('#query_data_user').val(queyruser);
+			$('#query_data_pass').val(querypassw);
+			$('#query_data_path').val(querypath);
+			$('#testtag').val(testtag);
+		})
+</script>
+{% endblock %}
