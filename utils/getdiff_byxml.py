@@ -152,7 +152,7 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
     tmp = 0
     finished = 0
     diffnum = 0
-    with open(query_tools_path+'query/'+filename,'r') as fin,open(query_tools_path+'result_log/'+'base_res_'+str(mission_id),'wb+') as fw_base,open(query_tools_path+'result_log/'+'test_res_'+str(mission_id),'wb+') as fw_test,open(query_tools_path+'result_log/'+'all_req_'+str(mission_id),'wb+') as allo:
+    with open(query_tools_path+'query/'+filename+'_'+str(mission_id),'r') as fin,open(query_tools_path+'result_log/'+'base_res_'+str(mission_id),'wb+') as fw_base,open(query_tools_path+'result_log/'+'test_res_'+str(mission_id),'wb+') as fw_test,open(query_tools_path+'result_log/'+'all_req_'+str(mission_id),'wb+') as allo:
         set_status(2)
         if reqtype == 'xml':
             for item in fin.readlines():
@@ -313,7 +313,7 @@ def getInfoFromDb(task_id):
     update_errorlog("[%s] Get task info from db by id success\n" % get_now_time())
     return data
     
-def getQueryFile(root_path):
+def getQueryFile(root_path,filename):
     # scp query to tools dir
     try:
         update_errorlog("[%s] %s\n" % (get_now_time(), "start try to scp query data"))
@@ -326,7 +326,7 @@ def getQueryFile(root_path):
         #        for item in oldfile:
         #            os.popen('mv %s %s' % (root_path+'query/'+item,root_path+'query_bak/'+filename+'_'+item))
         if queryip!='' and queryuser!='' and querypassw!='' and querypath!='':
-            scpres = scp_new_file(root_path+'query',queryip,queryuser,querypassw,querypath,'query_data')
+            scpres = scp_new_file(root_path+'query',queryip,queryuser,querypassw,querypath,'query_data',filename)
         else:
             update_errorlog("[%s] %s\n" % (get_now_time(), "query data configure is wrong"))
             set_status(3)
@@ -339,7 +339,7 @@ def getQueryFile(root_path):
         sys.exit()
     update_errorlog("[%s] %s\n" % (get_now_time(), "query data scp local success"))
 
-def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filetype):
+def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filetype,filename):
     update_errorlog("[%s] try scp rd %s to test enviroment\n" % (get_now_time(),filetype))
     if filetype != 'query_data':
         if os.path.exists(file_path):
@@ -348,7 +348,7 @@ def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filety
 
     passwd_key = '.*assword.*'
 
-    cmdline = 'scp -r %s@%s:%s %s/%s' %(newfileuser, newfileip, newfilepath, file_path,task_id)
+    cmdline = 'scp -r %s@%s:%s %s/%s' %(newfileuser, newfileip, newfilepath, file_path,filename+'_'+str(task_id))
     try:
         child=pexpect.spawn(cmdline,maxread=20000,timeout=300)
         os.popen("set timeout -1")
@@ -422,29 +422,39 @@ def sendMail(title,mail_body,tlist,attname,attbody):
 template_mail = """<html><head><style type="text/css">table{border-collapse:collapse;margin:0 auto;text-align:center;}table td,table th{border:1px solid #cad9ea;color:#666;height:30px;}table thead th{background-color:#CCE8EB;width:100px;}table tr:nth-child(odd){background:#fff;}table tr:nth-child(even){background:#F5FAFA;}</style></head><table width='90%' class='table'><thead><tr><th>ID</th><th>StartTime</th><th>EndTime</th><th>test_url</th><th>base_url</th><th>Finished</th><th>DiffNum</th><th>DiffRate(%)</th><th>Testtag</th><th>Detail</th></tr></thead>"""
 temp_format = """<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href="http://frontqa.web.sjs.ted/fy_xmldetail?tasknum=%d">Detail</a></td></tr></table></body></html>"""
 if __name__ == '__main__':
-    logstr = logUtils.logutil(task_id)
-    subpid = os.getpid()
-    set_subpid(subpid,1)
-    (test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath,user) = getInfoFromDb(task_id)
-    getQueryFile(root_path)
-    filename = os.path.basename(querypath)
-    print(filename)
-    getDiff(root_path,filename,task_id,base_url,test_url,reqtype)
-    # send result by mail
-    db = pymysql.connect(database_host,database_user,database_pass,database)
-    cursor = db.cursor()
-    sql = "SELECT id,start_time,end_time,test_url,base_url,user,diffnum,finished,testtag FROM %s where id='%d'" % ('fanyi_interfaceeval',task_id)
-    cursor.execute(sql)
-    (id,start_time,end_time,test_url,base_url,task_user,diffnum,finished,testtag) = cursor.fetchone()
-    attname=''
-    attbody=''
-    tlist=list()
-    tlist.append(task_user+'@Sogou-inc.com')
-    title = '翻译XML自动化diff详情'
-    result=0
-    if finished!=0:
-        result = round(float(diffnum)/float(finished)*100,2)
-        mail_body = template_mail+ temp_format % (id,start_time,end_time,test_url,base_url,finished,diffnum,result,testtag,int(id))
-    else:
-        mail_body = template_mail+ temp_format % (id,start_time,end_time,test_url,base_url,finished,diffnum,'0',testtag,int(id))
-    sendMail(title,mail_body,tlist,attname,attbody)
+    try:
+        logstr = logUtils.logutil(task_id)
+        subpid = os.getpid()
+        set_subpid(subpid,1)
+        (test_url,base_url,reqtype,queryip,queryuser,querypassw,querypath,user) = getInfoFromDb(task_id)
+        filename = os.path.basename(querypath)
+        getQueryFile(root_path,filename)
+        getDiff(root_path,filename,task_id,base_url,test_url,reqtype)
+    except Exception as e:
+        print(e)
+        update_errorlog("init failed!")
+        set_status(3)
+        sys.exit()
+    try:
+        # send result by mail
+        db = pymysql.connect(database_host,database_user,database_pass,database)
+        cursor = db.cursor()
+        sql = "SELECT id,start_time,end_time,test_url,base_url,user,diffnum,finished,testtag FROM %s where id='%d'" % ('fanyi_interfaceeval',task_id)
+        cursor.execute(sql)
+        (id,start_time,end_time,test_url,base_url,task_user,diffnum,finished,testtag) = cursor.fetchone()
+        attname=''
+        attbody=''
+        tlist=list()
+        tlist.append(task_user+'@Sogou-inc.com')
+        title = '翻译XML自动化diff详情'
+        result=0
+        if finished!=0:
+            result = round(float(diffnum)/float(finished)*100,2)
+            mail_body = template_mail+ temp_format % (id,start_time,end_time,test_url,base_url,finished,diffnum,result,testtag,int(id))
+        else:
+            mail_body = template_mail+ temp_format % (id,start_time,end_time,test_url,base_url,finished,diffnum,'0',testtag,int(id))
+        sendMail(title,mail_body,tlist,attname,attbody)
+    except Exception as e:
+        update_errorlog("send mail failed!")
+        set_status(3)
+        sys.exit()
