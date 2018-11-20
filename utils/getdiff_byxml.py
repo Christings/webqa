@@ -348,7 +348,7 @@ def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filety
 
     passwd_key = '.*assword.*'
 
-    cmdline = 'scp -r %s@%s:%s %s/' %(newfileuser, newfileip, newfilepath, file_path)
+    cmdline = 'scp -r %s@%s:%s %s/%s' %(newfileuser, newfileip, newfilepath, file_path,task_id)
     try:
         child=pexpect.spawn(cmdline,maxread=20000,timeout=300)
         os.popen("set timeout -1")
@@ -364,6 +364,8 @@ def scp_new_file(file_path,newfileip,newfileuser,newfilepassw,newfilepath,filety
 
     except Exception as e:
         update_errorlog("[%s] %s, scp rd %s failed \n" % (get_now_time(), e,filetype))
+        set_status(3)
+        sys.exit()
     update_errorlog("[%s] try scp rd %s to test enviroment success\n" % (get_now_time(),filetype))
     return 0
 

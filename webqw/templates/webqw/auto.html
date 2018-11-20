@@ -9,16 +9,16 @@
                                                                        id="error_xml"></span></h3>
                     <form class="row" action="" method="POST" id="form_automation">
                         {% csrf_token %}
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-11">
                             <label class="control-label">Basesvn</label>
                             <textarea class="form-control" rows="5" id="qw_basesvn" name="qw_basesvn"
                                       placeholder='job.ini[main.svn]'
                             ></textarea>
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-11" >
                             <label class="control-label">Testsvn</label>
                             <textarea class="form-control" rows="5" id="qw_testsvn" name="qw_testsvn"
-                                      placeholder='job.ini[main.svn]'
+                                      placeholder='job.ini[main.svn]' style="word-wrap: normal"
                             ></textarea>
                         </div>
                         <div class="form-group col-md-12 row">
@@ -168,7 +168,7 @@
                     </thead>
                     <tbody id="reqBody">
                     {% for item in req_lst %}
-                        <tr class="get_data">
+                        <tr req_id="{{ item.id }}" class="get_data">
                             <td>{{ item.id }}</td>
                             <td style="display: none;">{{ item.create_time }}</td>
                             <td>{{ item.start_time }}</td>
@@ -221,6 +221,8 @@
                             <td style="display: none;">{{ item.query_ip }}</td>
                             <td style="display: none;">{{ item.query_user }}</td>
                             <td style="display: none;">{{ item.query_pwd }}</td>
+                            <td><button class="del_line btn btn-primary">删除</button></td>
+
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -317,7 +319,7 @@
             var line_id = $(this).parent().parent().attr('req_id');
             $.ajax({
                 type: "POST",
-                url: "del_xml_line",
+                url: "/webqw/auto/del",
                 async: true,
                 data: {
                     'line_id': line_id
