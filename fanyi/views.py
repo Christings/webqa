@@ -33,11 +33,15 @@ def auth(func):
 # auto Bleu
 
 # interface eval
+@csrf_exempt
 def if_eval_cancal(request):
     ret = {'status': True, 'errro': None, 'data': None}
     try:
         cancel_id = request.POST.get('task_id')
         models.InterfaceEval.objects.filter(id=cancel_id).update(status=6)
+        task = models.InterfaceEval.objects.filter(id=cancel_id).first()
+        os.kill(int(task.runningPID), signal.SIGTERM)
+        models.InterfaceEval.objects.filter(id=cancel_id).update(status=5)
     except Exception as e:
         ret['error'] = 'error:' + str(e)
         ret['status'] = False
