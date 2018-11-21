@@ -41,7 +41,7 @@ def if_eval_cancal(request):
         models.InterfaceEval.objects.filter(id=cancel_id).update(status=6)
         task = models.InterfaceEval.objects.filter(id=cancel_id).first()
         os.kill(int(task.runningPID), signal.SIGTERM)
-        models.InterfaceEval.objects.filter(id=cancel_id).update(status=5)
+        models.InterfaceEval.objects.filter(id=cancel_id).update(end_time=get_now_time(),status=5)
     except Exception as e:
         ret['error'] = 'error:' + str(e)
         ret['status'] = False
@@ -81,7 +81,7 @@ def interface(request):
             task_list = models.InterfaceEval.objects.order_by('id')[::-1]
             page_obj = pagination.Page(current_page, len(task_list), 16, 9)
             data = task_list[page_obj.start:page_obj.end]
-            page_str = page_obj.page_str("/interface?page=")
+            page_str = page_obj.page_str("/fanyi/interface?page=")
         except Exception as e:
             print(e)
             pass
