@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'webqw.apps.WebqwConfig',
     'wiki.apps.WikiConfig',
     'editor_md',
+    'publicEnv.apps.PublicenvConfig',
 ]
 
 MIDDLEWARE = [

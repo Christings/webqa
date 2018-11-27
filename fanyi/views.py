@@ -37,7 +37,8 @@ def if_eval_cancal(request):
     ret = {'status': True, 'errro': None, 'data': None}
     try:
         cancel_id = request.POST.get('task_id')
-        models.InterfaceEval.objects.filter(id=cancel_id).update(status=6)
+        task = models.InterfaceEval.objects.filter(id=cancel_id).update(status=6)
+        os.kill(int(task['runningPID']), signal.SIGTERM)
     except Exception as e:
         ret['error'] = 'error:' + str(e)
         ret['status'] = False
@@ -64,7 +65,7 @@ def if_eval_detail(request):
                    'loginfo': loginfo, 'li': data, 'page_str': page_str})
 
 
-@auth
+# @auth
 def interface(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')
