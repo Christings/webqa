@@ -154,7 +154,7 @@ def get_menu_html(menu_data):
                                                display="is-expanded" if item['open'] else "",
                                                status="open" if item['open'] else "close",
                                                icon_random=icon_label[temp_num])
-        icon_label.pop(temp_num)
+        #icon_label.pop(temp_num)
     return menu_html
 
 
