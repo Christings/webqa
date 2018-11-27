@@ -25,6 +25,7 @@ from . import views
 app_name = 'publicEnv'
 urlpatterns = [
     # auto Bleu
-    re_path(r'^publicsv/deadlink$', views.deadlink),
-    re_path(r'^publicsv/svcheck$', views.svcheck),
+    re_path(r'^deadlink$', views.deadlink),
+    re_path(r'^svcheck/$', views.svcheck),
+    re_path(r'^svcheck/detail/$', views.svcheck),
 ]

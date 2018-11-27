@@ -1,0 +1,334 @@
+{% extends 'father.html' %}{% block content %}{% load tag_tools %}{% load static %}
+<div class="row">       
+    <div class="col-md-12">
+      <div class="tile">
+        <h3 class="tile-title">请求列表</h3>
+        <div class="tile-body">
+        	<table class="table" id="reqData">
+			<thead>
+				<tr>
+					<td>ID</td>
+					<td>ServiceName</td>
+					<td>Host</td>
+					<td>Port</td>
+					<td>Tpye</td>
+					<td>Status</td>
+				</tr>
+			</thead>
+			<tbody id="reqBody">
+				{% for item in li %}
+				<tr req_id="{{item.id}}" class="get_data">
+					<td style="">{{item.id}}</td>
+					<td ><a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">{{item.sv_name}}</a></td>
+					<td>{{item.sv_host}}</td>
+					<td>{{item.sv_port}}</td>
+					<td>{{item.sv_port_type}}</td>
+					<td>{{item.status}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+		</table>
+        </div>
+        <div id="showDiv"></div>
+        <div class="tile-footer">
+        	<div class="row">
+            <div class="col-md-9 col-md-offset-2">
+            	<nav aria-label="Page navigation">
+					<ul class="pagination">
+			    		{{page_str}}
+					</ul>
+				</nav>
+            </div>
+         </div>        	
+        </div>
+      </div>
+    </div>
+    <!--<div class="clearix"></div>-->
+</div>
+{% endblock %}
+{% block js %}
+<script>	
+	$(function(){
+		
+			$("#reqtype").change(function(){
+			    var opt=$("#reqtype").val();
+			    if(opt == 'json') {
+			    	$('#Chinese_query').removeClass('hide');
+			    	$('#lan_sel').val('en');
+			    	$('#lan_sel')[0].disabled=true;
+			    	$('#inlineRadio1')[0].disabled=true;
+			    	$('#inlineRadio2')[0].disabled=true;
+					$('#inlineRadio1').prop("checked", 'checked');
+					$('#inlineRadio2').removeAttr("checked");			    	
+				} else {
+					$('#Chinese_query').addClass('hide');
+					$('#lan_sel')[0].disabled=false;
+					$('#inlineRadio1')[0].disabled=false;
+					$('#inlineRadio2')[0].disabled=false;
+				}
+			});
+    		//判断ajax里面的方法是get还是post
+    		function csrfSafeMethod(method){
+    			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    		}
+    		
+			//只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
+    		$.ajaxSetup({
+    			beforeSend:function(xhr,settings){
+    				if(!csrfSafeMethod(settings.type)&&!this.crossDomain){
+    					xhr.setRequestHeader('X-CSRFtoken',$.cookie('csrftoken'))
+    				}    				
+    			}
+    		});
+    		
+    		function getQueryString(name) {
+			    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			    var r = window.location.search.substr(1).match(reg);
+			    if (r != null)
+			        return unescape(r[2]);
+			    return null;
+			}
+    		
+			var field_name = getQueryString("field");
+			if(field_name){
+				$('#reqfield').val(getQueryString("field"));
+				
+			}else{
+				$('#reqfield').val('all');
+			}
+    		
+    		//save
+			$('#save_xml').click(function() {
+				var reqtext = $('#reqtext').val()
+				var inputHost = $('#inputHost').val()
+				var lan_sel = $('#lan_sel').val()
+				var inlineRadioOptions = $("input[name='inlineRadioOptions']:checked").val()
+				var result = $('#result').val()
+				var reqtpye = $('#reqtype').val()
+				var Chinese_query = $('#Chn_query').val()
+				var req_field = $('#field').val()
+				console.log(Chinese_query)
+				if(reqtext != "" && inputHost != "") {
+					$.ajax({
+						type: "POST",
+						url: "/fanyi/debug/req_info_save/",
+						async: true,
+						traditional: true,
+						data: {
+							'inputHost': inputHost,
+							'lan_sel': lan_sel,
+							'inlineRadioOptions': inlineRadioOptions,
+							'reqtext': reqtext,
+							'result': result,
+							'reqtype':reqtpye,
+							'Chinese_query':Chinese_query,
+							'req_field':req_field,
+						},
+						dataType: 'JSON',
+						success: function(obj) {
+							if(obj.status) {
+								location.reload();
+							} else {
+								$('#error_xml').text(obj.error);
+							}
+						},
+						error: function() {
+		
+						},
+					});
+					$('#error_xml').text('');
+				} else {
+					if(reqtext == '') {
+						$('#error_xml').text('Request不可为空。');
+					} else if(inputHost == '') {
+						$('#error_xml').text('Host不可为空。');
+					} else {
+						$('#error_xml').text('未知错误。');
+					}
+				}
+			})
+		
+			//request
+			$('#request_xml').click(function() {
+				var reqtext = $('#reqtext').val()
+				var inputHost = $('#inputHost').val()
+				if(reqtext != "" && inputHost != "") {
+					$.ajax({
+						type: "POST",
+						url: "/fanyi/debug/",
+						async: true,
+						traditional: true,
+						data: $('#form_xml').serialize(),
+						dataType: 'JSON',
+						success: function(obj) {
+							if(obj.status) {
+								if(obj.reqtype=='alltrans_json'){
+									resultSplit=(obj.transResult).split('|||');
+									result_str=""
+									for(i=0;i<resultSplit.length;i++){
+										result_str+=(resultSplit[i]+'\r\n')
+									}
+//									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
+									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'
+								}else if(obj.reqtype=='json'){
+									resultSplit=(obj.transResult).split('^^^');
+									result_str=""
+									for(i=0;i<resultSplit.length;i++){
+										result_str+=(resultSplit[i]+'\r\n')
+									}
+//									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
+									debugInfo_str="请求串:\r\n"+obj.requestStr
+								}else{
+									result_str=obj.transResult
+									
+//									debugInfo_str="Debug信息：\r\n"+obj.debugInfo+'\r\n'+ "请求串:\r\n"+ obj.requestStr
+									debugInfo_str="Debug信息：\r\n"+obj.debugInfo+'\r\n'
+								}
+								$('#result').val(result_str)
+//								$('#debugInfo').val(debugInfo_str);
+								$('#debugInfo').text(debugInfo_str);
+								$('#oriresult').text(obj.oriresult);
+								$('#error_xml').text('');
+							} else {
+								$('#error_xml').text(obj.error);
+							}
+						},
+						error: function() {
+		
+						},
+					});
+					$('#error_xml').text('');
+				} else {
+					if(reqtext == '') {
+						$('#error_xml').text('Request不可为空');
+					} else if(inputHost == '') {
+						$('#error_xml').text('Host不可为空');
+					} else {
+						$('#error_xml').text('未知错误');
+					}
+				}
+			})
+		
+			//del
+			$('.del_line').click(function() {
+				var line_id = $(this).parent().parent().attr('req_id');
+				$.ajax({
+					type: "POST",
+					url: "/fanyi/debug/del_line/",
+					async: true,
+					data: {
+						'line_id': line_id,
+					},
+					dataType: 'JSON',
+					success: function(obj) {
+						if(obj.status) {
+							location.reload();
+						} else {
+							$('#error_xml').text(obj.error);
+						}
+					},
+					error: function() {
+		
+					}
+				});
+		
+			})
+		
+			//getData
+			$('.get_data').dblclick(function() {
+				var linelst = $(this).children();
+				reqtype = $(linelst[0]).text();
+				if(reqtype == 'json'){
+					$('#Chinese_query').removeClass('hide');
+			    	$('#lan_sel').val('en');
+			    	$('#lan_sel')[0].disabled=true;
+			    	$('#inlineRadio1')[0].disabled=true;
+			    	$('#inlineRadio2')[0].disabled=true;
+					$('#inlineRadio1').prop("checked", 'checked');
+					$('#inlineRadio2').removeAttr("checked");
+				}else{
+					$('#Chinese_query').addClass('hide');
+					$('#lan_sel')[0].disabled=false;
+					$('#inlineRadio1')[0].disabled=false;
+					$('#inlineRadio2')[0].disabled=false;
+				}
+				hostip = "http://"+$(linelst[1]).text();
+				direction = $(linelst[2]).text();
+				reqfield = $(linelst[3]).text();
+				reqtext = $(linelst[4]).text();
+				result = $(linelst[5]).text();
+				isfromzh = $(linelst[6]).text();
+				oriresult = $(linelst[7]).text();
+				chnquery = $(linelst[8]).text();
+				$('#Chn_query').val(chnquery);
+				$('#field').val(reqfield);
+				$('#inputHost').val(hostip);
+				$('#reqtype').val(reqtype);
+				$('#lan_sel').val(direction);
+				$('#reqtext').val(reqtext);
+				$('#oriresult').val(oriresult);
+				if(isfromzh == 'fromzh') {
+					$('#inlineRadio2').prop("checked", 'checked');
+					$('#inlineRadio1').removeAttr("checked");
+				} else {
+					$('#inlineRadio2').removeAttr("checked");
+					$('#inlineRadio1').prop("checked", 'checked');
+					
+				}
+				$('#result').val(result);
+				$('#debugInfo').text('');
+			})
+		
+			$('#lan_filter').change(function() {
+				var sel_lang = $(this).val();
+				if(sel_lang == 'all') {
+					$('#reqBody').children().each(function() {
+						$(this).removeClass('hide');
+					})
+				} else {
+					$('#reqBody').children().each(function() {
+						var line_lang = $(this).attr('lang_type');
+						if(sel_lang != line_lang) {
+							$(this).addClass('hide');
+						} else {
+							$(this).removeClass('hide');
+						}
+					})
+		
+				}
+			})
+			//table hover
+//			$(function() {
+//				function showBox(obj, box) {
+//					var timer = null;
+//					$(obj).on("mouseover", function(e) {
+//						clearTimeout(timer);
+//						var clientX = e.clientX;
+//						var clientY = e.clientY;
+//						var y = clientY + 20;
+//						var txt = $(this).text();
+//						timer = setTimeout(function() {
+//							$(box).css("left", clientX).css("top", y);
+//							if(txt == "") {
+//								$(box).hide();
+//							} else {
+//								$(box).show();
+//								$(box).html(txt);
+//							}
+//						}, 300);
+//					});
+//					$(obj).on("mouseout", function() {
+//						clearTimeout(timer);
+//						$(box).hide();
+//					});
+//				}
+//				showBox("#reqData > tbody td", "#showDiv");
+//			});
+//  		
+    	})
+	
+	
+	
+</script>
+{% endblock %}

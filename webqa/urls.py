@@ -33,6 +33,7 @@ urlpatterns = [
     re_path(r'webqo/', include('webqo.urls')),
     re_path(r'webqw/', include('webqw.urls')),
     re_path(r'wiki/', include('wiki.urls')),
+    re_path(r'publicsv/', include('publicEnv.urls')),
 
     re_path(r'', include('editor_md.urls')),
     re_path(r"^static/media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
