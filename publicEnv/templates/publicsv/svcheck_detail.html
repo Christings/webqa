@@ -1,229 +1,120 @@
-{% extends 'father.html' %}
-{% block content %}
-    {% load static %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Automation Detail</h3>
-                <table class="table" id="reqData">
-                    <thead>
-                    <tr>
-                        <td>ID</td>
-                        <td>CreateTime</td>
-                        <td>StartTime</td>
-                        <td>Test QPS</td>
-                        <td>Press Time</td>
-                        <td>Press Expid</td>
-                        <td>Press Rate</td>
-                        <td>Testtag</td>
-                        <td>Status</td>
-                        <td style="display: none;">TestItem</td>
-                        <td>User</td>
-                        <td style="">操作</td>
-                    </tr>
-                    </thead>
-                    <tbody id="reqBody">
-                    <tr class="get_data">
-                        <td style="width: 20px;">{{ task_detail.0.id }}</td>
-                        <td class="tabletd">{{ task_detail.0.create_time }}</td>
-                        <td>{{ task_detail.0.start_time }}</td>
-                        <td>{{ task_detail.0.press_qps }}</td>
-                        <td>{{ task_detail.0.press_time }}min</td>
-                        <td>{{ task_detail.0.press_expid }}</td>
-                        <td>{{ task_detail.0.press_rate }}%</td>
-                        <td class="tabletd">{{ task_detail.0.testtag }}</td>
-                        <td class="tabletd">
-                            {% ifequal task_detail.0.status 0 %}
-                                <font color="gray">Waiting</font>{% endifequal %} {% ifequal task_detail.0.status 1 %}
-                            <font color="cream">Ready</font>{% endifequal %} {% ifequal task_detail.0.status 2 %}
-                            <font color="green">Running</font>{% endifequal %} {% ifequal task_detail.0.status 3 %}
-                            <font color="red">Error</font>{% endifequal %} {% ifequal task_detail.0.status 4 %}
-                            <font color="blue">Finished</font>{% endifequal %} {% ifequal task_detail.0.status 5 %}
-                            <font color="orange">Canceled</font>{% endifequal %} {% ifequal task_detail.0.status 6 %}
-                            <font color="orange">Canceling</font>{% endifequal %}
-                        </td>
-                        {% ifequal task_detail.0.testitem 1 %}
-                            <td class="tabletd" style="display: none;">cost</td>
-                        {% else %}
-                            <td class="tabletd" style="display: none;">Null</td>
-                        {% endifequal %}
-                        <td class="tabletd">{{ task_detail.0.user }}</td>
-                        <td class="tabletd">
-                            <button class="del_line" id="restart_automation" task_id="{{ task_detail.0.id }}">Restart</button>
-                            {% ifequal task_detail.0.status 2 %}
-                                <button class="del_line" id="cancel_automation" task_id="{{ task_detail.0.id }}">Cancel
-                                </button>
-                            {% endifequal %}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Cost Status</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <td>Test</td>
-                        <td>Base</td>
-                    </tr>
-                    </thead>
-                    <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}">
-                        <td><div style="width:100%;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.cost_test }}</pre></div></td>
-                        <td><div style="width:100%;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.cost_base }}</pre></div></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">SVN Info</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <td>Test SVN</td>
-                        <td>Base SVN</td>
-                    </tr>
-                    </thead>
-                    <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td class="col-md-6"><div style="width: 520px;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.testsvn }}</pre></div></td>
-                        <td class="col-md-6"><div style="width: 520px;overflow-x: scroll;: scroll"><pre>{{ task_detail.0.basesvn }}</pre></div></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Log Info</h3>
-                <table class="table">
-                    <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td><pre>{{ task_detail.0.errorlog }}</pre></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-{% endblock %}
+{% extends 'father.html' %} {% load static %}{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="alert alert-dismissible alert-success" role="alert">任务详情&nbsp;&nbsp;&nbsp;
+				<a class="alert-link" href="/publicsv/svcheck/"><<返回列表</a>
+			</div>
+			<div class="tile-body">
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table" id="reqData">
+		                    <thead>
+		                    <tr>
+		                        <td>ID</td>
+		                        <td>CreateTime</td>
+		                        <td>UpdateTime</td>
+		                        <td>ServiceName</td>
+		                        <td>ServiceHost</td>
+		                        <td>ServicePort</td>
+		                        <td>ServiceType</td>
+		                        <td>Status</td>
+		                    </tr>
+		                    </thead>
+		                    <tbody id="reqBody">
+		                    <tr class="get_data">
+		                        <td style="width: 20px;">{{ task_detail.id }}</td>
+		                        <td>{{ task_detail.create_time }}</td>
+		                        <td>{{ task_detail.update_time }}</td>
+		                        <td>{{ task_detail.sv_name }}</td>
+		                        <td>{{ task_detail.sv_host }}</td>
+		                        <td>{{ task_detail.sv_port }}</td>
+		                        <td>{{ task_detail.sv_port_type }}</td>
+		                        <td>
+		                            {% ifequal task_detail.status 0 %}
+		                                <button class="btn btn-outline-info btn-sm" style="background-color: red;color: #000000;">离线</button>
+		                            {% endifequal %}
+		                            {% ifequal task_detail.status 1 %}
+		                            	<button class="btn btn-outline-info btn-sm" style="background-color: green;color: #000000;">在线</button>
+		                            {% endifequal %}
+		                        </td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+					<div id="showDiv"></div>
+					</div>
+				</div>				
+			</div>
+			<div class="alert alert-dismissible alert-success" role="alert">SVN INFO&nbsp;&nbsp;&nbsp;
+				</div>
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table">
+		                    <thead>
+		                    <tr>
+		                        <td><td class="col-md-12"><div><pre>{{ task_detail.svninfo }}</pre></div></td></td>
+		                    </tr>
+		                    </thead>
+		                </table>
+					</div>
+				</div>
+			<div class="alert alert-dismissible alert-success" role="alert">Log Info</div>
+			<div class="tile-body">
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table" id="reqData">
+		                    <thead>
+		                    <tr>
+		                        <td>Service_Path</td>
+		                        <td>Online_host</td>
+		                        <td>Online_path</td>
+		                    </tr>
+		                    </thead>
+		                    <tbody id="reqBody">
+		                    <tr class="get_data">
+		                        <td>{{ task_detail.sv_path }}</td>
+		                        <td>{{ task_detail.host_online }}</td>
+		                        <td>{{ task_detail.path_online }}</td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-{% block js %}
-    <script>
-
-        //判断ajax里面的方法是get还是post
-        function csrfSafeMethod(method) {
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-
-        //只要执行一次ajaxSetup进行header设置,就可以不用在没个ajax里面添加header信息了
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader('X-CSRFtoken', $.cookie('csrftoken'))
-                }
-            }
-        });
-
-        //cancel task
-        $('#cancel_automation').click(function () {
-            var task_id = $(this).attr('task_id');
-            $.ajax({
-                type: "POST",
-                url: "/webqo/auto/cancel",
-                async: true,
-                traditional: true,
-                data: {
-                    'task_id': task_id,
-                },
-                dataType: 'JSON',
-                success: function (obj) {
-                    if (obj.status) {
-                        location.reload();
-                    } else {
-                        $('#error_xml').text(obj.error);
-                    }
-                },
-                error: function () {
-
-                },
-            });
-        })
-
-        //restart task
-        $('#restart_automation').click(function () {
-            var task_id = $(this).attr('task_id');
-            $.ajax({
-                type: "POST",
-                url: "/webqo/auto/restart",
-                async: true,
-                traditional: true,
-                data: {
-                    'task_id': task_id,
-                },
-                dataType: 'JSON',
-                success: function (obj) {
-                    if (obj.status) {
-                        //location.reload();
-                        window.location.href = '/webqo/auto';
-                    } else {
-                        $('#error_xml').text(obj.error);
-                    }
-                },
-                error: function () {
-
-                },
-            });
-        })
-
-        //table hover
-        $(function () {
-            function showBox(obj, box) {
-                var timer = null;
-                $(obj).on("mouseover", function (e) {
-                    clearTimeout(timer);
-                    var clientX = e.clientX;
-                    var clientY = e.clientY;
-                    var y = clientY + 20;
-                    var txt = $(this).text();
-                    timer = setTimeout(function () {
-                        $(box).css("left", clientX).css("top", y);
-                        if (txt == "") {
-                            $(box).hide();
-                        } else {
-                            $(box).show();
-                            $(box).html(txt);
-                        }
-                    }, 300);
-                });
-                $(obj).on("mouseout", function () {
-                    clearTimeout(timer);
-                    $(box).hide();
-                });
-            }
-
-            showBox("#reqData > tbody td", "#showDiv");
-        });
-
-
-    </script>
+{% endblock %} {% block js %}
+<script>	
+//table hover
+	$(function() {
+		function showBox(obj, box) {
+			var timer = null;
+			$(obj).on("mouseover", function(e) {
+				clearTimeout(timer);
+				var clientX = e.clientX;
+				var clientY = e.clientY;
+				var y = clientY + 20;
+				var txt = $(this).text();
+				timer = setTimeout(function() {
+					$(box).css("left", clientX).css("top", y);
+					if(txt == "") {
+						$(box).hide();
+					} else {
+						$(box).show();
+						$(box).html(txt);
+					}
+				}, 300);
+			});
+			$(obj).on("mouseout", function() {
+				clearTimeout(timer);
+				$(box).hide();
+			});
+		}
+		showBox("#reqData > tbody td", "#showDiv");
+	});
+	
+	
+</script>
 {% endblock %}

@@ -1,5 +1,68 @@
 {% extends 'father.html' %}{% block content %}{% load tag_tools %}{% load static %}
-<div class="row">       
+<div class="row">
+		<div class="col-md-6 col-lg-12">
+          <div class="widget-small primary coloured-icon"><i class="icon fa fa-search fa-2x"></i>
+            <div class="info">
+              	<span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
+                	<a href="/publicsv/svcheck?tag=all" style="text-decoration: none;">全部&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                </span>
+                <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
+                	<a href="/publicsv/svcheck?tag=crash" style="text-decoration: none;">离线服务&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                </span>
+                <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
+                	<a href="/publicsv/svcheck?tag=unonline" style="text-decoration: none;">无线上服务&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                </span>
+            </div>
+            <li class="app-search">
+	        	<input class="app-search__input" id="search_content" name="search_content" type="search" placeholder="Search">
+	        	<a id="search_btn"><button class="app-search__button" ><i class="fa fa-search"></i></button></a>
+	        </li>
+          </div>
+       </div>
+</div>
+<div class="row">
+	{% for item in task_list %}
+    <div class="col-md-6 col-lg-3" >
+    	{% ifequal item.status 1 %}
+    		{% ifequal item.host_online '' %}
+            <div class="widget-small info coloured-icon" style="background-color: #ffc107;">
+            {% else %}
+            <div class="widget-small info coloured-icon">
+            {% endifequal %}
+		      	<i class="icon fa fa-thumbs-o-up fa-2x"></i>		      	
+		        <div class="info">		        	
+		        	<h6>
+		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
+		        		{{item.sv_name}}
+		        		</a>
+		        	</h6>		        	
+		        	<p><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
+		        </div>
+		     </div>
+        {% endifequal %} 
+        {% ifequal item.status 0 %}
+        	{% ifequal item.host_online '' %}
+	        <div class="widget-small danger coloured-icon" style="background-color: #ffc107;">
+	        {% else %}
+	        <div class="widget-small danger coloured-icon">
+	        {% endifequal %}
+		      	<i class="icon fa fa-thumbs-o-down fa-2x"></i>
+		        <div class="info">		        	
+		        	<h6 style="color: red;">
+		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
+		        		{{item.sv_name}}
+		        		</a>
+		        	</h6>		        	
+		        	<p style="color: red;"><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
+		        </div>
+		    </div>
+        {% endifequal %} 
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+<!--<div class="row">       
     <div class="col-md-12">
       <div class="tile">
         <h3 class="tile-title">请求列表</h3>
@@ -44,30 +107,25 @@
         </div>
       </div>
     </div>
-    <!--<div class="clearix"></div>-->
 </div>
+-->
 {% endblock %}
 {% block js %}
 <script>	
 	$(function(){
-		
-			$("#reqtype").change(function(){
-			    var opt=$("#reqtype").val();
-			    if(opt == 'json') {
-			    	$('#Chinese_query').removeClass('hide');
-			    	$('#lan_sel').val('en');
-			    	$('#lan_sel')[0].disabled=true;
-			    	$('#inlineRadio1')[0].disabled=true;
-			    	$('#inlineRadio2')[0].disabled=true;
-					$('#inlineRadio1').prop("checked", 'checked');
-					$('#inlineRadio2').removeAttr("checked");			    	
-				} else {
-					$('#Chinese_query').addClass('hide');
-					$('#lan_sel')[0].disabled=false;
-					$('#inlineRadio1')[0].disabled=false;
-					$('#inlineRadio2')[0].disabled=false;
-				}
-			});
+
+	    $(document).ready(function(){
+	       //点击链接的时候调用
+		      $("#search_btn").click(function(){
+		 
+		          //得到input的值
+		          var search_content = $("#search_content").val();
+		 
+		          //设置linkToCart的href的值
+		          $("#search_btn").attr("href","/publicsv/svcheck?key="+search_content);
+		      });
+		    });
+
     		//判断ajax里面的方法是get还是post
     		function csrfSafeMethod(method){
     			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -99,55 +157,33 @@
 			}
     		
     		//save
-			$('#save_xml').click(function() {
-				var reqtext = $('#reqtext').val()
-				var inputHost = $('#inputHost').val()
-				var lan_sel = $('#lan_sel').val()
-				var inlineRadioOptions = $("input[name='inlineRadioOptions']:checked").val()
-				var result = $('#result').val()
-				var reqtpye = $('#reqtype').val()
-				var Chinese_query = $('#Chn_query').val()
-				var req_field = $('#field').val()
-				console.log(Chinese_query)
-				if(reqtext != "" && inputHost != "") {
-					$.ajax({
-						type: "POST",
-						url: "/fanyi/debug/req_info_save/",
-						async: true,
-						traditional: true,
-						data: {
-							'inputHost': inputHost,
-							'lan_sel': lan_sel,
-							'inlineRadioOptions': inlineRadioOptions,
-							'reqtext': reqtext,
-							'result': result,
-							'reqtype':reqtpye,
-							'Chinese_query':Chinese_query,
-							'req_field':req_field,
-						},
-						dataType: 'JSON',
-						success: function(obj) {
-							if(obj.status) {
-								location.reload();
-							} else {
-								$('#error_xml').text(obj.error);
-							}
-						},
-						error: function() {
-		
-						},
-					});
-					$('#error_xml').text('');
-				} else {
-					if(reqtext == '') {
-						$('#error_xml').text('Request不可为空。');
-					} else if(inputHost == '') {
-						$('#error_xml').text('Host不可为空。');
-					} else {
-						$('#error_xml').text('未知错误。');
-					}
-				}
-			})
+//			$('#search_btn').click(function() {
+//				var search_content = $('#search_content').val()
+//				if(search_content != "") {
+//					$.ajax({
+//						type: "GET",
+//						url: "/publicsv/svcheck/",
+//						async: true,
+//						traditional: true,
+//						data: {
+//							'search_content': search_content,
+//						},
+//						dataType: 'JSON',
+//						success: function(obj) {
+//							if(obj.status) {
+//								location.reload();
+//							} else {
+//								window.alert("not found");
+//							}
+//						},
+//						error: function() {
+//		
+//						},
+//					});
+//					$('#error_xml').text('');
+//				} else {
+//				}
+//			})
 		
 			//request
 			$('#request_xml').click(function() {

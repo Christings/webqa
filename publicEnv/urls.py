@@ -24,8 +24,9 @@ from django.urls import re_path
 from . import views
 app_name = 'publicEnv'
 urlpatterns = [
-    # auto Bleu
+    # deadlink
     re_path(r'^deadlink$', views.deadlink),
+    # svcheck
     re_path(r'^svcheck/$', views.svcheck),
-    re_path(r'^svcheck/detail/$', views.svcheck),
+    re_path(r'^svcheck/detail/$', views.svcheck_detail),
 ]
