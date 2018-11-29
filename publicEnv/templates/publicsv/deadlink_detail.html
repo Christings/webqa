@@ -1,0 +1,120 @@
+{% extends 'father.html' %} {% load static %}{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+			<div class="alert alert-dismissible alert-success" role="alert">任务详情&nbsp;&nbsp;&nbsp;
+				<a class="alert-link" href="/publicsv/svcheck/"><<返回列表</a>
+			</div>
+			<div class="tile-body">
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table" id="reqData">
+		                    <thead>
+		                    <tr>
+		                        <td>ID</td>
+		                        <td>CreateTime</td>
+		                        <td>UpdateTime</td>
+		                        <td>ServiceName</td>
+		                        <td>ServiceHost</td>
+		                        <td>ServicePort</td>
+		                        <td>ServiceType</td>
+		                        <td>Status</td>
+		                    </tr>
+		                    </thead>
+		                    <tbody id="reqBody">
+		                    <tr class="get_data">
+		                        <td style="width: 20px;">{{ task_detail.id }}</td>
+		                        <td>{{ task_detail.create_time }}</td>
+		                        <td>{{ task_detail.update_time }}</td>
+		                        <td>{{ task_detail.sv_name }}</td>
+		                        <td>{{ task_detail.sv_host }}</td>
+		                        <td>{{ task_detail.sv_port }}</td>
+		                        <td>{{ task_detail.sv_port_type }}</td>
+		                        <td>
+		                            {% ifequal task_detail.status 0 %}
+		                                <button class="btn btn-outline-info btn-sm" style="background-color: red;color: #000000;">离线</button>
+		                            {% endifequal %}
+		                            {% ifequal task_detail.status 1 %}
+		                            	<button class="btn btn-outline-info btn-sm" style="background-color: green;color: #000000;">在线</button>
+		                            {% endifequal %}
+		                        </td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+					<div id="showDiv"></div>
+					</div>
+				</div>				
+			</div>
+			<div class="alert alert-dismissible alert-success" role="alert">SVN INFO&nbsp;&nbsp;&nbsp;
+				</div>
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table">
+		                    <thead>
+		                    <tr>
+		                        <td><td class="col-md-12"><div><pre>{{ task_detail.svninfo }}</pre></div></td></td>
+		                    </tr>
+		                    </thead>
+		                </table>
+					</div>
+				</div>
+			<div class="alert alert-dismissible alert-success" role="alert">Log Info</div>
+			<div class="tile-body">
+				<div class="form-group row">
+					<div class="col-md-12">
+						<table class="table" id="reqData">
+		                    <thead>
+		                    <tr>
+		                        <td>Service_Path</td>
+		                        <td>Online_host</td>
+		                        <td>Online_path</td>
+		                    </tr>
+		                    </thead>
+		                    <tbody id="reqBody">
+		                    <tr class="get_data">
+		                        <td>{{ task_detail.sv_path }}</td>
+		                        <td>{{ task_detail.host_online }}</td>
+		                        <td>{{ task_detail.path_online }}</td>
+		                    </tr>
+		                    </tbody>
+		                </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block js %}
+<script>	
+//table hover
+	$(function() {
+		function showBox(obj, box) {
+			var timer = null;
+			$(obj).on("mouseover", function(e) {
+				clearTimeout(timer);
+				var clientX = e.clientX;
+				var clientY = e.clientY;
+				var y = clientY + 20;
+				var txt = $(this).text();
+				timer = setTimeout(function() {
+					$(box).css("left", clientX).css("top", y);
+					if(txt == "") {
+						$(box).hide();
+					} else {
+						$(box).show();
+						$(box).html(txt);
+					}
+				}, 300);
+			});
+			$(obj).on("mouseout", function() {
+				clearTimeout(timer);
+				$(box).hide();
+			});
+		}
+		showBox("#reqData > tbody td", "#showDiv");
+	});
+	
+	
+</script>
+{% endblock %}

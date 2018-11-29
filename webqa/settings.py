@@ -97,7 +97,25 @@ DATABASES = {
         'OPTIONS': {
             'autocommit': True,
         },
-    }
+    },
+    'db_fhz': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'static_check_history',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'datatest01.web.sjs.ted',
+        'PORT': '3306',
+        'OPTIONS': {
+            'autocommit': True,
+            'isolation_level': None,
+        },
+    },
+}
+
+# use multi-database in django
+DATABASE_ROUTERS = ['webqa.database_router.DatabaseAppsRouter']
+DATABASE_APPS_MAPPING = {
+    'db_fhz': 'db_fhz',
 }
 
 # Password validation
@@ -131,7 +149,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
