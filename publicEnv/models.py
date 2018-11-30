@@ -49,3 +49,4 @@ class Special_check_deadlink(models.Model):
 
     class Meta:
         db_table = 'special_check_deadlink'
+        ordering = ['-error_count']

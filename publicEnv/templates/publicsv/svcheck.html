@@ -30,13 +30,13 @@
             <div class="widget-small info coloured-icon">
             {% endifequal %}
 		      	<i class="icon fa fa-thumbs-o-up fa-2x"></i>		      	
-		        <div class="info">		        	
+		        <div class="info" style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">		        	
 		        	<h6>
 		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
 		        		{{item.sv_name}}
 		        		</a>
 		        	</h6>		        	
-		        	<p><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
+		        	<p style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"><b title="{{item.sv_host}}:{{item.sv_port}}" style="cursor: pointer;">{{item.sv_host}}:{{item.sv_port}}</b></p>
 		        </div>
 		     </div>
         {% endifequal %} 
@@ -47,13 +47,13 @@
 	        <div class="widget-small danger coloured-icon">
 	        {% endifequal %}
 		      	<i class="icon fa fa-thumbs-o-down fa-2x"></i>
-		        <div class="info">		        	
+		        <div class="info" style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">		        	
 		        	<h6 style="color: red;">
 		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
 		        		{{item.sv_name}}
 		        		</a>
 		        	</h6>		        	
-		        	<p style="color: red;"><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
+		        	<p style="color: red;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"><b title="{{item.sv_host}}:{{item.sv_port}}" style="cursor: pointer;">{{item.sv_host}}:{{item.sv_port}}</b></p>
 		        </div>
 		    </div>
         {% endifequal %} 

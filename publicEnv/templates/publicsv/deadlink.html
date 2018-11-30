@@ -1,130 +1,187 @@
 {% extends 'father.html' %}{% block content %}{% load tag_tools %}{% load static %}
 <div class="row">
-		<div class="col-md-6 col-lg-12">
+		<div class="col-md-6 col-lg-9">
+          <div class="widget-small primary coloured-icon"><i class="icon fa fa-binoculars fa-2x"></i>
+            <div class="info">
+              	<div class="form-group row" style="margin-bottom:0rem">
+	               	<div class="col-md-3">
+		                <select id="pstatus" name="pstatus" class="form-control pfilter" style="cursor: pointer;" onchange="window.location.href='/publicsv/deadlink/?pstatus='+this.value">
+							<option value="0"> 未解决 </option>
+							<option value="1"> 已解决 </option>
+							<option value="2"> 存疑 </option>
+							<option value="-1"> 作废 </option>
+						</select>
+	             	</div>
+	             	<div class="col-md-3">
+		                <select id="pfrom" name="pfrom" class="form-control pfilter" style="cursor: pointer;" onchange="window.location.href='/publicsv/deadlink/?pfrom='+this.value">
+							<option value="1"> 图片 </option>
+							<option value="2"> umis官网 </option>
+							<option value="0"> VR </option>
+						</select>
+	             	</div>
+	             	<div class="col-md-2">
+		                <select id="httpcode" name="httpcode" class="form-control pfilter" style="cursor: pointer;" onchange="window.location.href='/publicsv/deadlink/?httpcode='+this.value">
+							{% for item in httpcode_list %}
+							<option value="{{item.status_code}}"> {{item.status_code}} </option>
+							{% endfor %}
+						</select>
+	             	</div>
+	             	<div class="col-md-3">
+		                <select id="pclient" name="pclient" class="form-control pfilter" style="cursor: pointer;" onchange="window.location.href='/publicsv/deadlink/?pclient='+this.value">
+							<option value="0"> PC普通 </option>
+							<option value="1"> Android </option>
+							<option value="2"> IOS </option>
+						</select>
+	             	</div>
+	             	<div class="col-md-1">
+						<span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
+		                	<a href="/publicsv/deadlink/" style="text-decoration: none;">全部</a>
+		                </span>
+	             	</div>
+            	</div>
+            </div>
+          </div>
+       </div>
+       <div class="col-md-6 col-lg-3">
           <div class="widget-small primary coloured-icon"><i class="icon fa fa-search fa-2x"></i>
             <div class="info">
-              	<span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
-                	<a href="/publicsv/svcheck?tag=all" style="text-decoration: none;">全部&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </span>
-                <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
-                	<a href="/publicsv/svcheck?tag=crash" style="text-decoration: none;">离线服务&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </span>
-                <span class="label label-info" style="font-size: 15px;cursor: pointer;line-height: 40px;">
-                	<a href="/publicsv/svcheck?tag=unonline" style="text-decoration: none;">无线上服务&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </span>
+	                <li class="app-search">
+			        	<input class="app-search__input" id="search_content" name="search_content" type="search" placeholder="Search Url">
+			        	<a id="search_btn"><button class="app-search__button" ><i class="fa fa-search"></i></button></a>
+			        </li>
             </div>
-            <li class="app-search">
-	        	<input class="app-search__input" id="search_content" name="search_content" type="search" placeholder="Search">
-	        	<a id="search_btn"><button class="app-search__button" ><i class="fa fa-search"></i></button></a>
-	        </li>
           </div>
        </div>
 </div>
 <div class="row">
-	{% for item in li %}
-    <div class="col-md-6 col-lg-3" >
-    	{% ifequal item.status 1 %}
-    		{% ifequal item.host_online '' %}
-            <div class="widget-small info coloured-icon" style="background-color: #ffc107;">
-            {% else %}
-            <div class="widget-small info coloured-icon">
-            {% endifequal %}
-		      	<i class="icon fa fa-thumbs-o-up fa-2x"></i>		      	
-		        <div class="info">		        	
-		        	<h6>
-		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
-		        		{{item.sv_name}}
-		        		</a>
-		        	</h6>		        	
-		        	<p><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
-		        </div>
-		     </div>
-        {% endifequal %} 
-        {% ifequal item.status 0 %}
-        	{% ifequal item.host_online '' %}
-	        <div class="widget-small danger coloured-icon" style="background-color: #ffc107;">
-	        {% else %}
-	        <div class="widget-small danger coloured-icon">
-	        {% endifequal %}
-		      	<i class="icon fa fa-thumbs-o-down fa-2x"></i>
-		        <div class="info">		        	
-		        	<h6 style="color: red;">
-		        		<a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">
-		        		{{item.sv_name}}
-		        		</a>
-		        	</h6>		        	
-		        	<p style="color: red;"><b>{{item.sv_host}}:{{item.sv_port}}</b></p>
-		        </div>
-		    </div>
-        {% endifequal %} 
-    	</div>
-    {% endfor %}
+	<div class="col-md-12">
+		<div class="tile">
+			<h3 class="tile-title">死链数据详情</h3>
+			<div class="tile-body">
+				<table class="table" id="reqData" style="table-layout:fixed;word-break:break-all;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">
+					<thead>
+						<tr>
+							<td style="display: none;">ID</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 20%;">Url</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 10%;">Query</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 10%;">carete_time</td>
+							<td style="width: 8%;">Type</td>
+							<td style="width: 5%;">ErrCount</td>
+							<td style="width: 10%;">Status</td>
+							<td style="width: 10%;">VRID</td>
+							<td style="width: 5%;">Http code</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 20%;">Comment</td>						
+						</tr>
+					</thead>
+					<tbody id="reqBody">
+						{% for item in li %}
+						<tr>
+							<td style="display: none;">{{ item.id }}</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 20%;">
+								<a href="{{ item.url }}" target="_blank" title="{{ item.url }}">
+								{{ item.url }}
+								</a>
+							</td>							
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 10%;">
+								{% ifequal item.type 0 %}
+								<a href="http://www.sogou.com.inner/web?query={{item.query}}" target="_blank" title="{{item.query}}">{{ item.query }}</a>
+								{% else %}
+								<a href="http://m.sogou.com.inner/web/searchList.jsp?keyword={{item.query}}" target="_blank" title="{{item.query}}">{{ item.query }}</a>
+								{% endifequal %}
+							</td>														
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 10%;">{{ item.add_timestamp }}</td>
+							<td style="width: 8%;" >
+								{% ifequal item.ua_type 0 %}
+								PC普通
+								{% endifequal %} 
+								{% ifequal item.ua_type 1 %}
+								Android
+								{% endifequal %} 
+								{% ifequal item.ua_type 2 %}
+								IOS
+								{% endifequal %} 
+							</td>
+							<td style="width: 5%;">{{ item.error_count }}</td>
+							<td style="width: 8%;"> 
+								<a>
+									{% ifequal item.status 0 %}
+									<button task_id={{ item.id }} class="btn btn-outline-secondary btn-sm complate_p" style="background-color:orangered;color: black;">未解决</button>
+									{% endifequal %} 
+									{% ifequal item.status 1 %}
+									<button class="btn btn-outline-secondary btn-sm" style="background-color: greenyellow;color: black;">已解决</button>
+									{% endifequal %} 
+									{% ifequal item.status 2 %}
+									<button class="btn btn-outline-parimary btn-sm" style="background-color:#007BFF;color: black;">存疑</button>
+									{% endifequal %} 
+									{% ifequal item.status -1 %}
+									<button class="btn btn-outline-danger btn-sm" style="background-color: #4B88A6;color: black;">作废</button>
+									{% endifequal %}							
+								</a>
+							</td>
+							<td style="width: 10%;">{{ item.vrid }}</td>
+							<td style="width: 8%;">{{ item.status_code }}</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 20%;" title="{{item.comment}}">{{ item.comment }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			</div>
+			<div id="showDiv"></div>
+	        <div class="tile-footer">
+	        	<div class="row">
+	            <div class="col-md-9 col-md-offset-2">
+	            	<nav aria-label="Page navigation">
+						<ul class="pagination">
+				    		{{page_str}}
+						</ul>
+					</nav>
+	            </div>
+	         </div>        	
+		</div>
 	</div>
-	<div class="tile-footer">
-        	<div class="row">
-	            <div class="col-md-9 col-md-offset-2">
-	            	<nav aria-label="Page navigation">
-						<ul class="pagination">
-				    		{{page_str}}
-						</ul>
-					</nav>
-	            </div>
-            </div>        	
-        </div>
 </div>
-<!--<div class="row">       
-    <div class="col-md-12">
-      <div class="tile">
-        <h3 class="tile-title">请求列表</h3>
-        <div class="tile-body">
-        	<table class="table" id="reqData">
-			<thead>
-				<tr>
-					<td>ID</td>
-					<td>ServiceName</td>
-					<td>Host</td>
-					<td>Port</td>
-					<td>Tpye</td>
-					<td>Status</td>
-				</tr>
-			</thead>
-			<tbody id="reqBody">
-				{% for item in li %}
-				<tr req_id="{{item.id}}" class="get_data">
-					<td style="">{{item.id}}</td>
-					<td ><a title="{{item.svninfo}}" href="/publicsv/svcheck/detail/?svid={{item.id}}" target="_blank">{{item.sv_name}}</a></td>
-					<td>{{item.sv_host}}</td>
-					<td>{{item.sv_port}}</td>
-					<td>{{item.sv_port_type}}</td>
-					<td>{{item.status}}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-
-		</table>
-        </div>
-        <div id="showDiv"></div>
-        <div class="tile-footer">
-        	<div class="row">
-	            <div class="col-md-9 col-md-offset-2">
-	            	<nav aria-label="Page navigation">
-						<ul class="pagination">
-				    		{{page_str}}
-						</ul>
-					</nav>
-	            </div>
-            </div>        	
-        </div>
-      </div>
-    </div>
 </div>
--->
 {% endblock %}
 {% block js %}
 <script>	
 	$(function(){
-
+//		 $(document).ready(function(){
+//	       //点击链接的时候调用
+//		    $(".pfilter").change(function(){		 
+//		        pstatus = $('#pstatus').val();
+//				pfrom = $('#pfrom').val();
+//				httpcode = $('#httpcode').val();
+//				pclient = $('#pclient').val();
+//		 		window.location.href="/publicsv/deadlink/?pstatus="+pstatus+'&pfrom='+pfrom+'&httpcode='+httpcode+'&pclient='+pclient;
+//		      });
+//		    });
+		
+		$('.complate_p').click(function(){
+			var task_id = $(this).attr('task_id');
+			console.log(task_id)
+			if(confirm('是否确认已解决?')){
+				$.ajax({
+				type:"POST",
+				url:"/publicsv/deadlink/del_line/",
+				async:true,
+				data:{'task_id':task_id},
+				dataType:'JSON',
+				success:function(obj){
+					if(obj.status){
+						location.reload();
+					}else{
+						alert("修改失败");
+					}
+				},
+				error:function(){
+					
+				}
+			});
+			}else{
+				return;
+			}
+		})
+		 
 	    $(document).ready(function(){
 	       //点击链接的时候调用
 		      $("#search_btn").click(function(){
@@ -133,7 +190,7 @@
 		          var search_content = $("#search_content").val();
 		 
 		          //设置linkToCart的href的值
-		          $("#search_btn").attr("href","/publicsv/svcheck?key="+search_content);
+		          $("#search_btn").attr("href","/publicsv/deadlink?key="+search_content);
 		      });
 		    });
 
@@ -159,13 +216,25 @@
 			    return null;
 			}
     		
-			var field_name = getQueryString("field");
-			if(field_name){
-				$('#reqfield').val(getQueryString("field"));
-				
-			}else{
-				$('#reqfield').val('all');
+			var pstatus = getQueryString("pstatus");
+			var pfrom = getQueryString("pfrom");
+			var httpcode = getQueryString("httpcode");
+			var pclient = getQueryString("pclient");
+			if(pstatus){
+				$('#pstatus').val(getQueryString("pstatus"));
 			}
+			if(pfrom){
+				$('#pfrom').val(getQueryString("pfrom"));
+			}
+			if(httpcode){
+				$('#httpcode').val(getQueryString("httpcode"));
+			}
+			if(pclient){
+				$('#pclient').val(getQueryString("pclient"));
+			}
+//			else{
+//				$('#reqfield').val('all');
+//			}
     		
     		//save
 //			$('#search_btn').click(function() {
@@ -196,66 +265,7 @@
 //				}
 //			})
 		
-			//request
-			$('#request_xml').click(function() {
-				var reqtext = $('#reqtext').val()
-				var inputHost = $('#inputHost').val()
-				if(reqtext != "" && inputHost != "") {
-					$.ajax({
-						type: "POST",
-						url: "/fanyi/debug/",
-						async: true,
-						traditional: true,
-						data: $('#form_xml').serialize(),
-						dataType: 'JSON',
-						success: function(obj) {
-							if(obj.status) {
-								if(obj.reqtype=='alltrans_json'){
-									resultSplit=(obj.transResult).split('|||');
-									result_str=""
-									for(i=0;i<resultSplit.length;i++){
-										result_str+=(resultSplit[i]+'\r\n')
-									}
-//									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
-									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'
-								}else if(obj.reqtype=='json'){
-									resultSplit=(obj.transResult).split('^^^');
-									result_str=""
-									for(i=0;i<resultSplit.length;i++){
-										result_str+=(resultSplit[i]+'\r\n')
-									}
-//									debugInfo_str="返回信息：\r\n"+obj.debugInfo +'\r\n'+"请求串:\r\n"+obj.requestStr
-									debugInfo_str="请求串:\r\n"+obj.requestStr
-								}else{
-									result_str=obj.transResult
-									
-//									debugInfo_str="Debug信息：\r\n"+obj.debugInfo+'\r\n'+ "请求串:\r\n"+ obj.requestStr
-									debugInfo_str="Debug信息：\r\n"+obj.debugInfo+'\r\n'
-								}
-								$('#result').val(result_str)
-//								$('#debugInfo').val(debugInfo_str);
-								$('#debugInfo').text(debugInfo_str);
-								$('#oriresult').text(obj.oriresult);
-								$('#error_xml').text('');
-							} else {
-								$('#error_xml').text(obj.error);
-							}
-						},
-						error: function() {
-		
-						},
-					});
-					$('#error_xml').text('');
-				} else {
-					if(reqtext == '') {
-						$('#error_xml').text('Request不可为空');
-					} else if(inputHost == '') {
-						$('#error_xml').text('Host不可为空');
-					} else {
-						$('#error_xml').text('未知错误');
-					}
-				}
-			})
+
 		
 			//del
 			$('.del_line').click(function() {
@@ -283,68 +293,68 @@
 			})
 		
 			//getData
-			$('.get_data').dblclick(function() {
-				var linelst = $(this).children();
-				reqtype = $(linelst[0]).text();
-				if(reqtype == 'json'){
-					$('#Chinese_query').removeClass('hide');
-			    	$('#lan_sel').val('en');
-			    	$('#lan_sel')[0].disabled=true;
-			    	$('#inlineRadio1')[0].disabled=true;
-			    	$('#inlineRadio2')[0].disabled=true;
-					$('#inlineRadio1').prop("checked", 'checked');
-					$('#inlineRadio2').removeAttr("checked");
-				}else{
-					$('#Chinese_query').addClass('hide');
-					$('#lan_sel')[0].disabled=false;
-					$('#inlineRadio1')[0].disabled=false;
-					$('#inlineRadio2')[0].disabled=false;
-				}
-				hostip = "http://"+$(linelst[1]).text();
-				direction = $(linelst[2]).text();
-				reqfield = $(linelst[3]).text();
-				reqtext = $(linelst[4]).text();
-				result = $(linelst[5]).text();
-				isfromzh = $(linelst[6]).text();
-				oriresult = $(linelst[7]).text();
-				chnquery = $(linelst[8]).text();
-				$('#Chn_query').val(chnquery);
-				$('#field').val(reqfield);
-				$('#inputHost').val(hostip);
-				$('#reqtype').val(reqtype);
-				$('#lan_sel').val(direction);
-				$('#reqtext').val(reqtext);
-				$('#oriresult').val(oriresult);
-				if(isfromzh == 'fromzh') {
-					$('#inlineRadio2').prop("checked", 'checked');
-					$('#inlineRadio1').removeAttr("checked");
-				} else {
-					$('#inlineRadio2').removeAttr("checked");
-					$('#inlineRadio1').prop("checked", 'checked');
-					
-				}
-				$('#result').val(result);
-				$('#debugInfo').text('');
-			})
+//			$('.get_data').dblclick(function() {
+//				var linelst = $(this).children();
+//				reqtype = $(linelst[0]).text();
+//				if(reqtype == 'json'){
+//					$('#Chinese_query').removeClass('hide');
+//			    	$('#lan_sel').val('en');
+//			    	$('#lan_sel')[0].disabled=true;
+//			    	$('#inlineRadio1')[0].disabled=true;
+//			    	$('#inlineRadio2')[0].disabled=true;
+//					$('#inlineRadio1').prop("checked", 'checked');
+//					$('#inlineRadio2').removeAttr("checked");
+//				}else{
+//					$('#Chinese_query').addClass('hide');
+//					$('#lan_sel')[0].disabled=false;
+//					$('#inlineRadio1')[0].disabled=false;
+//					$('#inlineRadio2')[0].disabled=false;
+//				}
+//				hostip = "http://"+$(linelst[1]).text();
+//				direction = $(linelst[2]).text();
+//				reqfield = $(linelst[3]).text();
+//				reqtext = $(linelst[4]).text();
+//				result = $(linelst[5]).text();
+//				isfromzh = $(linelst[6]).text();
+//				oriresult = $(linelst[7]).text();
+//				chnquery = $(linelst[8]).text();
+//				$('#Chn_query').val(chnquery);
+//				$('#field').val(reqfield);
+//				$('#inputHost').val(hostip);
+//				$('#reqtype').val(reqtype);
+//				$('#lan_sel').val(direction);
+//				$('#reqtext').val(reqtext);
+//				$('#oriresult').val(oriresult);
+//				if(isfromzh == 'fromzh') {
+//					$('#inlineRadio2').prop("checked", 'checked');
+//					$('#inlineRadio1').removeAttr("checked");
+//				} else {
+//					$('#inlineRadio2').removeAttr("checked");
+//					$('#inlineRadio1').prop("checked", 'checked');
+//					
+//				}
+//				$('#result').val(result);
+//				$('#debugInfo').text('');
+//			})
 		
-			$('#lan_filter').change(function() {
-				var sel_lang = $(this).val();
-				if(sel_lang == 'all') {
-					$('#reqBody').children().each(function() {
-						$(this).removeClass('hide');
-					})
-				} else {
-					$('#reqBody').children().each(function() {
-						var line_lang = $(this).attr('lang_type');
-						if(sel_lang != line_lang) {
-							$(this).addClass('hide');
-						} else {
-							$(this).removeClass('hide');
-						}
-					})
-		
-				}
-			})
+//			$('#lan_filter').change(function() {
+//				var sel_lang = $(this).val();
+//				if(sel_lang == 'all') {
+//					$('#reqBody').children().each(function() {
+//						$(this).removeClass('hide');
+//					})
+//				} else {
+//					$('#reqBody').children().each(function() {
+//						var line_lang = $(this).attr('lang_type');
+//						if(sel_lang != line_lang) {
+//							$(this).addClass('hide');
+//						} else {
+//							$(this).removeClass('hide');
+//						}
+//					})
+//		
+//				}
+//			})
 			//table hover
 //			$(function() {
 //				function showBox(obj, box) {
