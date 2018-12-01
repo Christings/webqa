@@ -131,7 +131,7 @@ def get_menu_html(menu_data):
                       {'title': '工时管理', 'url': '/survey/labor', 'menu_id': 4, 'status': True, 'open': False}]}
     ]
     """
-    icon_label=['fa-dashboard','fa-pie-chart','fa-edit','fa-laptop','fa-th-list','fa-file-text']
+    icon_label=['fa-dashboard','fa-pie-chart','fa-edit','fa-laptop','fa-th-list','fa-file-text','fa-id-card-o','fa-bar-chart','fa-university','fa-anchor','fa-diamond']
     menu_html = ''
     for item in menu_data:
         temp_num = random.randint(0,len(icon_label)-1)
@@ -154,7 +154,7 @@ def get_menu_html(menu_data):
                                                display="is-expanded" if item['open'] else "",
                                                status="open" if item['open'] else "close",
                                                icon_random=icon_label[temp_num])
-        #icon_label.pop(temp_num)
+        icon_label.pop(temp_num)
     return menu_html
 
 
