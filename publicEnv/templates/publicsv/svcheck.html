@@ -14,7 +14,7 @@
                 </span>
             </div>
             <li class="app-search">
-	        	<input class="app-search__input" id="search_content" name="search_content" type="search" placeholder="Search">
+	        	<input class="app-search__input" onkeydown='if(event.keyCode==13){search_btn.click()}' id="search_content" name="search_content" type="search" placeholder="Search">
 	        	<a id="search_btn"><button class="app-search__button" ><i class="fa fa-search"></i></button></a>
 	        </li>
           </div>
@@ -159,12 +159,9 @@
 			    return null;
 			}
     		
-			var field_name = getQueryString("field");
-			if(field_name){
-				$('#reqfield').val(getQueryString("field"));
-				
-			}else{
-				$('#reqfield').val('all');
+			var search_content = getQueryString("search_content");
+			if(search_content){
+				$('#search_content').val(getQueryString("search_content"))
 			}
     		
     		//save

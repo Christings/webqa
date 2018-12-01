@@ -248,6 +248,7 @@
 			var pfrom = getQueryString("pfrom");
 			var httpcode = getQueryString("httpcode");
 			var pclient = getQueryString("pclient");
+			var search_content = getQueryString("search_content");
 			if(pstatus){
 				$('#pstatus').val(getQueryString("pstatus"));
 			}
@@ -259,6 +260,9 @@
 			}
 			if(pclient){
 				$('#pclient').val(getQueryString("pclient"));
+			}
+			if(search_content){
+				$('#search_content').val(getQueryString("search_content"))
 			}
 //			else{
 //				$('#reqfield').val('all');
