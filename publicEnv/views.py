@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect, HttpResponse,render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render, redirect, HttpResponse
+from collections import Counter
 from publicEnv import models
 from django.db.models import Q
 from utils import pagination
-import json
+import json,re
 # Create your views here.
 
 def auth(func):
@@ -28,6 +28,25 @@ def del_line(request):
         ret['status'] = False
         ret['error'] = "Error:" + str(e)
     return HttpResponse(json.dumps(ret))
+
+@auth
+def get_urllist(request):
+    # user_id = 'zhangjingjun'
+    user_id = request.COOKIES.get('uid')
+    if request.method == 'GET':
+        try:
+            urllist = models.Special_check_deadlink.objects.using('db_fhz').values('url')
+            url_list = list()
+            for url in  urllist:
+                result = re.findall(".*//(.*?)/.*", url['url'])
+                if result:
+                    url_list.append(result[0])
+            list30 = Counter(url_list).most_common(30)
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, "publicsv/deadlink_url.html", {'user_id': user_id,'urllist':list30 })
+
 
 @auth
 def deadlink(request):

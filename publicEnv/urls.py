@@ -27,6 +27,7 @@ urlpatterns = [
     # deadlink
     re_path(r'^deadlink/$', views.deadlink),
     re_path(r'^deadlink/del_line/$', views.del_line),
+    re_path(r'^deadlink/get_urllist/$', views.get_urllist),
     # svcheck
     re_path(r'^svcheck/$', views.svcheck),
     re_path(r'^svcheck/detail/$', views.svcheck_detail),
