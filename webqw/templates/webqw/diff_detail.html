@@ -5,123 +5,125 @@
     <div class="row">
         <div class="col-md-12">
             <div class="tile">
-                <h3 class="tile-title">Diff Detail</h3>
-                <table class="table" id="reqData">
-                    <thead>
-                    <tr>
-                        <td>ID</td>
-                        <td>CreateTime</td>
-                        <td>StartTime</td>
-                        <td>Expid</td>
-                        <td>Rate</td>
-                        <td>Testtag</td>
-                        <td>Status</td>
-                        <td style="display: none;">TestItem</td>
-                        <td>User</td>
-                        <td style="">操作</td>
-                    </tr>
-                    </thead>
-                    <tbody id="reqBody">
-                    <tr class="get_data">
-                        <td style="width: 20px;">{{ task_detail.0.id }}</td>
-                        <td class="tabletd">{{ task_detail.0.create_time }}</td>
-                        <td>{{ task_detail.0.start_time }}</td>
-                        <td>{{ task_detail.0.press_expid }}</td>
-                        <td>{{ task_detail.0.press_rate }}%</td>
-                        <td class="tabletd">{{ task_detail.0.testtag }}</td>
-                        <td class="tabletd">
-                            {% ifequal task_detail.0.status 0 %}
-                                <font color="gray">Waiting</font>{% endifequal %} {% ifequal task_detail.0.status 1 %}
-                            <font color="cream">Ready</font>{% endifequal %} {% ifequal task_detail.0.status 2 %}
-                            <font color="green">Running</font>{% endifequal %} {% ifequal task_detail.0.status 3 %}
-                            <font color="red">Error</font>{% endifequal %} {% ifequal task_detail.0.status 4 %}
-                            <font color="blue">Finished</font>{% endifequal %} {% ifequal task_detail.0.status 5 %}
-                            <font color="orange">Canceled</font>{% endifequal %} {% ifequal task_detail.0.status 6 %}
-                            <font color="orange">Canceling</font>{% endifequal %}
-                        </td>
-                        {% ifequal task_detail.0.testitem 1 %}
-                            <td class="tabletd" style="display: none;">cost</td>
-                        {% else %}
-                            <td class="tabletd" style="display: none;">Null</td>
-                        {% endifequal %}
-                        <td class="tabletd">{{ task_detail.0.user }}</td>
-                        <td class="tabletd">
-                            <button class="del_line" id="restart_automation" task_id="{{ task_detail.0.id }}">Restart
-                            </button>
-                            {% ifequal task_detail.0.status 2 %}
-                                <button class="del_line" id="cancel_automation" task_id="{{ task_detail.0.id }}">Cancel
-                                </button>
-                            {% endifequal %}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
+            	<div class="alert alert-dismissible alert-success" role="alert">Diff Detail&nbsp;&nbsp;&nbsp;
+					<a class="alert-link" href="/webqw/auto/">&lt;&lt;返回列表</a>&nbsp;&nbsp;&nbsp;
+					<span style="color:red;font-size:15px;" id="error_xml"></span></h3>
+				</div>
+				<div class="tile-body">
+					<div class="form-group row">
+						<div class="col-md-12">
+							<table class="table" id="reqData">
+			                    <thead>
+			                    <tr>
+			                        <td>ID</td>
+			                        <td>CreateTime</td>
+			                        <td>StartTime</td>
+			                        <td>Expid</td>
+			                        <td>Rate</td>
+			                        <td>Testtag</td>
+			                        <td>Status</td>
+			                        <td style="display: none;">TestItem</td>
+			                        <td>User</td>
+			                        <td style="">操作</td>
+			                    </tr>
+			                    </thead>
+			                    <tbody id="reqBody">
+			                    <tr class="get_data">
+			                        <td style="width: 20px;">{{ task_detail.0.id }}</td>
+			                        <td class="tabletd">{{ task_detail.0.create_time }}</td>
+			                        <td>{{ task_detail.0.start_time }}</td>
+			                        <td>{{ task_detail.0.press_expid }}</td>
+			                        <td>{{ task_detail.0.press_rate }}%</td>
+			                        <td class="tabletd">{{ task_detail.0.testtag }}</td>
+			                        <td class="tabletd">
+			                            {% ifequal task_detail.0.status 0 %}
+			                                <font color="gray">Waiting</font>{% endifequal %} {% ifequal task_detail.0.status 1 %}
+			                            <font color="cream">Ready</font>{% endifequal %} {% ifequal task_detail.0.status 2 %}
+			                            <font color="green">Running</font>{% endifequal %} {% ifequal task_detail.0.status 3 %}
+			                            <font color="red">Error</font>{% endifequal %} {% ifequal task_detail.0.status 4 %}
+			                            <font color="blue">Finished</font>{% endifequal %} {% ifequal task_detail.0.status 5 %}
+			                            <font color="orange">Canceled</font>{% endifequal %} {% ifequal task_detail.0.status 6 %}
+			                            <font color="orange">Canceling</font>{% endifequal %}
+			                        </td>
+			                        {% ifequal task_detail.0.testitem 1 %}
+			                            <td class="tabletd" style="display: none;">cost</td>
+			                        {% else %}
+			                            <td class="tabletd" style="display: none;">Null</td>
+			                        {% endifequal %}
+			                        <td class="tabletd">{{ task_detail.0.user }}</td>
+			                        <td class="tabletd">
+			                            <button class="del_line" id="restart_automation" task_id="{{ task_detail.0.id }}">Restart
+			                            </button>
+			                            {% ifequal task_detail.0.status 2 %}
+			                                <button class="del_line" id="cancel_automation" task_id="{{ task_detail.0.id }}">Cancel
+			                                </button>
+			                            {% endifequal %}
+			                        </td>
+			                    </tr>
+			                    </tbody>
+			                </table>													
+						</div>															
+					</div>
+				</div>
+				<div class="alert alert-dismissible alert-success" role="alert">Diff Result</div>
+                <div class="tile-body">
+					<div class="form-group row">
+						<div class="col-md-12">
+							<table class="table">
+			                    <thead>
+			                    <tr>
+			                        <td style="width: 50%;">Test</td>
+			                        <td style="width: 50%;">Base</td>
+			                    </tr>
+			                    </thead>
+			                </table>
+			                {% autoescape off %}
+			                    <div style="height: 500px;overflow-y: scroll">
+			                        {% for item in li %}
+			                            {% formatStr item.diff_content %}
+			                        {% endfor %}
+			                    </div>
+			                {% endautoescape %}													
+						</div>															
+					</div>
+				</div>
+				<div class="alert alert-dismissible alert-success" role="alert">SVN INFO</div>
+                <div class="tile-body">
+					<div class="form-group row">
+						<div class="col-md-12">
+							<table class="table">
+			                    <thead>
+			                    <tr>
+			                        <td style="width: 50%;">Test SVN</td>
+			                        <td style="width: 50%;">Base SVN</td>
+			                    </tr>
+			                    </thead>
+			                    <tbody id="reqBody">
+			                    <tr req_id="{{ task_detail.id }}" class="get_data">
+			                        <td style="width: 50%;"><pre style="white-space: pre-wrap;word-wrap: break-word;">{{ task_detail.0.basesvn }}</pre></td>
+			                        <td style="width: 50%;"><pre style="white-space: pre-wrap;word-wrap: break-word;">{{ task_detail.0.testsvn }}</pre></td>
+			                    </tr>
+			                    </tbody>
+			                </table>												
+						</div>															
+					</div>
+				</div>
+				<div class="alert alert-dismissible alert-success" role="alert">LOG INFO</div>
+                <div class="tile-body">
+					<div class="form-group row">
+						<div class="col-md-12">
+							<table class="table">
+			                    <tbody id="reqBody">
+			                    <tr req_id="{{ task_detail.id }}" class="get_data">
+			                        <td><pre>{{ task_detail.0.errorlog }}</pre></td>
+			                    </tr>
+			                    </tbody>
+			                </table>												
+						</div>															
+					</div>
+				</div>
             </div>
         </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Diff Result</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <td style="width: 50%;">Test</td>
-                        <td style="width: 50%;">Base</td>
-                    </tr>
-                    </thead>
-                </table>
-                {% autoescape off %}
-                    <div style="height: 500px;overflow-y: scroll">
-                        {% for item in li %}
-                            {% formatStr item.diff_content %}
-                        {% endfor %}
-                    </div>
-                {% endautoescape %}
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">SVN Info</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <td style="width: 50%;">Test SVN</td>
-                        <td style="width: 50%;">Base SVN</td>
-                    </tr>
-                    </thead>
-                    <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td style="width: 50%;"><pre style="white-space: pre-wrap;word-wrap: break-word;">{{ task_detail.0.basesvn }}</pre></td>
-                        <td style="width: 50%;"><pre style="white-space: pre-wrap;word-wrap: break-word;">{{ task_detail.0.testsvn }}</pre></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Log Info</h3>
-                <table class="table">
-                    <tbody id="reqBody">
-                    <tr req_id="{{ task_detail.id }}" class="get_data">
-                        <td><pre>{{ task_detail.0.errorlog }}</pre></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="showDiv"></div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
     </div>
 {% endblock %}
 
