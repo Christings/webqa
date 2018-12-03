@@ -9,25 +9,20 @@
 				<table class="table" id="reqData" style="table-layout:fixed;word-break:break-all;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">
 					<thead>
 						<tr>
-							<td>URL</td>
-							<td>总量</td>
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 90%;">URL</td>
+							<td style="width: 10%;">总量</td>
 						</tr>
 					</thead>
 					<tbody id="reqBody">
-						<tr>
-							<td>{{ list30 }}</td>							
-							<td>{{ item }}</td>							
-						</tr>
 						{% for item in urllist %}
 						<tr>
-							<td>{{ item.0 }}</td>							
-							<td>{{ item.1 }}</td>							
+							<td style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 90%;">{{ item.url }}</td>							
+							<td style="width: 10%;">{{ item.error_count }}</td>							
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
 			</div>
-			<div id="showDiv"></div>
 	</div>
 </div>
 </div>

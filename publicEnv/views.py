@@ -35,13 +35,14 @@ def get_urllist(request):
     user_id = request.COOKIES.get('uid')
     if request.method == 'GET':
         try:
-            urllist = models.Special_check_deadlink.objects.using('db_fhz').values('url')
-            url_list = list()
-            for url in  urllist:
-                result = re.findall(".*//(.*?)/.*", url['url'])
-                if result:
-                    url_list.append(result[0])
-            list30 = Counter(url_list).most_common(30)
+            # urllist = models.Special_check_deadlink.objects.using('db_fhz').values('url')
+            # url_list = list()
+            # for url in  urllist:
+            #     result = re.findall(".*//(.*?)/.*", url['url'])
+            #     if result:
+            #         url_list.append(result[0])
+            # list30 = Counter(url_list).most_common(30)
+            list30 = models.Special_check_deadlink.objects.using('db_fhz').values('url','error_count').order_by('-error_count')[0:50]
         except Exception as e:
             print(e)
             pass
