@@ -11,7 +11,7 @@ import cgi
 import HTMLParser
 from xml.etree import ElementTree
 from bs4 import BeautifulSoup
-reload(sys)
+
 sys.setdefaultencoding('utf-8')
 
 
@@ -27,7 +27,7 @@ def insert_finished(finished,diff_task_id):
         cursor.execute(up_sql)
         db.commit()
     except Exception as e:
-        print e
+        print(e)
         db.rollback()
         pass
     db.close()
@@ -41,7 +41,7 @@ def insert_diff_data(diffcontent,diffnum,diff_task_id):
         cursor.execute(update_sql)
         db.commit()
     except Exception as e:
-        print e
+        print(e)
         db.rollback()
         pass
 
@@ -51,7 +51,7 @@ def insert_diff_data(diffcontent,diffnum,diff_task_id):
         cursor.execute(sql)
         db.commit()
     except Exception as e:
-        print e
+        print(e)
         db.rollback()
         pass
     db.close()
@@ -61,7 +61,7 @@ def parseXmlRes(xml_str):
     ns={'parent':'http://schemas.xmlsoap.org/soap/envelope/','child':'http://fanyi.sogou.com/'}
     try:
         root=ElementTree.fromstring(xml_str)
-    except Exception,e:
+    except Exception as e:
         result_dic['wrongres']='wrongres:'+str(e)
         result_dic['transRes']='Error request'
         return result_dic
@@ -76,7 +76,7 @@ def parseXmlRes(xml_str):
                         result_dic['transRes']='Error request'
                 else:
                     result_dic['transRes']='Error request'
-    except Exception,e:
+    except Exception as e:
         result_dic['wrongres']='wrongres:'+str(e)
         result_dic['transRes']='Error request'
     if 'transRes' not in result_dic:
@@ -91,7 +91,7 @@ def getUniNum(string):
             query+="&#"+str(ord(uchar))+";"
         return query
     except Exception as e:
-            print e
+        print(e)
 
 def decodeHtml(input_str):
     h = HTMLParser.HTMLParser()
@@ -158,7 +158,7 @@ def getDiff(query_tools_path,filename,fromlang,tolang,mission_id):
         try:
             insert_diff_data(escape_str.replace("'","&#39;"),diffnum,mission_id)
         except Exception as e:
-            print e
+            print(e)
         insert_finished(finished,mission_id)
 
 

@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect, HttpResponse
-from collections import Counter
 from publicEnv import models
 from django.db.models import Q
 from utils import pagination
-import json,re
+import json, os, time
 # Create your views here.
 
 def auth(func):
@@ -15,8 +14,70 @@ def auth(func):
                 return redirect(login_url)
         except:
             return redirect(login_url)
-        return func(request,*args,**kwargs)
+        return func(request, *args, **kwargs)
     return inner
+
+# @auth
+def pnine_detail(request):
+    # user_id="zhangjingjun"
+    user_id = request.COOKIES.get('uid')
+    task_id = request.GET.get('svid')
+    task_detail = models.ServiceStatus.objects.using('default').filter(id=task_id).first()
+    return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail})
+
+# @auth
+def pnine(request):
+    # uid = 'zhangjingjun'
+    uid = request.COOKIES['uid']
+    if request.method == 'GET':
+        page = request.GET.get('page')
+        task_id = request.GET.get('taskid')
+        if task_id is None or task_id == 'None':
+            task_id = ''
+        current_page = 1
+        if page:
+            current_page = int(page)
+        try:
+            if task_id == '':
+                gpu_info = models.AnalyDetail.objects.using('default').filter(user=uid).values('id', 'create_time', 'end_time',
+                                                                             'ip', 'user','status').order_by('-id')
+            else:
+                gpu_info = models.AnalyDetail.objects.using('default').filter(h_id=task_id, user=uid).values('id', 'create_time', 'end_time',
+                                                                             'ip', 'user','status').order_by('-id')
+            page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
+            data = gpu_info[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/publicsv/p99/?taskid=%s&page=" % task_id)
+
+            host_list = models.AnalyDetail.objects.using('default').filter(user_fk_id=uid).order_by('ip')
+        except Exception as e:
+            print(e)
+            pass
+        return render(request, 'publicsv/pnine.html', {'user_id': uid, 'li': data, 'page_str': page_str, 'host_list': host_list})
+    elif request.method == 'POST':
+        ret = {'status': True, 'errro': None, 'data': None}
+        ip = request.POST.get('analyip')
+        monitor_user = request.POST.get('analyuser')
+        monitor_passw = request.POST.get('analypassw')
+        testlogpath = request.POST.get('testlogpath')
+        baselogpath = request.POST.get('baselogpath')
+        if not testlogpath:
+            testlogpath=''
+        if not baselogpath:
+            baselogpath=''
+        print(ip,monitor_user,monitor_passw,testlogpath,baselogpath)
+        try:
+            a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
+                                                               testlog_path=testlogpath,
+                                                               baselog_path=baselogpath, user_fk_id=uid)
+            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/percentile_test.py %d &' % a.id)
+        except Exception as e:
+            models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
+            ret['error'] = "Error:" + str(e)
+            print(e)
+            ret['status'] = False
+        return HttpResponse(json.dumps(ret))
+
+
 
 def del_line(request):
     ret = {'status': True, 'error': None, 'data': None}
@@ -164,3 +225,8 @@ def svcheck(request):
             print(e)
             pass
         return render(request, 'publicsv/svcheck.html', {'user_id': user_id, 'li': data, 'page_str': page_str,'task_list':task_list})
+
+
+def get_now_time():
+    timeArray = time.localtime()
+    return time.strftime("%Y-%m-%d %H:%M:%S", timeArray)

@@ -3,7 +3,7 @@
 """
 __title__ = ''
 __author__ = 'zhangjingjun'
-__mtime__ = '2018/8/6'
+__mtime__ = '2018/12/5'
 # ----------Dragon be here!----------
               ┏━┓      ┏━┓
             ┏━┛ ┻━━━━━━┛ ┻━━┓
@@ -20,19 +20,3 @@ __mtime__ = '2018/8/6'
                    ┃ ┫ ┫   ┃ ┫ ┫
                    ┗━┻━┛   ┗━┻━┛
 """
-from django.urls import re_path
-from . import views
-app_name = 'publicEnv'
-urlpatterns = [
-    # svcheck
-    re_path(r'^p99/$', views.pnine),
-    # re_path(r'^p99/add/$', views.pnine_detail),
-    re_path(r'^p99/detail/$', views.pnine_detail),
-    # deadlink
-    re_path(r'^deadlink/$', views.deadlink),
-    re_path(r'^deadlink/del_line/$', views.del_line),
-    re_path(r'^deadlink/get_urllist/$', views.get_urllist),
-    # svcheck
-    re_path(r'^svcheck/$', views.svcheck),
-    re_path(r'^svcheck/detail/$', views.svcheck_detail),
-]

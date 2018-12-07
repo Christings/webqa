@@ -1,5 +1,5 @@
 from django.db import models
-import django.utils.timezone as timezone
+from rbac.models import UserInfo
 # Create your models here.
 class ServiceStatus(models.Model):
     sv_name = models.CharField(max_length=100, default="")
@@ -50,3 +50,19 @@ class Special_check_deadlink(models.Model):
     class Meta:
         db_table = 'special_check_deadlink'
         ordering = ['-error_count']
+
+
+class AnalyDetail(models.Model):
+    create_time = models.CharField(max_length=50, default="")
+    end_time = models.CharField(max_length=50, default="")
+    user = models.CharField(max_length=50)
+    status = models.IntegerField(default=0)
+    ip = models.CharField(max_length=500, default="")
+    user = models.CharField(max_length=500, default="")
+    passw = models.CharField(max_length=500, default="")
+    testlog_path=models.CharField(max_length=500, default="")
+    baselog_path=models.CharField(max_length=500, default="")
+    testres_list = models.TextField(default="")
+    baseres_list = models.TextField(default="")
+    errorlog = models.TextField(default="")
+    user_fk = models.ForeignKey(to=UserInfo, to_field='username', default="", on_delete=models.CASCADE)
