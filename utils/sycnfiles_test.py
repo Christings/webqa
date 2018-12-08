@@ -44,7 +44,7 @@ task_id = int(sys.argv[1])
 def set_status(stat):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    sql = "UPDATE %s set status=%d where id=%d" % ('fanyi_interfaceeval', stat, task_id)
+    sql = "UPDATE %s set status=%d where id=%d" % (database_table, stat, task_id)
     cursor.execute(sql)
     db.commit()
 
@@ -52,7 +52,7 @@ def update_errorlog(log):
     log = log.replace("'", "\\'")
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    sql = "UPDATE %s set errorlog=CONCAT(errorlog, '%s') where id=%d;" % ('fanyi_interfaceeval', log, task_id)
+    sql = "UPDATE %s set errorlog=CONCAT(errorlog, '%s') where id=%d;" % (database_table, log, task_id)
     cursor.execute(sql)
     data = cursor.fetchone()
     logstr.log_info(str(task_id)+"\t"+log)
@@ -85,7 +85,7 @@ def get_now_time():
 def set_subpid(subpid,status):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    sql = "UPDATE %s set start_time='%s',runningPID='%s',status=%d where id=%d;" % ('fanyi_interfaceeval', get_now_time(),subpid, status,int(task_id))
+    sql = "UPDATE %s set start_time='%s',runningPID='%s',status=%d where id=%d;" % (database_table, get_now_time(),subpid, status,int(task_id))
     cursor.execute(sql)
     try:
         db.commit()
