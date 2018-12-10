@@ -82,22 +82,11 @@ def get_now_time():
     timeArray = time.localtime()
     return  time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
 
-def set_subpid(subpid,status):
-    db = pymysql.connect(database_host,database_user,database_pass,database)
-    cursor = db.cursor()
-    sql = "UPDATE %s set start_time='%s',runningPID='%s',status=%d where id=%d;" % (database_table, get_now_time(),subpid, status,int(task_id))
-    cursor.execute(sql)
-    try:
-        db.commit()
-        logstr.log_info('Update PID task ,sql is '+ sql)
-    except Exception as e:
-        db.rollback()
-        logstr.log_info('Update PID task failed')
-
 
 def transfile(remote_host,remote_user,remote_pwd,local_path,remote_path):
     """上传文件"""
     try:
+        update_errorlog("[%s] Trans file to %s at remote_path id \n" % (get_now_time(),remote_host,remote_path))
         # 实例化Transport
         trans = paramiko.Transport((remote_host, 22))
         # 建立连接
@@ -106,22 +95,23 @@ def transfile(remote_host,remote_user,remote_pwd,local_path,remote_path):
         sftp = paramiko.SFTPClient.from_transport(trans)
         # 上传文件,必须是文件的完整路径,远端的目录必须已经存在
         sftp.put(localpath=local_path, remotepath=remote_path)
+        update_errorlog("[%s] Trans file success\n" % get_now_time())
     except Exception as e:
-        print(e)
-        pass
+        update_errorlog("[%s] Trans file error \n" % get_now_time())
+        logstr.log_info("[%s] Trans file error ,error info:%s" % (get_now_time(),str(e)))
+        sys.exit()
     finally:
         trans.close()
 
+
 if __name__ == "__main__":
     # transfile('10.140.40.73','root','sogourank@2016','E:/xcx/runoob.txt','/root/runoob.txt')
-    local_path = '/search/odin/pypro/webqa/utils/percenttile_test.py'
+    local_path = '/search/odin/pypro/webqa/utils/percentile_test.py'
     remote_path = '/root/percenttile_test.py'
     try:
         logstr = logUtils.logutil(task_id)
-        subpid = os.getpid()
-        set_subpid(subpid,1)
         (ip,user,passw,testlog_path,baselog_path,userid) = getInfoFromDb(task_id)
-        transfile(ip, user, task_id, passw, local_path, remote_path)
+        transfile(ip, user, passw, local_path, remote_path)
         if testlog_path:
             pass
         if baselog_path:
