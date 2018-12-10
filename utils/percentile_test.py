@@ -42,8 +42,17 @@ def get_readable_timestr(ts):
     ts = int(ts)
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
+def get_rd_timestr(ts):
+    ts = int(ts)
+    return datetime.datetime.fromtimestamp(ts).strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
+
 
 if __name__ == '__main__':
+    database = 'sogowebqa'
+    user = 'root'
+    passwd = 'Websearch@qa66'
+    host = '10.144.120.30'
+
     input_datafile = sys.argv[1]
     data_precent = float(sys.argv[2])
     data_interval = int(sys.argv[3])
@@ -125,7 +134,7 @@ if __name__ == '__main__':
         line_count = line_count + 1
     fp.close()
 
-    print("Item count:" + str(item_count))
+    #print("Item count:" + str(item_count))
     # print (sec_log_box)
 
     sec_log_box_keys.sort(key=float)
@@ -158,44 +167,62 @@ if __name__ == '__main__':
     # check & output from final data.
     pxx_list = []
     first_line = True
-    wfp = open(output_filename, 'w+')
+    #wfp = open(output_filename, 'w+')
+    #new_data_list_index = 0
+    #for new_data_key in new_data_key_list:
+    #    if (len(new_data_list[new_data_list_index]) > 0):
+    #        new_data_list[new_data_list_index].sort(key=float)
+    #        n_to_list = new_data_list[new_data_list_index]
+    #        wfp.write(str(get_readable_timestr(new_data_key)) + "," + str(
+    #            n_to_list[int(len(n_to_list) * data_percent)]) + "\n")
+    #        pxx_list.append(float(n_to_list[int(len(n_to_list) * data_percent)]))
+    #    else:
+    #        if (first_line):
+    #            first_line = False
+    #        else:
+    #            wfp.write(str(get_readable_timestr(new_data_key)) + ",0\n")
+    #            if (not first_line):
+    #                pxx_list.append(0)
+    #    new_data_list_index = new_data_list_index + 1
+    #wfp.close()
+    outstr=""
     new_data_list_index = 0
     for new_data_key in new_data_key_list:
         if (len(new_data_list[new_data_list_index]) > 0):
             new_data_list[new_data_list_index].sort(key=float)
             n_to_list = new_data_list[new_data_list_index]
-            wfp.write(str(get_readable_timestr(new_data_key)) + "," + str(
-                n_to_list[int(len(n_to_list) * data_percent)]) + "\n")
+            outstr+=(str(get_rd_timestr(new_data_key)) + "," + str(
+                n_to_list[int(len(n_to_list) * data_percent)]) + "],")
             pxx_list.append(float(n_to_list[int(len(n_to_list) * data_percent)]))
         else:
             if (first_line):
                 first_line = False
             else:
-                wfp.write(str(get_readable_timestr(new_data_key)) + ",0\n")
+                wfp.write(str(get_rd_timestr(new_data_key)) + ",0")
                 if (not first_line):
                     pxx_list.append(0)
         new_data_list_index = new_data_list_index + 1
-    wfp.close()
+    print(outstr)
 
     # write to summary result.
-    wfp = open(summary_filename, 'w+')
-    wfp.write("".join(["====== parameter ======", "\n"]))
-    wfp.write("".join(["percent:", str(data_percent), "\n"]))
-    wfp.write("".join(["interval:", str(data_interval), " second(s)\n"]))
-    wfp.write("".join(["====== statistics ======", "\n"]))
-    wfp.write("".join(["item count:", str(item_count), "\n"]))
-    wfp.write("".join(["P", str(data_percent * 100), " nodes count:", str(len(pxx_list)), "\n"]))
-    wfp.write("".join(["max:", str(max(pxx_list)), "\n"]))
-    wfp.write("".join(["min:", str(min(pxx_list)), "\n"]))
-    wfp.write("".join(["max - min:", str(max(pxx_list) - min(pxx_list)), "\n"]))
-    wfp.write("".join(["standard deviation:", str(stddev(pxx_list, 1)), "\n"]))
-    pxx_list.sort(key=float)
-    wfp.write(
-        "".join(["P95 for all P", str(data_percent * 100), " data:", str(pxx_list[int(len(pxx_list) * 0.95)]), "\n"]))
+    #wfp = open(summary_filename, 'w+')
+    #wfp.write("".join(["====== parameter ======", "\n"]))
+    #wfp.write("".join(["percent:", str(data_percent), "\n"]))
+    #wfp.write("".join(["interval:", str(data_interval), " second(s)\n"]))
+    #wfp.write("".join(["====== statistics ======", "\n"]))
+    #wfp.write("".join(["item count:", str(item_count), "\n"]))
+    #wfp.write("".join(["P", str(data_percent * 100), " nodes count:", str(len(pxx_list)), "\n"]))
+    #wfp.write("".join(["max:", str(max(pxx_list)), "\n"]))
+    #wfp.write("".join(["min:", str(min(pxx_list)), "\n"]))
+    #wfp.write("".join(["max - min:", str(max(pxx_list) - min(pxx_list)), "\n"]))
+    #wfp.write("".join(["standard deviation:", str(stddev(pxx_list, 1)), "\n"]))
+    #pxx_list.sort(key=float)
+    #wfp.write(
+    #    "".join(["P95 for all P", str(data_percent * 100), " data:", str(pxx_list[int(len(pxx_list) * 0.95)]), "\n"]))
 
-    wfp.close()
+    #wfp.close()
 
-    print("task done. check output file:" + output_filename)
+    #print("task done. check output file:" + output_filename)
     '''
     ch_list = chunks(cost_list, data_frame_num) #split into chunks
     for chunk in ch_list:
