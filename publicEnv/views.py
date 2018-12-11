@@ -68,7 +68,7 @@ def pnine(request):
             basep='0.99'
         if not base_interval:
             base_interval='10'
-        print(ip,monitor_user,monitor_passw,testlogpath,baselogpath)
+        print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep)
         try:
             a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
                                                                testlog_path=testlogpath, testp=testp, test_interval=test_interval,
