@@ -67,6 +67,8 @@ class AnalyDetail(models.Model):
     basep = models.CharField(max_length=10, default="")
     base_interval = models.CharField(max_length=10, default="")
     testres_list = models.TextField(default="")
+    testres_detail = models.TextField(default="")
     baseres_list = models.TextField(default="")
+    baseres_detail = models.TextField(default="")
     errorlog = models.TextField(default="")
     user_fk = models.ForeignKey(to=UserInfo, to_field='username', default="", on_delete=models.CASCADE)
