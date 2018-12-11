@@ -31,28 +31,20 @@ def pnine(request):
     # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
-        task_id = request.GET.get('taskid')
-        if task_id is None or task_id == 'None':
-            task_id = ''
         current_page = 1
         if page:
             current_page = int(page)
         try:
-            if task_id == '':
-                gpu_info = models.AnalyDetail.objects.using('default').filter(user=uid).values('id', 'create_time', 'end_time',
-                                                                             'ip', 'user','status').order_by('-id')
-            else:
-                gpu_info = models.AnalyDetail.objects.using('default').filter(h_id=task_id, user=uid).values('id', 'create_time', 'end_time',
-                                                                             'ip', 'user','status').order_by('-id')
+            gpu_info = models.AnalyDetail.objects.using('default').filter(user_fk_id=uid).values('id', 'create_time', 'end_time',
+                                                                             'ip', 'user', 'status', 'passw', 'testlog_path', 'baselog_path',
+                                                                             'testp','basep','test_interval','base_interval').order_by('-id')
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
-            page_str = page_obj.page_str("/publicsv/p99/?taskid=%s&page=" % task_id)
-
-            host_list = models.AnalyDetail.objects.using('default').filter(user_fk_id=uid).order_by('ip')
+            page_str = page_obj.page_str("/publicsv/p99/?page=")
         except Exception as e:
             print(e)
             pass
-        return render(request, 'publicsv/pnine.html', {'user_id': uid, 'li': data, 'page_str': page_str, 'host_list': host_list})
+        return render(request, 'publicsv/pnine.html', {'user_id': uid, 'li': data, 'page_str': page_str})
     elif request.method == 'POST':
         ret = {'status': True, 'errro': None, 'data': None}
         ip = request.POST.get('analyip')

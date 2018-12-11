@@ -1,4 +1,4 @@
-{% extends 'main.html' %}{% load tag_tools %}{% block content %}{% load static %}
+{% extends 'father.html' %}{% load tag_tools %}{% block content %}{% load static %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -63,52 +63,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="tile-footer">
-				<div class="row">
-					<div class="col-xs-6 col-sm-12 placeholder">
-						<div class="tile-body">
-							<table class="table table-hover" id="reqData">
-								<thead>
-									<tr>										
-										<td>IP</td>
-										<td style="display: none;">user</td>
-										<td style="display: none;">password</td>
-										<td>GpuID</td>
-										<td>Process</td>
-										<td>Ctrl</td>
-										<td>Filter</td>
-									</tr>
-								</thead>
-								<tbody style="cursor: pointer;" id="reqBody">									
-									{% for item in host_list %}
-									<tr host_id="{{item.id}}" class="get_host">
-										<td>{{item.ip}}</td>
-										<td style="display: none;">{{item.user}}</td>
-										<td style="display: none;">{{item.passw}}</td>
-										<td>{{item.gpuid}}</td>
-										<td>{{item.processname}}</td>
-										<td>
-											{% ifequal item.status 0 %}
-											<button class="btn btn-success btn-sm startMonitor" style="color: black;">Start</button>
-											<a href="/fanyi/gpu/task_edit?taskid={{item.id}}">
-											<button class="btn btn-success btn-sm" style="color: black;">Edit</button>
-											</a>
-											<button class="btn btn-danger btn-sm del_line" style="color: black;" >Del</button>
-											{% endifequal%}				
-											{% ifequal item.status 1 %}
-											<button class="btn btn-warning btn-sm stopMonitor" style="color: black;">Stop&nbsp;&nbsp;</button>								
-											{% endifequal%}						
-										</td>
-										<td><a href="/fanyi/gpu/?taskid={{item.id}}"><button class="btn btn-outline-info btn-sm" style="color: black;">Filter</button></a></td>
-									</tr>
-									{% endfor %}									
-								</tbody>
-							</table>
-						</div>
-						<div id="showDiv"></div>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 	<div class="col-md-7">
@@ -121,26 +75,24 @@
 						<td style="display: none;">ID</td>
 						<td style="">StartTime</td>
 						<td>EndTime</td>
-						<td style="">IP</td>
-						<td>GpuID</td>
-						<td style="display:none">User</td>
+						<td>IP</td>
+						<td>User</td>
 						<td>Stauts</td>
 						<td>Ctrl</td>
 					</tr>
 				</thead>
 				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
-					<tr req_id="{{item.id}}">
+					<tr req_id="{{item.id}}" class="get_data">
 						<td  style="display: none;">{{item.id}}</td>
 						<td>{{item.create_time}}</td>
 						<td>{{item.end_time}}</td>
-						<td>{{item.monitorip}}</td>
-						<td>{{item.gpuid}}</td>
-						<td style="display:none">{{item.user}}</td>
+						<td>{{item.ip}}</td>
+						<td>{{item.user}}</td>
 						<td>
-							<a href="/fanyi/gpu/detail/?taskid={{item.id}}">
+							<a href="/publicsv/p99/detail/?taskid={{item.id}}">
 								{% ifequal item.status 0 %}
-								<button class="btn btn-outline-info btn-sm" style="color: green;">Stopped</button>
+								<button class="btn btn-outline-info btn-sm" style="color: green;">Finished</button>
 								{% endifequal %} 
 								{% ifequal item.status 1 %}
 								<button class="btn btn-outline-success btn-sm" style="color: cream;">Running</button>
@@ -150,6 +102,13 @@
 								{% endifequal %}
 							</a>
 						</td>
+						<td style="display: none;">{{item.passw}}</td>
+						<td style="display: none;">{{item.testlog_path}}</td>
+						<td style="display: none;">{{item.baselog_path}}</td>
+						<td style="display: none;">{{item.testp}}</td>
+						<td style="display: none;">{{item.basep}}</td>
+						<td style="display: none;">{{item.test_interval}}</td>
+						<td style="display: none;">{{item.base_interval}}</td>
 						{% ifequal item.status 0 %}
 						<td>
 							<button class="btn btn-danger btn-sm del_one_task" style="color: black;" >DEL</button>
@@ -162,7 +121,7 @@
 						{% ifequal item.status 2 %}
 						<td>
 							<button class="btn btn-danger btn-sm del_one_task" style="color: black;" >DEL</button>
-						</td>
+						</td>						
 						{% endifequal%}
 					</tr>
 					{% endfor %}
@@ -204,196 +163,141 @@
 				}    				
 			}
 		});
-			//add_host
-			$('#add_host').click(function() {
-				var analyip = $("#analyip").val()
-				var analyuser = $("#analyuser").val()
-				var analypassw = $("#analypassw").val()
-				var testlogpath = $("#testlogpath").val()
-				var baselogpath = $("#baselogpath").val()
-				var testp99 = $("#testp99").val()
-				var test_interval = $("#test_interval").val()
-				var testp99 = $("#basep99").val()
-				var test_interval = $("#base_interval").val()
-				if(analyip != "" && analyuser != "" && analypassw!="") {
-					if(testlogpath !="" || baselogpath!=""){					
-						$.ajax({
-							type: "POST",
-							url: "/publicsv/p99/",
-							async: true,
-							traditional: true,
-							data: {
-								'analyip': analyip,
-								'analyuser': analyuser,
-								'analypassw': analypassw,
-								'testlogpath':testlogpath,
-								'baselogpath':baselogpath,
-								'testp99':testp99,
-								'test_interval':test_interval,
-								'basep99':basep99,
-								'base_interval':base_interval,
-							},
-							dataType: 'JSON',
-							success: function(obj) {
-								if(obj.status) {
-									location.reload();
-								} else {
-									$('#error_xml').text(obj.error);
-								}
-							},
-							error: function() {
-			
-							},
-						});
-						$('#error_xml').text('');
-					}else{
-						$('#error_xml').text('路径不可都为空');
-					}
-				} else {
-					if(monitorip == '') {
-						$('#error_xml').text('ip不可为空。');
-					} else if(monitoruser == '') {
-						$('#error_xml').text('用户名不可为空。');
-					} else if(monitorpassw==''){
-						$('#error_xml').text('密码不可为空。');
-					}else {
-						$('#error_xml').text('未知错误。');
-					}
-				}
-			})
-		
-			//table hover
-			$(function() {
-				function showBox(obj, box) {
-					var timer = null;
-					$(obj).on("mouseover", function(e) {
-						clearTimeout(timer);
-						var clientX = e.clientX;
-						var clientY = e.clientY;
-						var y = clientY + 20;
-						var txt = $(this).text();
-						timer = setTimeout(function() {
-							$(box).css("left", clientX).css("top", y);
-							if(txt == "") {
-								$(box).hide();
+		//add_host
+		$('#add_host').click(function() {
+			var analyip = $("#analyip").val()
+			var analyuser = $("#analyuser").val()
+			var analypassw = $("#analypassw").val()
+			var testlogpath = $("#testlogpath").val()
+			var baselogpath = $("#baselogpath").val()
+			var testp99 = $("#testp99").val()
+			var test_interval = $("#test_interval").val()
+			var testp99 = $("#basep99").val()
+			var test_interval = $("#base_interval").val()
+			if(analyip != "" && analyuser != "" && analypassw!="") {
+				if(testlogpath !="" || baselogpath!=""){					
+					$.ajax({
+						type: "POST",
+						url: "/publicsv/p99/",
+						async: true,
+						traditional: true,
+						data: {
+							'analyip': analyip,
+							'analyuser': analyuser,
+							'analypassw': analypassw,
+							'testlogpath':testlogpath,
+							'baselogpath':baselogpath,
+							'testp99':testp99,
+							'test_interval':test_interval,
+							'basep99':basep99,
+							'base_interval':base_interval,
+						},
+						dataType: 'JSON',
+						success: function(obj) {
+							if(obj.status) {
+								location.reload();
 							} else {
-								$(box).show();
-								$(box).html(txt);
+								$('#error_xml').text(obj.error);
 							}
-						}, 300);
+						},
+						error: function() {
+		
+						},
 					});
-					$(obj).on("mouseout", function() {
-						clearTimeout(timer);
-						$(box).hide();
-					});
+					$('#error_xml').text('');
+				}else{
+					$('#error_xml').text('路径不可都为空');
 				}
-				showBox("#reqData > tbody td", "#showDiv");
-			});
+			} else {
+				if(monitorip == '') {
+					$('#error_xml').text('ip不可为空。');
+				} else if(monitoruser == '') {
+					$('#error_xml').text('用户名不可为空。');
+				} else if(monitorpassw==''){
+					$('#error_xml').text('密码不可为空。');
+				}else {
+					$('#error_xml').text('未知错误。');
+				}
+			}
+		})
 		
-			//del one monitor
-			$('.del_one_task').click(function() {
-				var monitor_id = $(this).parent().parent().attr('req_id');
-				$.ajax({
-					type: "POST",
-					url: "/fanyi/gpu/del_task/",
-					async: true,
-					data: {
-						'monitor_id': monitor_id
-					},
-					dataType: 'JSON',
-					success: function(obj) {
-						if(obj.status) {
-							location.reload();
+		//table hover
+		$(function() {
+			function showBox(obj, box) {
+				var timer = null;
+				$(obj).on("mouseover", function(e) {
+					clearTimeout(timer);
+					var clientX = e.clientX;
+					var clientY = e.clientY;
+					var y = clientY + 20;
+					var txt = $(this).text();
+					timer = setTimeout(function() {
+						$(box).css("left", clientX).css("top", y);
+						if(txt == "") {
+							$(box).hide();
 						} else {
-							$('#error_xml').text(obj.error);
+							$(box).show();
+							$(box).html(txt);
 						}
-					},
-					error: function() {
-		
-					}
+					}, 300);
 				});
+				$(obj).on("mouseout", function() {
+					clearTimeout(timer);
+					$(box).hide();
+				});
+			}
+			showBox("#reqData > tbody td", "#showDiv");
+		});
 		
-			})
+		//del one monitor
+		$('.del_one_task').click(function() {
+			var monitor_id = $(this).parent().parent().attr('req_id');
+			$.ajax({
+				type: "POST",
+				url: "/fanyi/gpu/del_task/",
+				async: true,
+				data: {
+					'monitor_id': monitor_id
+				},
+				dataType: 'JSON',
+				success: function(obj) {
+					if(obj.status) {
+						location.reload();
+					} else {
+						$('#error_xml').text(obj.error);
+					}
+				},
+				error: function() {
+	
+				}
+			});		
+		})
+		
+		//getData
+        $('.get_data').dblclick(function () {
+            var linelst = $(this).children();
+            hostip = $(linelst[3]).text();
+            user = $(linelst[4]).text();
+            passw = $(linelst[6]).text();
+            testlog_path = $(linelst[7]).text();
+            baselog_path = $(linelst[8]).text();
+            testp = $(linelst[9]).text();
+            basep = $(linelst[10]).text();
+            test_interval = $(linelst[11]).text();
+            base_interval = $(linelst[12]).text();
+            $('#analyip').val(hostip);
+            $('#analyuser').val(user);
+            $('#analypassw').val(passw);
+            $('#testlogpath').val(testlog_path);
+            $('#baselogpath').val(baselog_path);
+            $('#testp99').val(testp);
+            $('#basep99').val(basep);
+            $('#test_interval').val(test_interval);
+            $('#base_interval').val(base_interval);
+        })
+        
 			
-			//start Monitor
-			$('.startMonitor').click(function() {
-				
-				var line_id = $(this).parent().parent().attr('host_id');
-				console.log(line_id)
-				$.ajax({
-					type: "POST",
-					url: "/fanyi/gpu/task_start/",
-					async: true,
-					data: {
-						'line_id': line_id,
-					},
-					dataType: 'JSON',
-					success: function(obj) {
-						console.log(obj.status)
-						if(obj.status) {
-							location.reload();
-		//					setTimeout(function(){
-		//						window.location.reload();
-		//						}, 500);
-						} else {
-							$('#error_xml').text(obj.error);
-						}
-					},
-					error: function() {		
-					}
-				});		
-			})
 			
-			//stop Monitor
-			$('.stopMonitor').click(function() {
-				var line_id = $(this).parent().parent().attr('host_id');
-				$.ajax({
-					type: "POST",
-					url: "/fanyi/gpu/task_stop/",
-					async: true,
-					data: {
-						'line_id': line_id,
-					},
-					dataType: 'JSON',
-					success: function(obj) {
-						if(obj.status) {
-							location.reload();
-						} else {
-							$('#error_xml').text(obj.error);
-						}
-					},
-					error: function() {
-		
-					}
-				});
-		
-			})
-		
-		
-			//del
-			$('.del_line').click(function() {
-				var line_id = $(this).parent().parent().attr('host_id');
-				$.ajax({
-					type: "POST",
-					url: "/fanyi/gpu/del_host/",
-					async: true,
-					data: {
-						'line_id': line_id
-					},
-					dataType: 'JSON',
-					success: function(obj) {
-						if(obj.status) {
-							location.reload();
-						} else {
-							$('#error_xml').text(obj.error);
-						}
-					},
-					error: function() {
-		
-					}
-				});
-		
-			})
 		})
 </script>
 {% endblock %}
