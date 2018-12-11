@@ -19,16 +19,16 @@ def auth(func):
 
 # @auth
 def pnine_detail(request):
-    # user_id="zhangjingjun"
-    user_id = request.COOKIES.get('uid')
+    user_id="zhangjingjun"
+    # user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('svid')
     task_detail = models.ServiceStatus.objects.using('default').filter(id=task_id).first()
     return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail})
 
 # @auth
 def pnine(request):
-    # uid = 'zhangjingjun'
-    uid = request.COOKIES['uid']
+    uid = 'zhangjingjun'
+    # uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         task_id = request.GET.get('taskid')
@@ -60,16 +60,28 @@ def pnine(request):
         monitor_passw = request.POST.get('analypassw')
         testlogpath = request.POST.get('testlogpath')
         baselogpath = request.POST.get('baselogpath')
+        testp = request.POST.get('testp99')
+        test_interval = request.POST.get('test_interval')
+        basep = request.POST.get('testp99')
+        base_interval = request.POST.get('base_interval')
         if not testlogpath:
             testlogpath=''
         if not baselogpath:
             baselogpath=''
+        if not testp:
+            testp='0.99'
+        if not test_interval:
+            test_interval='10'
+        if not basep:
+            basep='0.99'
+        if not base_interval:
+            base_interval='10'
         print(ip,monitor_user,monitor_passw,testlogpath,baselogpath)
         try:
             a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
-                                                               testlog_path=testlogpath,
-                                                               baselog_path=baselogpath, user_fk_id=uid)
-            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/percentile_test.py %d &' % a.id)
+                                                               testlog_path=testlogpath, testp=testp, test_interval=test_interval,
+                                                               baselog_path=baselogpath, basep=basep, base_interval=base_interval, user_fk_id=uid)
+            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
         except Exception as e:
             models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
             ret['error'] = "Error:" + str(e)

@@ -1,4 +1,4 @@
-{% extends 'father.html' %}{% load tag_tools %}{% block content %}{% load static %}
+{% extends 'main.html' %}{% load tag_tools %}{% block content %}{% load static %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -31,9 +31,27 @@
 						</div>
 					</div>
 					<div class="form-group row">
+						<label class="control-label col-md-2"></label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" id="testp99" name="testp99" placeholder="数据节点，默认0.99(p99)" >
+						</div>
+						<div class="col-md-5">
+							<input type="text" class="form-control" id="test_interval" name="test_interval" placeholder="样本间隔，默认10(s)" >
+						</div>
+					</div>
+					<div class="form-group row">
 						<label class="control-label col-md-2">BaseLogPath</label>
 						<div class="col-md-10">
 							<input type="text" class="form-control" id="baselogpath" name="baselogpath" placeholder="绝对路径+文件名" >
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2"></label>
+						<div class="col-md-5">
+							<input type="text" class="form-control" id="basep99" name="basep99" placeholder="数据节点，默认0.99(p99)" >
+						</div>
+						<div class="col-md-5">
+							<input type="text" class="form-control" id="base_interval" name="base_interval" placeholder="样本间隔，默认10(s)" >
 						</div>
 					</div>
 				</form>
@@ -193,6 +211,10 @@
 				var analypassw = $("#analypassw").val()
 				var testlogpath = $("#testlogpath").val()
 				var baselogpath = $("#baselogpath").val()
+				var testp99 = $("#testp99").val()
+				var test_interval = $("#test_interval").val()
+				var testp99 = $("#basep99").val()
+				var test_interval = $("#base_interval").val()
 				if(analyip != "" && analyuser != "" && analypassw!="") {
 					if(testlogpath !="" || baselogpath!=""){					
 						$.ajax({
@@ -206,6 +228,10 @@
 								'analypassw': analypassw,
 								'testlogpath':testlogpath,
 								'baselogpath':baselogpath,
+								'testp99':testp99,
+								'test_interval':test_interval,
+								'basep99':basep99,
+								'base_interval':base_interval,
 							},
 							dataType: 'JSON',
 							success: function(obj) {
