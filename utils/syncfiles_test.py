@@ -132,11 +132,13 @@ def startsh(remote_host,remote_user,remote_pwd,cmds):
 def insert_data(column_name,data_str):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
-    up_sql = "UPDATE %s set %s=%s where id=%d" % (database_table,column_name, data_str,task_id)
+    up_sql = "UPDATE %s set %s='%s' where id=%d" % (database_table,column_name, data_str,task_id)
+    print(up_sql)
     try:
         cursor.execute(up_sql)
         db.commit()
     except Exception as e:
+        print(e)
         db.rollback()
         pass
     db.close()
@@ -156,15 +158,19 @@ if __name__ == "__main__":
         set_status(1)
         if testlog_path:
             cmds_test = "python /root/percentile_test.py %s %s %s" % (testlog_path,testp,test_interval)
-            test_result = (ip,user, passw, cmds_test)
+            test_result = startsh(ip,user, passw, cmds_test)
+            print(test_result)
+            print(len(test_result))
             if len(test_result) == 2:
+                print(11111)
                 insert_data('testres_list',test_result[0])
                 insert_data('testres_detail',test_result[1])
             else:
                 update_errorlog("Get test result failed ,pl check env\n")
         if baselog_path:
             cmds_base = "python /root/percentile_test.py %s %s %s" % (baselog_path,basep,base_interval)
-            base_resutl = (ip,user, passw, cmds_base)
+            base_result = startsh(ip,user, passw, cmds_base)
+            print(base_result)
             if len(base_result) == 2:
                 insert_data('baseres_list',base_result[0])
                 insert_data('baseres_detail',base_result[1])
