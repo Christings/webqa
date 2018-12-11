@@ -66,12 +66,12 @@ def getInfoFromDb(task_id):
     try:
         db = pymysql.connect(database_host,database_user,database_pass,database)
         cursor = db.cursor()
-        sql = "SELECT ip,user,passw,testlog_path,baselog_path,user_fk_id FROM %s where id='%d'" % (database_table,task_id)
+        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id FROM %s where id='%d'" % (database_table,task_id)
         cursor.execute(sql)
         data = cursor.fetchone()
-        logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'userid:'+data[5])
+        logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'testp'+data[5]+'\n'+'test_interval'+data[6]+'\n'+'basep'+data[7]+'\n'+'base_interval'+data[8]+'\n'+'userid:'+data[9]+'\n')
     except Exception as e:
-        set_status(3)
+        set_status(2)
         update_errorlog("[%s] Get task info error from db by id \n" % get_now_time())
         logstr.log_info("[%s] Get task info error from db by id,error info:%s" % (get_now_time(),str(e)))
         sys.exit()
@@ -123,11 +123,24 @@ def startsh(remote_host,remote_user,remote_pwd,cmds):
         return result
     except Exception as e:
         print(e)
-        update_errorlog("[%s] Start script error \n" % get_now_time())
+        update_errorlog("[%s] Start script error ,error info:%s \n" % (get_now_time(),stderr.readlines()))
         logstr.log_info("[%s] Start script error ,error info:%s" % (get_now_time(),str(e)))
         sys.exit()
     finally:
         client.close()
+
+def insert_data(column_name,data_str):
+    db = pymysql.connect(database_host,database_user,database_pass,database)
+    cursor = db.cursor()
+    up_sql = "UPDATE %s set %s=%s where id=%d" % (database_table,column_name, data_str,task_id)
+    try:
+        cursor.execute(up_sql)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        pass
+    db.close()
+
 
 if __name__ == "__main__":
     # transfile('10.140.40.73','root','sogourank@2016','E:/xcx/runoob.txt','/root/runoob.txt')
@@ -137,18 +150,30 @@ if __name__ == "__main__":
     #start_remote_path = '/root/start.sh'
     try:
         logstr = logUtils.logutil(task_id)
-        (ip,user,passw,testlog_path,baselog_path,userid) = getInfoFromDb(task_id)
+        (ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,userid) = getInfoFromDb(task_id)
         transfile(ip, user, passw, local_path, remote_path)
         cmds=''
+        set_status(1)
         if testlog_path:
-            cmds = "python /root/percentile_test.py /root/log 0.99 10"
+            cmds_test = "python /root/percentile_test.py %s %s %s" % (testlog_path,testp,test_interval)
+            test_result = (ip,user, passw, cmds_test)
+            if len(test_result) == 2:
+                insert_data('testres_list',test_result[0])
+                insert_data('testres_detail',test_result[1])
+            else:
+                update_errorlog("Get test result failed ,pl check env\n")
         if baselog_path:
-            cmds = "python /root/percentile_test.py /root/log 0.99 10"
-        a = startsh(ip,user, passw, cmds)
-        
-        print(a[0])
+            cmds_base = "python /root/percentile_test.py %s %s %s" % (baselog_path,basep,base_interval)
+            base_resutl = (ip,user, passw, cmds_base)
+            if len(base_result) == 2:
+                insert_data('baseres_list',base_result[0])
+                insert_data('baseres_detail',base_result[1])
+            else:
+                update_errorlog("Get base result failed ,pl check env\n")
+        set_status(0)
+            
     except Exception as e:
         print(e)
-        update_errorlog("init failed!")
-        set_status(3)
+        update_errorlog("init failed!\n")
+        set_status(2)
         sys.exit()
