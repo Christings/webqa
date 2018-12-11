@@ -21,8 +21,8 @@ def auth(func):
 def pnine_detail(request):
     user_id="zhangjingjun"
     # user_id = request.COOKIES.get('uid')
-    task_id = request.GET.get('svid')
-    task_detail = models.ServiceStatus.objects.using('default').filter(id=task_id).first()
+    task_id = request.GET.get('taskid')
+    task_detail = models.AnalyDetail.objects.using('default').filter(id=task_id).first()
     return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail})
 
 # @auth
@@ -54,7 +54,7 @@ def pnine(request):
         baselogpath = request.POST.get('baselogpath')
         testp = request.POST.get('testp99')
         test_interval = request.POST.get('test_interval')
-        basep = request.POST.get('testp99')
+        basep = request.POST.get('basep99')
         base_interval = request.POST.get('base_interval')
         if not testlogpath:
             testlogpath=''
