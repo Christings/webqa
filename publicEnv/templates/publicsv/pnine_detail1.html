@@ -50,101 +50,87 @@
 </div>
 
 {% endblock %} {% block js %}
-<script src="{% static "js/highstock.js" %}"></script>
+<script src="{% static "js/highcharts.js" %}"></script>
 <script src="{% static "js/exporting.js" %}"></script>
 <script language="JavaScript">
-var seriesOptions = [],
-	seriesCounter = 0,
-	names = ['MSFT', 'AAPL', 'GOOG'],
-	// create the chart when all data is loaded
-	createChart = function () {
-		Highcharts.stockChart('container', {
-			rangeSelector: {
-				selected: 4
-			},
-			yAxis: {
-				labels: {
-					formatter: function () {
-						return (this.value > 0 ? ' + ' : '') + this.value + '%';
-					}
-				},
-				plotLines: [{
-					value: 0,
-					width: 2,
-					color: 'silver'
-				}]
-			},
-			plotOptions: {
-				series: {
-					compare: 'percent'
-				}
-			},
-			tooltip: {
-				pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-				valueDecimals: 2
-			},
-			series: seriesOptions
-		});
-	};
-$.each(names, function (i, name) {
-//	$.getJSON('https://data.jianshukeji.com/jsonp?filename=json/' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-//		seriesOptions[i] = {
-//			name: name,
-//			data: data
-//		};
-//		// As we're loading the data asynchronously, we don't know what order it will arrive. So
-//		// we keep a counter and create the chart when all the data is loaded.
-//		seriesCounter += 1;
-//		if (seriesCounter === names.length) {
-//			createChart();
-//		}
-//	});
-	seriesOptions[i] = {
-			name: name,
-			data: ([
-/* May 2006 */
-[1147651200000,23.15],
-[1147737600000,23.01],
-[1147824000000,22.73],
-[1147910400000,22.83],
-[1147996800000,22.56],
-[1148256000000,22.88],
-[1148342400000,22.79],
-[1148428800000,23.50],
-[1148515200000,23.74],
-[1148601600000,23.72],
-[1148947200000,23.15],
-[1149033600000,22.65],
-/* Jun 2006 */
-[1149120000000,22.82],
-[1149206400000,22.76],
-[1149465600000,22.50],
-[1149552000000,22.13],
-[1149638400000,22.04],
-[1149724800000,22.11],
-[1149811200000,21.92],
-[1150070400000,21.71],
-[1150156800000,21.51],
-[1150243200000,21.88],
-[1150329600000,22.07],
-[1150416000000,22.10],
-[1150675200000,22.55],
-[1150761600000,22.56],
-[1150848000000,23.08],
-[1150934400000,22.88],
-[1151020800000,22.50],
-[1151280000000,22.82],
-[1151366400000,22.86],
-[1151452800000,23.16],
-[1151539200000,23.47],
-[1151625600000,23.30]])
-		};
-		// As we're loading the data asynchronously, we don't know what order it will arrive. So
-		// we keep a counter and create the chart when all the data is loaded.
-		seriesCounter += 1;
-		if (seriesCounter === names.length) {
-			createChart();
-		}
+$(document).ready(function() {  
+   var chart = {
+      type: 'spline'      
+   }; 
+   var title = {
+      text: 'P99分析曲线'   
+   };
+   var subtitle = {
+//    text: 'Irregular time data in Highcharts JS'
+   };
+   var xAxis = {
+      type: 'datetime',
+      dateTimeLabelFormats: { // don't display the dummy year
+         month: '%e. %b',
+         year: '%b',
+         tickPixelInterval:1000,
+      },
+      title: {
+         text: 'Date Time'
+      },
+	tickPixelInterval:10000000,
+   };
+   var yAxis = {
+      title: {
+         text: 'cost'
+      },
+      min: 0
+   };
+   var tooltip = {
+      headerFormat: '<b>{series.name}</b><br>',
+      pointFormat: '{point.x:%b. %e}: {point.y:.2f}'
+   };
+   var plotOptions = {
+      spline: {
+      	lineWidth: 0.5,
+        fillOpacity: 0.5,
+        marker: 
+        {
+            enabled: true,
+            radius: 3,
+            states: 
+            {
+                hover: {
+                    enabled: true,
+                    radius: 3,
+                    }
+            }
+         },
+      }
+   };
+
+   var series= [{
+         name: 'Test P{{task_detail.testp}} / {{task_detail.test_interval}}',
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+         data: [
+             {{task_detail.testres_list}}
+         ]
+      }, {
+         name: 'Base P{{task_detail.basep}} / {{task_detail.base_interval}}',
+         data: [
+             {{task_detail.baseres_list}}
+         ]
+      }
+   ];     
+      
+   var json = {};
+   json.chart = chart;
+   json.title = title;
+   json.subtitle = subtitle;
+   json.tooltip = tooltip;
+   json.xAxis = xAxis;
+   json.yAxis = yAxis;  
+   json.series = series;
+   json.plotOptions = plotOptions;
+   $('#container').highcharts(json);
+  
 });
 </script>
 <script>	
