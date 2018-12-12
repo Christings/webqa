@@ -23,7 +23,10 @@ def pnine_detail(request):
     # user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('taskid')
     task_detail = models.AnalyDetail.objects.using('default').filter(id=task_id).first()
-    return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail})
+    loginfo = str_unix2br(task_detail.errorlog)
+    testres_detail = str_unix2br((task_detail.testres_detail).replace('---','\n'))
+    baseres_detail = str_unix2br((task_detail.baseres_detail).replace('---', '\n'))
+    return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail,'loginfo':loginfo,'testres_detail':testres_detail,'baseres_detail':baseres_detail})
 
 # @auth
 def pnine(request):
@@ -234,3 +237,6 @@ def svcheck(request):
 def get_now_time():
     timeArray = time.localtime()
     return time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+
+def str_unix2br(input):
+    return input.replace('\n', '<br>')

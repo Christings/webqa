@@ -44,7 +44,7 @@ def get_readable_timestr(ts):
 
 def get_rd_timestr(ts):
     ts = int(ts)
-    return datetime.datetime.fromtimestamp(ts).strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
+    return datetime.datetime.fromtimestamp(ts).strftime('[Date.UTC(%Y,%m-1,%d,%H,%M,%S)')
 
 
 if __name__ == '__main__':
