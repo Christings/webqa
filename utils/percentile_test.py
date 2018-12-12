@@ -176,7 +176,7 @@ if __name__ == '__main__':
             n_to_list = new_data_list[new_data_list_index]
             wfp.write(str(get_readable_timestr(new_data_key)) + "," + str(
                 n_to_list[int(len(n_to_list) * data_percent)]) + "\n")
-            outstr+=(str(get_rd_timestr(new_data_key)) + "," + str(
+            outstr+=('['+str(new_data_key*1000) + "," + str(
                 n_to_list[int(len(n_to_list) * data_percent)]) + "],")
             pxx_list.append(float(n_to_list[int(len(n_to_list) * data_percent)]))
         else:
@@ -209,37 +209,37 @@ if __name__ == '__main__':
     #    new_data_list_index = new_data_list_index + 1
     #print(outstr)
     
-    pxx_list.sort(key=float)
-    outsummary=""
-    outsummary=("---".join(["====== parameter ======", 
-                "percent:"+str(data_percent),
-                "interval:"+ str(data_interval)+" second(s)",
-                "====== statistics ======",
-                "item count:"+ str(item_count),
-                "P"+ str(data_percent * 100)+" nodes count:"+str(len(pxx_list)),
-                "max:"+ str(max(pxx_list)),
-                "min:"+ str(min(pxx_list)),
-                "max - min:"+str(max(pxx_list) - min(pxx_list)),
-                "standard deviation:"+str(stddev(pxx_list, 1)),
-                "P95 for all P"+str(data_percent * 100)+ " data:"+ str(pxx_list[int(len(pxx_list) * 0.95)])]))
-    # write to summary result.
-    wfp = open('/root/'+summary_filename, 'w+')
-    wfp.write("".join(["====== parameter ======", "\n"]))
-    wfp.write("".join(["percent:", str(data_percent), "\n"]))
-    wfp.write("".join(["interval:", str(data_interval), " second(s)\n"]))
-    wfp.write("".join(["====== statistics ======", "\n"]))
-    wfp.write("".join(["item count:", str(item_count), "\n"]))
-    wfp.write("".join(["P", str(data_percent * 100), " nodes count:", str(len(pxx_list)), "\n"]))
-    wfp.write("".join(["max:", str(max(pxx_list)), "\n"]))
-    wfp.write("".join(["min:", str(min(pxx_list)), "\n"]))
-    wfp.write("".join(["max - min:", str(max(pxx_list) - min(pxx_list)), "\n"]))
-    wfp.write("".join(["standard deviation:", str(stddev(pxx_list, 1)), "\n"]))
-    wfp.write(
-        "".join(["P95 for all P", str(data_percent * 100), " data:", str(pxx_list[int(len(pxx_list) * 0.95)]), "\n"]))
+    #pxx_list.sort(key=float)
+    #outsummary=""
+    #outsummary=("---".join(["====== parameter ======", 
+    #            "percent:"+str(data_percent),
+    #            "interval:"+ str(data_interval)+" second(s)",
+    #            "====== statistics ======",
+    #            "item count:"+ str(item_count),
+    #            "P"+ str(data_percent * 100)+" nodes count:"+str(len(pxx_list)),
+    #            "max:"+ str(max(pxx_list)),
+    #            "min:"+ str(min(pxx_list)),
+    #            "max - min:"+str(max(pxx_list) - min(pxx_list)),
+    #            "standard deviation:"+str(stddev(pxx_list, 1)),
+    #            "P95 for all P"+str(data_percent * 100)+ " data:"+ str(pxx_list[int(len(pxx_list) * 0.95)])]))
+    ## write to summary result.
+    #wfp = open('/root/'+summary_filename, 'w+')
+    #wfp.write("".join(["====== parameter ======", "\n"]))
+    #wfp.write("".join(["percent:", str(data_percent), "\n"]))
+    #wfp.write("".join(["interval:", str(data_interval), " second(s)\n"]))
+    #wfp.write("".join(["====== statistics ======", "\n"]))
+    #wfp.write("".join(["item count:", str(item_count), "\n"]))
+    #wfp.write("".join(["P", str(data_percent * 100), " nodes count:", str(len(pxx_list)), "\n"]))
+    #wfp.write("".join(["max:", str(max(pxx_list)), "\n"]))
+    #wfp.write("".join(["min:", str(min(pxx_list)), "\n"]))
+    #wfp.write("".join(["max - min:", str(max(pxx_list) - min(pxx_list)), "\n"]))
+    #wfp.write("".join(["standard deviation:", str(stddev(pxx_list, 1)), "\n"]))
+    #wfp.write(
+    #    "".join(["P95 for all P", str(data_percent * 100), " data:", str(pxx_list[int(len(pxx_list) * 0.95)]), "\n"]))
 
-    wfp.close()
+    #wfp.close()
 
-    print(outsummary)
+    #print(outsummary)
     #print("task done. check output file:" + output_filename)
     '''
     ch_list = chunks(cost_list, data_frame_num) #split into chunks

@@ -159,23 +159,23 @@ if __name__ == "__main__":
         if testlog_path:
             cmds_test = "python /root/percentile_test.py %s %s %s" % (testlog_path,testp,test_interval)
             test_result = startsh(ip,user, passw, cmds_test)
-            print(test_result)
-            print(len(test_result))
-            if len(test_result) == 2:
-                print(11111)
-                insert_data('testres_list',test_result[0])
-                insert_data('testres_detail',test_result[1])
-            else:
-                update_errorlog("Get test result failed ,pl check env\n")
+            #if len(test_result) == 2:
+            #    print(11111)
+            #    insert_data('testres_list',test_result[0])
+            #    insert_data('testres_detail',test_result[1])
+            #else:
+            #    update_errorlog("Get test result failed ,pl check env\n")
+            insert_data('testres_list',test_result[0])
         if baselog_path:
             cmds_base = "python /root/percentile_test.py %s %s %s" % (baselog_path,basep,base_interval)
             base_result = startsh(ip,user, passw, cmds_base)
-            print(base_result)
-            if len(base_result) == 2:
-                insert_data('baseres_list',base_result[0])
-                insert_data('baseres_detail',base_result[1])
-            else:
-                update_errorlog("Get base result failed ,pl check env\n")
+            #print(base_result)
+            #if len(base_result) == 2:
+            #    insert_data('baseres_list',base_result[0])
+            #    insert_data('baseres_detail',base_result[1])
+            #else:
+            #    update_errorlog("Get base result failed ,pl check env\n")
+            insert_data('baseres_list',base_result[0])
         set_status(0)
             
     except Exception as e:
