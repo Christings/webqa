@@ -78,19 +78,20 @@
 				<table class="table" id="reqData">
 				<thead>
 					<tr>
-						<td style="display: none;">ID</td>
+						<td>ID</td>
 						<td style="">StartTime</td>
 						<td>EndTime</td>
 						<td>IP</td>
 						<td>User</td>
 						<td>Stauts</td>
 						<td>Ctrl</td>
+						<td>详情</td>
 					</tr>
 				</thead>
 				<tbody style="cursor: pointer;" id="reqBody">
 					{% for item in li %}
 					<tr req_id="{{item.id}}" class="get_data">
-						<td  style="display: none;">{{item.id}}</td>
+						<td>{{item.id}}</td>
 						<td>{{item.create_time}}</td>
 						<td>{{item.end_time}}</td>
 						<td>{{item.ip}}</td>
@@ -131,6 +132,14 @@
 							<button class="btn btn-danger btn-sm del_one_task" style="color: black;" >DEL</button>
 						</td>						
 						{% endifequal%}
+						<td>								
+	                		<a href="#" class="openhide" style="width: 5%;"> 详情 </a>
+						</td>
+					</tr>
+					<tr class="hidecontent hide">
+						<td colspan="8" style="text-align: left;background-color: #85C5E5;">
+						Test日志路径：{{ item.testlog_path }}&nbsp;&nbsp;&nbsp;&nbsp;Base日志路径：{{ item.baselog_path }}
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -158,6 +167,18 @@
 
 <script>
 	$(function(){
+		$('.openhide').click(function(){
+			have_hide = $(this).parent().parent().next().hasClass('hide');
+			console.log(have_hide)
+			if(have_hide){
+				$(this).parent().parent().next().removeClass('hide');
+			}else{
+				$(this).parent().parent().next().addClass('hide');
+			}
+			$(this).parent().parent().next().siblings('.hidecontent').addClass('hide');
+		})
+		
+		
 		//判断ajax里面的方法是get还是post
 		function csrfSafeMethod(method){
 			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -207,7 +228,7 @@
 						dataType: 'JSON',
 						success: function(obj) {
 							if(obj.status) {
-								location.reload();
+								window.location.href = '/fanyi/man_eval/';
 							} else {
 								$('#error_xml').text(obj.error);
 							}
@@ -233,33 +254,33 @@
 			}
 		})
 		
-		//table hover
-		$(function() {
-			function showBox(obj, box) {
-				var timer = null;
-				$(obj).on("mouseover", function(e) {
-					clearTimeout(timer);
-					var clientX = e.clientX;
-					var clientY = e.clientY;
-					var y = clientY + 20;
-					var txt = $(this).text();
-					timer = setTimeout(function() {
-						$(box).css("left", clientX).css("top", y);
-						if(txt == "") {
-							$(box).hide();
-						} else {
-							$(box).show();
-							$(box).html(txt);
-						}
-					}, 300);
-				});
-				$(obj).on("mouseout", function() {
-					clearTimeout(timer);
-					$(box).hide();
-				});
-			}
-			showBox("#reqData > tbody td", "#showDiv");
-		});
+//		//table hover
+//		$(function() {
+//			function showBox(obj, box) {
+//				var timer = null;
+//				$(obj).on("mouseover", function(e) {
+//					clearTimeout(timer);
+//					var clientX = e.clientX;
+//					var clientY = e.clientY;
+//					var y = clientY + 20;
+//					var txt = $(this).text();
+//					timer = setTimeout(function() {
+//						$(box).css("left", clientX).css("top", y);
+//						if(txt == "") {
+//							$(box).hide();
+//						} else {
+//							$(box).show();
+//							$(box).html(txt);
+//						}
+//					}, 300);
+//				});
+//				$(obj).on("mouseout", function() {
+//					clearTimeout(timer);
+//					$(box).hide();
+//				});
+//			}
+//			showBox("#reqData > tbody td", "#showDiv");
+//		});
 		
 		//del one monitor
 		$('.del_one_task').click(function() {
