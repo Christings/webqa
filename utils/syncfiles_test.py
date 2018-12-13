@@ -146,7 +146,7 @@ def insert_data(column_name,data_str):
 
 if __name__ == "__main__":
     # transfile('10.140.40.73','root','sogourank@2016','E:/xcx/runoob.txt','/root/runoob.txt')
-    local_path = '/search/odin/pypro/webqa/utils/percentile_test.py'
+    local_path = '/search/odin/pypro/webqa/utils/percentile_box.py'
     remote_path = '/root/percentile_test.py'
     #start_path = '/search/odin/pypro/webqa/utils/start.sh'
     #start_remote_path = '/root/start.sh'
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         cmds=''
         set_status(1)
         if testlog_path:
-            cmds_test = "python /root/percentile_test.py %s %s %s" % (testlog_path,testp,test_interval)
+            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,'500')
             test_result = startsh(ip,user, passw, cmds_test)
             #if len(test_result) == 2:
             #    print(11111)
@@ -166,6 +166,7 @@ if __name__ == "__main__":
             #else:
             #    update_errorlog("Get test result failed ,pl check env\n")
             insert_data('testres_list',test_result[0])
+            print(test_result[0])
         if baselog_path:
             cmds_base = "python /root/percentile_test.py %s %s %s" % (baselog_path,basep,base_interval)
             base_result = startsh(ip,user, passw, cmds_base)

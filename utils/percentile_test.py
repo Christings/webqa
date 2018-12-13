@@ -39,7 +39,6 @@ def stddev(data, ddof=0):
     return pvar**0.5
 
 def get_readable_timestr(ts):
-    print(ts)
     ts = int(ts)
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -185,7 +184,7 @@ if __name__ == '__main__':
                 first_line = False
             else:
                 wfp.write(str(get_readable_timestr(new_data_key)) + ",0\n")
-                outstr+=(str(get_rd_timestr(new_data_key)) + ",0],")
+                outstr+=('[%d' % (int(new_data_key)*1000) + ",0],")
                 if (not first_line):
                     pxx_list.append(0)
         new_data_list_index = new_data_list_index + 1
