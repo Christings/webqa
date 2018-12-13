@@ -133,7 +133,6 @@ def insert_data(column_name,data_str):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
     up_sql = "UPDATE %s set %s='%s' where id=%d" % (database_table,column_name, data_str,task_id)
-    print(up_sql)
     try:
         cursor.execute(up_sql)
         db.commit()
@@ -156,27 +155,35 @@ if __name__ == "__main__":
         transfile(ip, user, passw, local_path, remote_path)
         cmds=''
         set_status(1)
-        if testlog_path:
+        if testlog_path and not baselog_path:
             cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,testbox)
             test_result = startsh(ip,user, passw, cmds_test)
-            #if len(test_result) == 2:
-            #    print(11111)
-            #    insert_data('testres_list',test_result[0])
-            #    insert_data('testres_detail',test_result[1])
-            #else:
-            #    update_errorlog("Get test result failed ,pl check env\n")
             insert_data('testres_list',test_result[0])
-            print(test_result[0])
-        if baselog_path:
+        elif baselog_path and not testlog_path:
             cmds_base = "python /root/percentile_test.py %s %s %s %s" % (baselog_path,basep,base_interval,basebox)
             base_result = startsh(ip,user, passw, cmds_base)
-            #print(base_result)
-            #if len(base_result) == 2:
-            #    insert_data('baseres_list',base_result[0])
-            #    insert_data('baseres_detail',base_result[1])
-            #else:
-            #    update_errorlog("Get base result failed ,pl check env\n")
             insert_data('baseres_list',base_result[0])
+        elif testlog_path and baselog_path:
+            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,testbox)
+            test_result = startsh(ip,user, passw, cmds_test)
+            test_result[0]=test_result[0].split(',')[:-1]
+            test_result[1]=test_result[1].split(',')[:-1]
+            cmds_base = "python /root/percentile_test.py %s %s %s %s" % (baselog_path,basep,base_interval,basebox)
+            base_result = startsh(ip,user, passw, cmds_base)
+            base_result[0]=base_result[0].split(',')[:-1]
+            base_result[1]=base_result[1].split(',')[:-1]
+            testresult=''
+            baseresult=''
+            if len(test_result[1])>=len(base_result[1]):
+                for i, element in enumerate(base_result[0]):
+                    baseresult+=('[%s' % base_result[0][i] + ',' + base_result[1][i]+'],')
+                    testresult+=('[%s' % base_result[0][i] + ',' + test_result[1][i]+'],')
+            else:
+                for i, element in enumerate(test_result[0]):
+                    baseresult+=('[%s' % base_result[0][i] + ',' + base_result[1][i]+'],')
+                    testresult+=('[%s' % base_result[0][i] + ',' + test_result[1][i]+'],')
+            insert_data('testres_list',testresult)
+            insert_data('baseres_list',baseresult)
         set_status(0)
             
     except Exception as e:

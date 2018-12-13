@@ -62,7 +62,9 @@ if __name__ == '__main__':
 
     wfp = open(input_datafile + "_p" + str(show_percent) + ".log", 'w+')
     wfp.write("timestamp,p" + str(show_percent))
-    outstr=''
+    #outstr=''
+    datestr=''
+    datastr=''
     with open (input_datafile, 'r') as fp:
         for line in fp:
             try:
@@ -82,8 +84,10 @@ if __name__ == '__main__':
                         mypxx = get_pxx(box, data_precent)
                         #print (str(my_timestamp) + "," + mypxx + ", box size:" + str(len(box)) + ", max:" + str(max(box, key=float)) + ", min:" + str(min(box, key=float)))
                         wfp.write("".join([str(get_readable_timestr(my_timestamp)), str(mypxx)]))
-                        outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
+                        #outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
                         #print ("in:" + str(cost_str) + ", out:" + str(box[0]))
+                        datestr+=(str(int(my_timestamp)*1000)+',')
+                        datastr+=(str(mypxx)+',')
                     #update box.
                     del box[0]
                     box.append(cost_str)
@@ -91,4 +95,6 @@ if __name__ == '__main__':
                 traceback.print_exc()
 
     wfp.close()
-    print(outstr)
+    #print(outstr)
+    print(datestr)
+    print(datastr)
