@@ -32,7 +32,7 @@ import logUtils
 import re
 import cgi
 import pexpect
-
+import traceback
 database_host="10.144.120.30"
 database="sogowebqa"
 database_user="root"
@@ -45,6 +45,13 @@ def set_status(stat):
     db = pymysql.connect(database_host,database_user,database_pass,database)
     cursor = db.cursor()
     sql = "UPDATE %s set status=%d where id=%d" % (database_table, stat, task_id)
+    cursor.execute(sql)
+    db.commit()
+
+def set_finish():
+    db = pymysql.connect(database_host,database_user,database_pass,database)
+    cursor = db.cursor()
+    sql = "UPDATE %s set end_time='%s' where id=%d" % (database_table, get_now_time(), task_id)
     cursor.execute(sql)
     db.commit()
 
@@ -184,10 +191,11 @@ if __name__ == "__main__":
                     testresult+=('[%s' % base_result[0][i] + ',' + test_result[1][i]+'],')
             insert_data('testres_list',testresult)
             insert_data('baseres_list',baseresult)
+        set_finish()
         set_status(0)
             
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         update_errorlog("init failed!\n")
         set_status(2)
         sys.exit()
