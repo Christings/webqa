@@ -17,7 +17,7 @@ def auth(func):
         return func(request, *args, **kwargs)
     return inner
 
-# @auth
+@auth
 def pnine_detail(request):
     # user_id="zhangjingjun"
     user_id = request.COOKIES.get('uid')
@@ -28,7 +28,7 @@ def pnine_detail(request):
     baseres_detail = str_unix2br((task_detail.baseres_detail).replace('---', '\n'))
     return render(request, 'publicsv/pnine_detail.html',{'user_id': user_id, 'task_detail': task_detail,'loginfo':loginfo,'testres_detail':testres_detail,'baseres_detail':baseres_detail})
 
-# @auth
+@auth
 def pnine(request):
     # uid = 'zhangjingjun'
     uid = request.COOKIES['uid']
