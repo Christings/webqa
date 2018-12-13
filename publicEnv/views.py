@@ -19,8 +19,8 @@ def auth(func):
 
 # @auth
 def pnine_detail(request):
-    user_id="zhangjingjun"
-    # user_id = request.COOKIES.get('uid')
+    # user_id="zhangjingjun"
+    user_id = request.COOKIES.get('uid')
     task_id = request.GET.get('taskid')
     task_detail = models.AnalyDetail.objects.using('default').filter(id=task_id).first()
     loginfo = str_unix2br(task_detail.errorlog)
@@ -30,8 +30,8 @@ def pnine_detail(request):
 
 # @auth
 def pnine(request):
-    uid = 'zhangjingjun'
-    # uid = request.COOKIES['uid']
+    # uid = 'zhangjingjun'
+    uid = request.COOKIES['uid']
     if request.method == 'GET':
         page = request.GET.get('page')
         current_page = 1
@@ -85,9 +85,9 @@ def pnine(request):
                                                                 user_fk_id=uid)
             os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
         except Exception as e:
-            models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
+            #models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
             ret['error'] = "Error:" + str(e)
-            print(e)
+            #print(e)
             ret['status'] = False
         return HttpResponse(json.dumps(ret))
 
