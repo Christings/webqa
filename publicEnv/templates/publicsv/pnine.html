@@ -1,4 +1,4 @@
-{% extends 'father.html' %}{% load tag_tools %}{% block content %}{% load static %}
+{% extends 'main.html' %}{% load tag_tools %}{% block content %}{% load static %}
 <div class="row">
 	<div class="col-md-5">
 		<div class="tile">
@@ -32,11 +32,14 @@
 					</div>
 					<div class="form-group row">
 						<label class="control-label col-md-2"></label>
-						<div class="col-md-5">
-							<input type="text" class="form-control" id="testp99" name="testp99" placeholder="数据节点，默认0.99(p99)" >
+						<div class="col-md-4">
+							<input type="text" class="form-control" id="testp99" name="testp99" placeholder="数据节点,默认0.99" >
 						</div>
-						<div class="col-md-5">
-							<input type="text" class="form-control" id="test_interval" name="test_interval" placeholder="样本间隔，默认10(s)" >
+						<div class="col-md-3">
+							<input type="text" class="form-control" id="test_interval" name="test_interval" placeholder="间隔,默认10(s)" >
+						</div>
+						<div class="col-md-3">
+							<input type="text" class="form-control" id="test_box" name="test_box" placeholder="box，默认500" >
 						</div>
 					</div>
 					<div class="form-group row">
@@ -47,11 +50,14 @@
 					</div>
 					<div class="form-group row">
 						<label class="control-label col-md-2"></label>
-						<div class="col-md-5">
-							<input type="text" class="form-control" id="basep99" name="basep99" placeholder="数据节点，默认0.99(p99)" >
+						<div class="col-md-4">
+							<input type="text" class="form-control" id="basep99" name="basep99" placeholder="数据节点,默认0.99" >
 						</div>
-						<div class="col-md-5">
-							<input type="text" class="form-control" id="base_interval" name="base_interval" placeholder="样本间隔，默认10(s)" >
+						<div class="col-md-3">
+							<input type="text" class="form-control" id="base_interval" name="base_interval" placeholder="间隔,默认10(s)" >
+						</div>
+						<div class="col-md-3">
+							<input type="text" class="form-control" id="base_box" name="base_box" placeholder="box，默认500" >
 						</div>
 					</div>
 				</form>
@@ -109,6 +115,8 @@
 						<td style="display: none;">{{item.basep}}</td>
 						<td style="display: none;">{{item.test_interval}}</td>
 						<td style="display: none;">{{item.base_interval}}</td>
+						<td style="display: none;">{{item.testbox}}</td>
+						<td style="display: none;">{{item.basebox}}</td>
 						{% ifequal item.status 0 %}
 						<td>
 							<button class="btn btn-danger btn-sm del_one_task" style="color: black;" >DEL</button>
@@ -174,6 +182,8 @@
 			var test_interval = $("#test_interval").val()
 			var basep99 = $("#basep99").val()
 			var base_interval = $("#base_interval").val()
+			var test_box = $("#test_box").val()
+			var base_box = $("#base_box").val()
 			if(analyip != "" && analyuser != "" && analypassw!="") {
 				if(testlogpath !="" || baselogpath!=""){					
 					$.ajax({
@@ -191,6 +201,8 @@
 							'test_interval':test_interval,
 							'basep99':basep99,
 							'base_interval':base_interval,
+							'testbox':test_box,
+							'basebox':base_box,
 						},
 						dataType: 'JSON',
 						success: function(obj) {
@@ -285,6 +297,8 @@
             basep = $(linelst[10]).text();
             test_interval = $(linelst[11]).text();
             base_interval = $(linelst[12]).text();
+            test_box = $(linelst[13]).text();
+            base_box = $(linelst[14]).text();
             $('#analyip').val(hostip);
             $('#analyuser').val(user);
             $('#analypassw').val(passw);
@@ -294,6 +308,8 @@
             $('#basep99').val(basep);
             $('#test_interval').val(test_interval);
             $('#base_interval').val(base_interval);
+            $('#test_box').val(test_box);
+            $('#base_box').val(base_box);
         })
         
 			

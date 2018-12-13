@@ -40,7 +40,7 @@ def pnine(request):
         try:
             gpu_info = models.AnalyDetail.objects.using('default').filter(user_fk_id=uid).values('id', 'create_time', 'end_time',
                                                                              'ip', 'user', 'status', 'passw', 'testlog_path', 'baselog_path',
-                                                                             'testp','basep','test_interval','base_interval').order_by('-id')
+                                                                             'testp','basep','test_interval','base_interval','testbox','basebox').order_by('-id')
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/publicsv/p99/?page=")
@@ -56,8 +56,10 @@ def pnine(request):
         testlogpath = request.POST.get('testlogpath')
         baselogpath = request.POST.get('baselogpath')
         testp = request.POST.get('testp99')
+        testbox = request.POST.get('testbox')
         test_interval = request.POST.get('test_interval')
         basep = request.POST.get('basep99')
+        basebox = request.POST.get('basebox')
         base_interval = request.POST.get('base_interval')
         if not testlogpath:
             testlogpath=''
@@ -71,11 +73,16 @@ def pnine(request):
             basep='0.99'
         if not base_interval:
             base_interval='10'
+        if not testbox:
+            testbox = '500'
+        if not basebox:
+            basebox = '500'
         print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep)
         try:
             a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
-                                                               testlog_path=testlogpath, testp=testp, test_interval=test_interval,
-                                                               baselog_path=baselogpath, basep=basep, base_interval=base_interval, user_fk_id=uid)
+                                                               testlog_path=testlogpath, testp=testp, test_interval=test_interval,testbox=testbox,
+                                                               baselog_path=baselogpath, basep=basep, base_interval=base_interval, basebox=basebox,
+                                                                user_fk_id=uid)
             os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
         except Exception as e:
             models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
