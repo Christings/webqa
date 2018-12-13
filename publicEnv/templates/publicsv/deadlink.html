@@ -189,7 +189,7 @@
 			if(confirm('是否确认已解决?')){
 				$.ajax({
 				type:"POST",
-				url:"/publicsv/deadlink/del_line/",
+				url:"/publicsv/deadlink/resolved/",
 				async:true,
 				data:{'task_id':task_id},
 				dataType:'JSON',

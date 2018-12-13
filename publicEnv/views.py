@@ -96,6 +96,17 @@ def pnine(request):
 def del_line(request):
     ret = {'status': True, 'error': None, 'data': None}
     req_id = request.POST.get('task_id')
+    try:
+        models.AnalyDetail.objects.using('default').filter(id=req_id).delete()
+    except Exception as e:
+        ret['status'] = False
+        ret['error'] = "Error:" + str(e)
+    return HttpResponse(json.dumps(ret))
+
+
+def resolved(request):
+    ret = {'status': True, 'error': None, 'data': None}
+    req_id = request.POST.get('task_id')
     print(req_id)
     try:
         models.Special_check_deadlink.objects.using('db_fhz').filter(id=req_id).update(status=1)

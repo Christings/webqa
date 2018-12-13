@@ -26,11 +26,11 @@ app_name = 'publicEnv'
 urlpatterns = [
     # svcheck
     re_path(r'^p99/$', views.pnine),
-    # re_path(r'^p99/add/$', views.pnine_detail),
+    re_path(r'^p99/del_line/$', views.del_line),
     re_path(r'^p99/detail/$', views.pnine_detail),
     # deadlink
     re_path(r'^deadlink/$', views.deadlink),
-    re_path(r'^deadlink/del_line/$', views.del_line),
+    re_path(r'^deadlink/resolved/$', views.resolved),
     re_path(r'^deadlink/get_urllist/$', views.get_urllist),
     # svcheck
     re_path(r'^svcheck/$', views.svcheck),
