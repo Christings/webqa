@@ -176,7 +176,7 @@ if __name__ == '__main__':
             n_to_list = new_data_list[new_data_list_index]
             wfp.write(str(get_readable_timestr(new_data_key)) + "," + str(
                 n_to_list[int(len(n_to_list) * data_percent)]) + "\n")
-            outstr+=('['+str(new_data_key*1000) + "," + str(
+            outstr+=('[%d' % (int(new_data_key)*1000) + "," + str(
                 n_to_list[int(len(n_to_list) * data_percent)]) + "],")
             pxx_list.append(float(n_to_list[int(len(n_to_list) * data_percent)]))
         else:
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 first_line = False
             else:
                 wfp.write(str(get_readable_timestr(new_data_key)) + ",0\n")
-                outstr+=(str(get_rd_timestr(new_data_key)) + ",0],")
+                outstr+=('[%d' % (int(new_data_key)*1000) + ",0],")
                 if (not first_line):
                     pxx_list.append(0)
         new_data_list_index = new_data_list_index + 1

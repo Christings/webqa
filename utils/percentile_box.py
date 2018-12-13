@@ -82,7 +82,7 @@ if __name__ == '__main__':
                         mypxx = get_pxx(box, data_precent)
                         #print (str(my_timestamp) + "," + mypxx + ", box size:" + str(len(box)) + ", max:" + str(max(box, key=float)) + ", min:" + str(min(box, key=float)))
                         wfp.write("".join([str(get_readable_timestr(my_timestamp)), str(mypxx)]))
-                        outstr+=('['+str(my_timestamp*1000)+','+str(mypxx)+'],')
+                        outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
                         #print ("in:" + str(cost_str) + ", out:" + str(box[0]))
                     #update box.
                     del box[0]
