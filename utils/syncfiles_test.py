@@ -66,7 +66,7 @@ def getInfoFromDb(task_id):
     try:
         db = pymysql.connect(database_host,database_user,database_pass,database)
         cursor = db.cursor()
-        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id FROM %s where id='%d'" % (database_table,task_id)
+        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id,testbox,basebox FROM %s where id='%d'" % (database_table,task_id)
         cursor.execute(sql)
         data = cursor.fetchone()
         logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'testp'+data[5]+'\n'+'test_interval'+data[6]+'\n'+'basep'+data[7]+'\n'+'base_interval'+data[8]+'\n'+'userid:'+data[9]+'\n')
@@ -152,12 +152,12 @@ if __name__ == "__main__":
     #start_remote_path = '/root/start.sh'
     try:
         logstr = logUtils.logutil(task_id)
-        (ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,userid) = getInfoFromDb(task_id)
+        (ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,userid,testbox,basebox) = getInfoFromDb(task_id)
         transfile(ip, user, passw, local_path, remote_path)
         cmds=''
         set_status(1)
         if testlog_path:
-            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,'500')
+            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,testbox)
             test_result = startsh(ip,user, passw, cmds_test)
             #if len(test_result) == 2:
             #    print(11111)
@@ -168,7 +168,7 @@ if __name__ == "__main__":
             insert_data('testres_list',test_result[0])
             print(test_result[0])
         if baselog_path:
-            cmds_base = "python /root/percentile_test.py %s %s %s" % (baselog_path,basep,base_interval)
+            cmds_base = "python /root/percentile_test.py %s %s %s %s" % (baselog_path,basep,base_interval,basebox)
             base_result = startsh(ip,user, passw, cmds_base)
             #print(base_result)
             #if len(base_result) == 2:
