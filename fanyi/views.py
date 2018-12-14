@@ -10,6 +10,7 @@ from utils import baidufy_t
 from utils import youdaofy_t
 from utils import qqfy_t
 from utils import sogofy_t
+from fanyi.task import get_fanyi_result
 import M2Crypto
 import urllib
 import json
@@ -103,7 +104,12 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
+            #os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
+            r = get_fanyi_result(a.id)
+            if r != 0:
+                ret['status'] = False
+                ret['error'] = 'error:执行失败'
+                models.InterfaceEval.objects.filter(id=a.id).update(status=3, errlog='start failed')
         except Exception as e:
             ret['error'] = 'error:' + str(e)
             ret['status'] = False
