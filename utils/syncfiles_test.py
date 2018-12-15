@@ -73,7 +73,7 @@ def getInfoFromDb(task_id):
     try:
         db = pymysql.connect(database_host,database_user,database_pass,database)
         cursor = db.cursor()
-        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id,testbox,basebox FROM %s where id='%d'" % (database_table,task_id)
+        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id,testbox,basebox,test_ttype,base_ttpye FROM %s where id='%d'" % (database_table,task_id)
         cursor.execute(sql)
         data = cursor.fetchone()
         logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'testp'+data[5]+'\n'+'test_interval'+data[6]+'\n'+'basep'+data[7]+'\n'+'base_interval'+data[8]+'\n'+'userid:'+data[9]+'\n')
@@ -158,24 +158,24 @@ if __name__ == "__main__":
     #start_remote_path = '/root/start.sh'
     try:
         logstr = logUtils.logutil(task_id)
-        (ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,userid,testbox,basebox) = getInfoFromDb(task_id)
+        (ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,userid,testbox,basebox,test_ttype,base_ttype) = getInfoFromDb(task_id)
         transfile(ip, user, passw, local_path, remote_path)
         cmds=''
         set_status(1)
         if testlog_path and not baselog_path:
-            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,testbox)
+            cmds_test = "python /root/percentile_test.py %s %s %s %s %s" % (testlog_path,testp,test_interval,testbox,base_ttype)
             test_result = startsh(ip,user, passw, cmds_test)
             insert_data('testres_list',test_result[0])
         elif baselog_path and not testlog_path:
-            cmds_base = "python /root/percentile_test.py %s %s %s %s" % (baselog_path,basep,base_interval,basebox)
+            cmds_base = "python /root/percentile_test.py %s %s %s %s %s" % (baselog_path,basep,base_interval,basebox,test_ttype)
             base_result = startsh(ip,user, passw, cmds_base)
             insert_data('baseres_list',base_result[0])
         elif testlog_path and baselog_path:
-            cmds_test = "python /root/percentile_test.py %s %s %s %s" % (testlog_path,testp,test_interval,testbox)
+            cmds_test = "python /root/percentile_test.py %s %s %s %s %s" % (testlog_path,testp,test_interval,testbox,test_ttype)
             test_result = startsh(ip,user, passw, cmds_test)
             test_result[0]=test_result[0].split(',')[:-1]
             test_result[1]=test_result[1].split(',')[:-1]
-            cmds_base = "python /root/percentile_test.py %s %s %s %s" % (baselog_path,basep,base_interval,basebox)
+            cmds_base = "python /root/percentile_test.py %s %s %s %s %s" % (baselog_path,basep,base_interval,basebox,base_ttype)
             base_result = startsh(ip,user, passw, cmds_base)
             base_result[0]=base_result[0].split(',')[:-1]
             base_result[1]=base_result[1].split(',')[:-1]

@@ -61,6 +61,8 @@ def pnine(request):
         basep = request.POST.get('basep99')
         basebox = request.POST.get('basebox')
         base_interval = request.POST.get('base_interval')
+        test_ttype = request.POST.get('test_ttype')
+        base_ttype = request.POST.get('base_ttype')
         if not testlogpath:
             testlogpath=''
         if not baselogpath:
@@ -80,8 +82,8 @@ def pnine(request):
         print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep)
         try:
             a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
-                                                               testlog_path=testlogpath, testp=testp, test_interval=test_interval,testbox=testbox,
-                                                               baselog_path=baselogpath, basep=basep, base_interval=base_interval, basebox=basebox,
+                                                               testlog_path=testlogpath, testp=testp, test_interval=test_interval,testbox=testbox,test_ttype=test_ttype,
+                                                               baselog_path=baselogpath, basep=basep, base_interval=base_interval, basebox=basebox,base_ttype=base_ttype,
                                                                 user_fk_id=uid)
             os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
         except Exception as e:

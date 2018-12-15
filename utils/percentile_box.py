@@ -36,6 +36,7 @@ if __name__ == '__main__':
     data_precent = float(sys.argv[2]) #percentile
     my_output_timestamp_interval = int(sys.argv[3])
     box_size = int(sys.argv[4])
+    time_type = sys.argv[5]
 
     #check input good.
     if(data_precent > 1 or data_precent < 0):
@@ -60,6 +61,12 @@ if __name__ == '__main__':
 
     show_percent = data_precent * 100
 
+    time_se_style_1 = r'\d{8} \d{2}:\d{2}:\d{2}'
+    time_se_style_2 = r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
+
+    time_style={'1':r'\d{8} \d{2}:\d{2}:\d{2}','2':r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'}
+    time_format={'1':"%Y%m%d %H:%M:%S",'2':"%Y-%m-%d %H:%M:%S"}
+
     wfp = open(input_datafile + "_p" + str(show_percent) + ".log", 'w+')
     wfp.write("timestamp,p" + str(show_percent))
     #outstr=''
@@ -68,12 +75,14 @@ if __name__ == '__main__':
     with open (input_datafile, 'r') as fp:
         for line in fp:
             try:
-                if(not "Sogou-Observer" in line):
+                if(not "Sogou-Observer" in line and "cost=" in line):
                     continue
                 cost_str = line.split("cost=")[1].split(",")[0]
-                mat = re.search(time_se_style_1, line)
+                #mat = re.search(time_se_style_1, line)
+                mat = re.search(time_style[time_type],line)
                 if(not mat is None):
-                    my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), "%Y%m%d %H:%M:%S").timetuple()))
+                    #my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), "%Y%m%d %H:%M:%S").timetuple()))
+                    my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), time_format[time_type]).timetuple()))
                 if(len(box) < box_size):
                     box.append(cost_str)
                 else:

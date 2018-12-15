@@ -30,15 +30,24 @@
 							<input type="text" class="form-control" id="testlogpath" name="testlogpath" placeholder="绝对路径+文件名" >
 						</div>
 					</div>
-					<div class="form-group row">
+                    <div class="form-group row">
 						<label class="control-label col-md-2"></label>
+                        <div class="col-md-6">
+							<select id="test_ttype" name="test_ttype" class="form-control" style="cursor: pointer;">
+                                <option value="1"> yyyy-MM-dd HH:mm:ss </option>
+                                <option value="2"> yyyyMMdd HH:mm:ss </option>
+                            </select>
+						</div>
 						<div class="col-md-4">
 							<input type="text" class="form-control" id="testp99" name="testp99" placeholder="数据节点,默认0.99" >
-						</div>
-						<div class="col-md-3">
+						</div>						
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2"></label>
+						<div class="col-md-5">
 							<input type="text" class="form-control" id="test_interval" name="test_interval" placeholder="间隔,默认10(s)" >
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-5">
 							<input type="text" class="form-control" id="test_box" name="test_box" placeholder="box，默认500" >
 						</div>
 					</div>
@@ -48,15 +57,24 @@
 							<input type="text" class="form-control" id="baselogpath" name="baselogpath" placeholder="绝对路径+文件名" >
 						</div>
 					</div>
-					<div class="form-group row">
+                    <div class="form-group row">
 						<label class="control-label col-md-2"></label>
+                        <div class="col-md-6">
+							<select id="base_ttype" name="base_ttype" class="form-control" style="cursor: pointer;">
+                                <option value="1"> yyyy-MM-dd HH:mm:ss </option>
+                                <option value="2"> yyyyMMdd HH:mm:ss </option>
+                            </select>
+						</div>
 						<div class="col-md-4">
 							<input type="text" class="form-control" id="basep99" name="basep99" placeholder="数据节点,默认0.99" >
 						</div>
-						<div class="col-md-3">
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-md-2"></label>
+						<div class="col-md-5">
 							<input type="text" class="form-control" id="base_interval" name="base_interval" placeholder="间隔,默认10(s)" >
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-5">
 							<input type="text" class="form-control" id="base_box" name="base_box" placeholder="box，默认500" >
 						</div>
 					</div>
@@ -199,6 +217,8 @@
 			var analypassw = $("#analypassw").val()
 			var testlogpath = $("#testlogpath").val()
 			var baselogpath = $("#baselogpath").val()
+            var test_ttype = $('#test_ttype').val()
+            var base_ttype = $('#base_ttype').val()
 			var testp99 = $("#testp99").val()
 			var test_interval = $("#test_interval").val()
 			var basep99 = $("#basep99").val()
@@ -224,6 +244,8 @@
 							'base_interval':base_interval,
 							'testbox':test_box,
 							'basebox':base_box,
+                            'test_ttype':test_ttype,
+                            'base_ttype':base_ttype,
 						},
 						dataType: 'JSON',
 						success: function(obj) {
