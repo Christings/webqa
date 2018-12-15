@@ -79,7 +79,7 @@ def pnine(request):
             testbox = '500'
         if not basebox:
             basebox = '500'
-        print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep)
+        print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep,test_ttype,base_ttype)
         try:
             a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
                                                                testlog_path=testlogpath, testp=testp, test_interval=test_interval,testbox=testbox,test_ttype=test_ttype,

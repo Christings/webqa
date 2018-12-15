@@ -75,31 +75,31 @@ if __name__ == '__main__':
     with open (input_datafile, 'r') as fp:
         for line in fp:
             try:
-                if(not "Sogou-Observer" in line and "cost=" in line):
-                    continue
-                cost_str = line.split("cost=")[1].split(",")[0]
-                #mat = re.search(time_se_style_1, line)
-                mat = re.search(time_style[time_type],line)
-                if(not mat is None):
-                    #my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), "%Y%m%d %H:%M:%S").timetuple()))
-                    my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), time_format[time_type]).timetuple()))
-                if(len(box) < box_size):
-                    box.append(cost_str)
-                else:
-                    #process when box is full. calc pxx, then remove [0] and append it
-                    #print only when timestamp > 15s
-                    if(my_timestamp - timestamp_key > my_output_timestamp_interval):
-                        timestamp_key = my_timestamp
-                        mypxx = get_pxx(box, data_precent)
-                        #print (str(my_timestamp) + "," + mypxx + ", box size:" + str(len(box)) + ", max:" + str(max(box, key=float)) + ", min:" + str(min(box, key=float)))
-                        wfp.write("".join([str(get_readable_timestr(my_timestamp)), str(mypxx)]))
-                        #outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
-                        #print ("in:" + str(cost_str) + ", out:" + str(box[0]))
-                        datestr+=(str(int(my_timestamp)*1000)+',')
-                        datastr+=(str(mypxx)+',')
-                    #update box.
-                    del box[0]
-                    box.append(cost_str)
+                if("Sogou-Observer" in line and "cost=" in line):
+               
+                    cost_str = line.split("cost=")[1].split(",")[0]
+                    #mat = re.search(time_se_style_1, line)
+                    mat = re.search(time_style[time_type],line)
+                    if(not mat is None):
+                        #my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), "%Y%m%d %H:%M:%S").timetuple()))
+                        my_timestamp = (time.mktime(datetime.datetime.strptime(mat.group(0), time_format[time_type]).timetuple()))
+                    if(len(box) < box_size):
+                        box.append(cost_str)
+                    else:
+                        #process when box is full. calc pxx, then remove [0] and append it
+                        #print only when timestamp > 15s
+                        if(my_timestamp - timestamp_key > my_output_timestamp_interval):
+                            timestamp_key = my_timestamp
+                            mypxx = get_pxx(box, data_precent)
+                            #print (str(my_timestamp) + "," + mypxx + ", box size:" + str(len(box)) + ", max:" + str(max(box, key=float)) + ", min:" + str(min(box, key=float)))
+                            wfp.write("".join([str(get_readable_timestr(my_timestamp)), str(mypxx)]))
+                            #outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
+                            #print ("in:" + str(cost_str) + ", out:" + str(box[0]))
+                            datestr+=(str(int(my_timestamp)*1000)+',')
+                            datastr+=(str(mypxx)+',')
+                        #update box.
+                        del box[0]
+                        box.append(cost_str)
             except Exception as e:
                 traceback.print_exc()
 

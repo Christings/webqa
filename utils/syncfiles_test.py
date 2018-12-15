@@ -73,10 +73,10 @@ def getInfoFromDb(task_id):
     try:
         db = pymysql.connect(database_host,database_user,database_pass,database)
         cursor = db.cursor()
-        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id,testbox,basebox,test_ttype,base_ttpye FROM %s where id='%d'" % (database_table,task_id)
+        sql = "SELECT ip,user,passw,testlog_path,baselog_path,testp,test_interval,basep,base_interval,user_fk_id,testbox,basebox,test_ttype,base_ttype FROM %s where id='%d'" % (database_table,task_id)
         cursor.execute(sql)
         data = cursor.fetchone()
-        logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'testp'+data[5]+'\n'+'test_interval'+data[6]+'\n'+'basep'+data[7]+'\n'+'base_interval'+data[8]+'\n'+'userid:'+data[9]+'\n')
+        logstr.log_info("ip:"+data[0]+'\n'+'user:'+data[1]+'\n'+'passw:'+data[2]+'\n'+'testlog_path:'+data[3]+'\n'+'baselog_path:'+data[4]+'\n'+'testp'+data[5]+'\n'+'test_interval'+data[6]+'\n'+'basep'+data[7]+'\n'+'base_interval'+data[8]+'\n'+'userid:'+data[9]+'\n'+'testbox'+data[10]+'\n'+'basebox'+data[11]+'\n'+'test_ttype'+str(data[12])+'\n'+'base_ttype'+str(data[13]))
     except Exception as e:
         set_status(2)
         update_errorlog("[%s] Get task info error from db by id \n" % get_now_time())
@@ -162,14 +162,24 @@ if __name__ == "__main__":
         transfile(ip, user, passw, local_path, remote_path)
         cmds=''
         set_status(1)
+        testresult=''
+        baseresult=''
         if testlog_path and not baselog_path:
-            cmds_test = "python /root/percentile_test.py %s %s %s %s %s" % (testlog_path,testp,test_interval,testbox,base_ttype)
+            cmds_test = "python /root/percentile_test.py %s %s %s %s %s" % (testlog_path,testp,test_interval,testbox,test_ttype)
             test_result = startsh(ip,user, passw, cmds_test)
-            insert_data('testres_list',test_result[0])
+            test_result[0]=test_result[0].split(',')[:-1]
+            test_result[1]=test_result[1].split(',')[:-1]
+            for i, element in enumerate(test_result[1]):
+                testresult+=('[%s' % test_result[0][i] + ',' + test_result[1][i]+'],')
+            insert_data('testres_list',testresult)
         elif baselog_path and not testlog_path:
-            cmds_base = "python /root/percentile_test.py %s %s %s %s %s" % (baselog_path,basep,base_interval,basebox,test_ttype)
+            cmds_base = "python /root/percentile_test.py %s %s %s %s %s" % (baselog_path,basep,base_interval,basebox,base_ttype)
             base_result = startsh(ip,user, passw, cmds_base)
-            insert_data('baseres_list',base_result[0])
+            base_result[0]=base_result[0].split(',')[:-1]
+            base_result[1]=base_result[1].split(',')[:-1]
+            for i, element in enumerate(base_result[1]):
+                baseresult+=('[%s' % base_result[0][i] + ',' + base_result[1][i]+'],')
+            insert_data('baseres_list',baseresult)
         elif testlog_path and baselog_path:
             cmds_test = "python /root/percentile_test.py %s %s %s %s %s" % (testlog_path,testp,test_interval,testbox,test_ttype)
             test_result = startsh(ip,user, passw, cmds_test)
@@ -179,16 +189,14 @@ if __name__ == "__main__":
             base_result = startsh(ip,user, passw, cmds_base)
             base_result[0]=base_result[0].split(',')[:-1]
             base_result[1]=base_result[1].split(',')[:-1]
-            testresult=''
-            baseresult=''
             if len(test_result[1])>=len(base_result[1]):
                 for i, element in enumerate(base_result[0]):
                     baseresult+=('[%s' % base_result[0][i] + ',' + base_result[1][i]+'],')
                     testresult+=('[%s' % base_result[0][i] + ',' + test_result[1][i]+'],')
             else:
                 for i, element in enumerate(test_result[0]):
-                    baseresult+=('[%s' % base_result[0][i] + ',' + base_result[1][i]+'],')
-                    testresult+=('[%s' % base_result[0][i] + ',' + test_result[1][i]+'],')
+                    baseresult+=('[%s' % test_result[0][i] + ',' + base_result[1][i]+'],')
+                    testresult+=('[%s' % test_result[0][i] + ',' + test_result[1][i]+'],')
             insert_data('testres_list',testresult)
             insert_data('baseres_list',baseresult)
         set_finish()
