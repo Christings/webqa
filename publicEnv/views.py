@@ -40,7 +40,7 @@ def pnine(request):
         try:
             gpu_info = models.AnalyDetail.objects.using('default').filter(user_fk_id=uid).values('id', 'create_time', 'end_time',
                                                                              'ip', 'user', 'status', 'passw', 'testlog_path', 'baselog_path',
-                                                                             'testp','basep','test_interval','base_interval','testbox','basebox').order_by('-id')
+                                                                             'testp','basep','test_interval','base_interval','testbox','basebox','test_ttype','base_ttype').order_by('-id')
             page_obj = pagination.Page(current_page, len(gpu_info), 15, 9)
             data = gpu_info[page_obj.start:page_obj.end]
             page_str = page_obj.page_str("/publicsv/p99/?page=")
