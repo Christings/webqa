@@ -295,6 +295,61 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     print(e)
             insert_finished(finished, mission_id, get_now_time())
             set_status(4)
+        elif reqtype == 'alltrans_json':
+            for item in fin.readlines():
+                finished += 1
+                item = item.strip()
+                allj_data = item
+                result_base=''
+                result_test=''
+                try:
+                    resp_base = requests.post('http://' + base_url + '/alltrans_json', data=allj_data)
+                    result_base = resp_base.text
+                except Exception as e:
+                    result_base = 'base request http error'
+                    pass
+                try:
+                    resp_test = requests.post('http://' + test_url + '/alltrans_json', data=allj_data)
+                    result_test = resp_test.text
+                except Exception as e:
+                    result_test = 'test request http error'
+                    pass
+                allo.write(item)
+                allo.write(reqstr.encode('utf-8'))
+                allo.write(('base:' + result_base + '\n').encode('utf-8'))
+                allo.write(('test:' + result_test + '\n').encode('utf-8'))
+                if (result_base != result_test):
+                    base_info = item + result_base
+                    test_info = item + result_test
+                    base_diff_content += base_info
+                    test_diff_content += test_info
+                    fw_base.write(base_info.encode('utf-8'))
+                    fw_test.write(test_info.encode('utf-8'))
+                    tmp += 1
+                    diffnum += 1
+                if tmp == 2:
+                    d = difflib.HtmlDiff()
+                    diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+                    parse_html = BeautifulSoup(diff_html, "html.parser")
+                    escape_str = cgi.escape(str(parse_html.table), quote=True)
+                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+                    base_diff_content = ''
+                    test_diff_content = ''
+                    tmp = 0
+                if (finished % 100) == 0:
+                    insert_finished(finished, mission_id)
+            if base_diff_content.strip()!='' or test_diff_content.strip()!='':
+                d = difflib.HtmlDiff()
+                diff_html = d.make_file(base_diff_content.splitlines(), test_diff_content.splitlines())
+                parse_html = BeautifulSoup(diff_html, "html.parser")
+                escape_str = cgi.escape(str(parse_html.table), quote=True)
+                try:
+                    insert_diff_data(escape_str.replace("'", "&#39;"), diffnum, mission_id, reqtype)
+                except Exception as e:
+                    print(e)
+            insert_finished(finished, mission_id, get_now_time())
+            set_status(4)
+
 
 def getInfoFromDb(task_id):
     update_errorlog("[%s] Get task info from db by id \n" % get_now_time())
