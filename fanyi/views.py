@@ -70,7 +70,7 @@ def if_eval_detail(request):
                    'loginfo': loginfo, 'li': data, 'page_str': page_str})
 
 
-# @auth
+@auth
 def interface(request):
     # user_id = 'zhangjingjun'
     user_id = request.COOKIES.get('uid')
