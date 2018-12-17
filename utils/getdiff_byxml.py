@@ -311,6 +311,10 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     result_base = requestData.allJsonResult(resp_base.text)
                     if result_base['status'] is False:
                         result_base['transRes'] = 'base request http error'
+                        result_base['red_mark'] = 'base request http error'
+                        result_base['trans_red_query'] = 'base request http error'
+                        result_base['en_red_query'] = 'base request http error'
+                        result_base['ch_red_query'] = 'base request http error'
                         result_base['docs'] = []
                 except Exception as e:
                     result_base['transRes'] = 'base request http error'
@@ -320,14 +324,18 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     result_test = requestData.JsonResult(resp_test.text)
                     if result_test['status'] is False:
                         result_test['transRes'] = 'base request http error'
+                        result_test['red_mark'] = 'base request http error'
+                        result_test['trans_red_query'] = 'base request http error'
+                        result_test['en_red_query'] = 'base request http error'
+                        result_test['ch_red_query'] = 'base request http error'
                         result_test['docs'] = []
                 except Exception as e:
                     result_test['transRes'] = 'test request http error'
                     pass
                 head_info = ('from_lang:' + reqInfo['from_lang'] + '\n'
                              + 'to_lang:' + reqInfo['to_lang'] + '\n'
-                             + 'base_red_mark:'+result_base['red_mark'] + '\n'
-                             + 'test_red_mark:'+result_test['red_mark'] + '\n'
+                             + 'base_red_mark:'+str(result_base['red_mark']) + '\n'
+                             + 'test_red_mark:'+str(result_test['red_mark']) + '\n'
                              + 'base_trans_red_query:'+result_base['trans_red_query'] + '\n'
                              + 'test_trans_red_query:' + result_test['trans_red_query'] + '\n'
                              + 'base_en_red_query:' + result_base['en_red_query'] +'\n'
