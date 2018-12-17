@@ -18,6 +18,7 @@ import base64
 import time
 import os
 import signal
+import traceback
 
 def auth(func):
     def inner(request,*args,**kwargs):
@@ -104,13 +105,14 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            #os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
-            r = get_fanyi_result(a.id)
-            if r != 0:
-                ret['status'] = False
-                ret['error'] = 'error:执行失败'
-                models.InterfaceEval.objects.filter(id=a.id).update(status=3, errlog='start failed')
+            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
+            #r = get_fanyi_result(a.id)
+            #if r != 0:
+            #    ret['status'] = False
+            #    ret['error'] = 'error:执行失败'
+            #    models.InterfaceEval.objects.filter(id=a.id).update(status=3, errlog='start failed')
         except Exception as e:
+            traceback.print_exc()
             ret['error'] = 'error:' + str(e)
             ret['status'] = False
         return HttpResponse(json.dumps(ret))

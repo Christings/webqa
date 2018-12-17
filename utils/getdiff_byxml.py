@@ -17,6 +17,7 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 #from fanyi import requestData
 import requestData
+import traceback
 
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
@@ -314,13 +315,15 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                 except Exception as e:
                     result_test = 'test request http error'
                     pass
-                allo.write(item)
-                allo.write(reqstr.encode('utf-8'))
+                allo.write(item.encode('utf-8'))
                 allo.write(('base:' + result_base + '\n').encode('utf-8'))
                 allo.write(('test:' + result_test + '\n').encode('utf-8'))
+                #print(type(result_test))
+                #print(item.encode('utf-8').decode('utf-8'))
+    
                 if (result_base != result_test):
-                    base_info = item + result_base
-                    test_info = item + result_test
+                    base_info = item +'\n' +result_base
+                    test_info = item +'\n' +result_test
                     base_diff_content += base_info
                     test_diff_content += test_info
                     fw_base.write(base_info.encode('utf-8'))
@@ -486,6 +489,7 @@ if __name__ == '__main__':
         getQueryFile(root_path,filename)
         getDiff(root_path,filename,task_id,base_url,test_url,reqtype)
     except Exception as e:
+        traceback.print_exc()
         print(e)
         update_errorlog("init failed!")
         set_status(3)
