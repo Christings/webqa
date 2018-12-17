@@ -73,7 +73,7 @@
 					<tr>
 						<td>ID</td>
 						<td>StartTime</td>
-						<td style="display: none">EndTime</td>
+						<td>Diffs</td>
 						<td>TestUrl</td>
 						<td>BaseUrl</td>
 						<td>ReqType</td>
@@ -87,7 +87,11 @@
 					<tr class="get_data">
 						<td>{{ item.id }}</td>
 						<td>{{ item.start_time }}</td>
-						<td style="display: none">{{ item.end_time }}</td>
+						{% ifequal item.diffnum 0 %}
+						<td style="background-color: green;">{{ item.diffnum }}</td>
+						{% else %}
+						<td style="background-color: red;">{{ item.diffnum }}</td>
+						{% endifequal %}
 						<td>{{ item.test_url }}</td>
 						<td>{{ item.base_url }}</td>
 						<td>{{ item.reqtype }}</td>
