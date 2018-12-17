@@ -300,30 +300,56 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
             for item in fin.readlines():
                 finished += 1
                 item = item.strip()
+                reqInfo = requestData.parseAlljRequest(item)
+                if reqInfo['status'] is False:
+                    continue
                 allj_data = item
-                result_base=''
-                result_test=''
+                result_base=dict()
+                result_test=dict()
                 try:
                     resp_base = requests.post('http://' + base_url + '/alltrans_json', data=allj_data)
-                    result_base = resp_base.text
+                    result_base = requestData.allJsonResult(resp_base.text)
+                    if result_base['status'] is False:
+                        result_base['transRes'] = 'base request http error'
+                        result_base['docs'] = []
                 except Exception as e:
-                    result_base = 'base request http error'
+                    result_base['transRes'] = 'base request http error'
                     pass
                 try:
                     resp_test = requests.post('http://' + test_url + '/alltrans_json', data=allj_data)
-                    result_test = resp_test.text
+                    result_test = requestData.JsonResult(resp_test.text)
+                    if result_test['status'] is False:
+                        result_test['transRes'] = 'base request http error'
+                        result_test['docs'] = []
                 except Exception as e:
-                    result_test = 'test request http error'
+                    result_test['transRes'] = 'test request http error'
                     pass
-                allo.write(item.encode('utf-8'))
-                allo.write(('base:' + result_base + '\n').encode('utf-8'))
-                allo.write(('test:' + result_test + '\n').encode('utf-8'))
-                #print(type(result_test))
-                #print(item.encode('utf-8').decode('utf-8'))
-    
-                if (result_base != result_test):
-                    base_info = item +'\n' +result_base
-                    test_info = item +'\n' +result_test
+                head_info = ('from_lang:' + reqInfo['from_lang'] + '\n'
+                             + 'to_lang:' + reqInfo['to_lang'] + '\n'
+                             + 'base_red_mark:'+result_base['red_mark'] + '\n'
+                             + 'test_red_mark:'+result_test['red_mark'] + '\n'
+                             + 'base_trans_red_query:'+result_base['trans_red_query'] + '\n'
+                             + 'test_trans_red_query:' + result_test['trans_red_query'] + '\n'
+                             + 'base_en_red_query:' + result_base['en_red_query'] +'\n'
+                             + 'test_en_red_query:' + result_test['en_red_query'] +'\n'
+                             + 'base_ch_red_query:' + result_base['ch_red_query'] + '\n'
+                             + 'test_ch_red_query:' + result_test['ch_red_query'] + '\n')
+                allo.write(head_info.encode('utf-8'))
+                reqstr = ''
+                for value in reqInfo['docs']:
+                    reqstr += (str(value) + '\n')
+                allo.write(reqstr.encode('utf-8'))
+                resbase_str = ''
+                for value in result_base['docs']:
+                    resbase_str += (str(value) + '\n')
+                allo.write(('base:' + resbase_str + '\n').encode('utf-8'))
+                restest_str = ''
+                for value in result_test['docs']:
+                    restest_str += (str(value) + '\n')
+                allo.write(('test:' + restest_str + '\n').encode('utf-8'))
+                if (resbase_str != restest_str):
+                    base_info = head_info + reqstr + resbase_str
+                    test_info = head_info  + reqstr + restest_str
                     base_diff_content += base_info
                     test_diff_content += test_info
                     fw_base.write(base_info.encode('utf-8'))

@@ -223,6 +223,49 @@ def JsonResult(json_str):
         
     return result_dict
 
+
+def allJsonResult(json_str):
+    try:
+        resparse = json.loads(json_str[8:-1])
+        result = resparse['trans_result']
+        result_dict = dict()
+        result_dict['docs'] = list()
+        for sub_res in result:
+            tempNum = random.randint(1, 3)
+            result = dict()
+            result[sub_res['id']] = sub_res['trans_text']
+            result_dict['docs'].append(result)
+        result_dict['status'] = True
+        result_dict['red_mark'] = resparse['red_mark']
+        result_dict['trans_red_query'] = resparse['trans_red_query']
+        result_dict['en_red_query'] = resparse['en_red_query']
+        result_dict['ch_red_query'] = resparse['ch_red_query']
+    except Exception as e:
+        result_dict = dict()
+        result_dict['status'] = False
+    return result_dict
+
+def parseAlljRequest(xml_str):
+    try:
+        resparse = json.loads(xml_str)
+        from_lang = resparse['from_lang']
+        to_lang = resparse['to_lang']
+        result = resparse['trans_frag']
+        result_dict=dict()
+        result_dict['docs']=list()
+        for sub_res in result:
+            result=dict()
+            result[sub_res['id']] = sub_res['sendback'] + '|||' + sub_res['text']
+            result_dict['docs'].append(result)
+        result_dict['from_lang'] = from_lang
+        result_dict['to_lang'] = to_lang
+        result_dict['status'] = True
+    except Exception as e:
+        result_dict=dict()
+        result_dict['status'] = False
+    return result_dict
+
+
 def parseAlljRes(xml_str):
     resparse = json.loads(xml_str)
     result = resparse['trans_result']
