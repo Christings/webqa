@@ -321,7 +321,7 @@ def getDiff(query_tools_path,filename,mission_id,base_url,test_url,reqtype):
                     pass
                 try:
                     resp_test = requests.post('http://' + test_url + '/alltrans_json', data=allj_data)
-                    result_test = requestData.JsonResult(resp_test.text)
+                    result_test = requestData.allJsonResult(resp_test.text)
                     if result_test['status'] is False:
                         result_test['transRes'] = 'base request http error'
                         result_test['red_mark'] = 'base request http error'
