@@ -1,5 +1,6 @@
 #python2
 from __future__ import print_function
+from datetime import timedelta
 import math,sys,codecs,re,time,datetime,os,traceback
 import Queue
 
@@ -30,6 +31,17 @@ def get_pxx(data, percentile):
 def get_readable_timestr(ts):
     ts = int(ts)
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+def local_to_utc(local_ts):
+    local_tz = pytz.timezone('Asia/Shanghai')
+    local_format = "%Y-%m-%d %H:%M:%S"
+    time_str = time.strftime(local_format, time.localtime(local_ts))
+    dt = datetime.datetime.strptime(time_str, local_format)
+    local_dt = local_tz.localize(dt, is_dst=None)
+    utc_dt = local_dt.astimezone(pytz.utc)+timedelta(hours=8)
+    formatStr = utc_dt.timestamp()
+    return formatStr
+
 
 if __name__ == '__main__':
     input_datafile = sys.argv[1] #which logfile to read?
@@ -75,9 +87,9 @@ if __name__ == '__main__':
     with open (input_datafile, 'r') as fp:
         for line in fp:
             try:
-                if("Sogou-Observer" in line and "cost=" in line):
+                if("Sogou-Observer" in line and ",cost=" in line):
                
-                    cost_str = line.split("cost=")[1].split(",")[0]
+                    cost_str = line.split(",cost=")[1].split(",")[0]
                     #mat = re.search(time_se_style_1, line)
                     mat = re.search(time_style[time_type],line)
                     if(not mat is None):
@@ -92,10 +104,10 @@ if __name__ == '__main__':
                             timestamp_key = my_timestamp
                             mypxx = get_pxx(box, data_precent)
                             #print (str(my_timestamp) + "," + mypxx + ", box size:" + str(len(box)) + ", max:" + str(max(box, key=float)) + ", min:" + str(min(box, key=float)))
-                            wfp.write("".join([str(get_readable_timestr(my_timestamp)), str(mypxx)]))
+                            wfp.write("".join([str(get_readable_timestr(my_timestamp)), ' '+str(mypxx)+'\n']))
                             #outstr+=('[%d' % (int(my_timestamp)*1000)+','+str(mypxx)+'],')
                             #print ("in:" + str(cost_str) + ", out:" + str(box[0]))
-                            datestr+=(str(int(my_timestamp)*1000)+',')
+                            datestr+=(str((int(my_timestamp)+28800)*1000)+',')
                             datastr+=(str(mypxx)+',')
                         #update box.
                         del box[0]
