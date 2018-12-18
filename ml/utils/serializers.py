@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from publicEnv.models import Project, Rule, Field
+from ml.models import Project, Rule, Field
 
 
 class FieldSerializer(serializers.ModelSerializer):

@@ -20,9 +20,12 @@ __mtime__ = '2018/8/6'
                    ┃ ┫ ┫   ┃ ┫ ┫
                    ┗━┻━┛   ┗━┻━┛
 """
-from django.urls import re_path
+from django.urls import re_path,include
 from . import views
+
 app_name = 'publicEnv'
+
+
 urlpatterns = [
     # svcheck
     re_path(r'^p99/$', views.pnine),

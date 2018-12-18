@@ -24,7 +24,7 @@ from django.urls import re_path,include
 from . import views
 from rest_framework import routers
 
-app_name = 'publicEnv'
+app_name = 'ml'
 
 router = routers.DefaultRouter()
 router.register(r'project', views.ProjectViewSet)
@@ -32,17 +32,7 @@ router.register(r'rule', views.RuleViewSet)
 router.register(r'field', views.FieldViewSet)
 
 urlpatterns = [
-    # svcheck
-    re_path(r'^p99/$', views.pnine),
-    re_path(r'^p99/del_line/$', views.del_line),
-    re_path(r'^p99/detail/$', views.pnine_detail),
-    # deadlink
-    re_path(r'^deadlink/$', views.deadlink),
-    re_path(r'^deadlink/resolved/$', views.resolved),
-    re_path(r'^deadlink/get_urllist/$', views.get_urllist),
-    # svcheck
-    re_path(r'^svcheck/$', views.svcheck),
-    re_path(r'^svcheck/detail/$', views.svcheck_detail),
+
     # crawler
     # re_path(r'^project', views.crawler_list),
     re_path(r'^project/add', views.crawler_add),
