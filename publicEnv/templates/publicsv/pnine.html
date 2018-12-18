@@ -125,6 +125,9 @@
 								{% ifequal item.status 2 %}
 								<button class="btn btn-outline-danger btn-sm" style="color: red;">Error</button>
 								{% endifequal %}
+								{% ifequal item.status 3 %}
+								<button class="btn btn-outline-danger btn-sm" style="color: cream;">Ready</button>
+								{% endifequal %}
 							</a>
 						</td>
 						<td style="display: none;">{{item.passw}}</td>
@@ -144,6 +147,10 @@
 						</td>
 						{% endifequal%}
 						{% ifequal item.status 1 %}
+						<td class="tabletd">							
+						</td>
+						{% endifequal%}
+						{% ifequal item.status 3 %}
 						<td class="tabletd">							
 						</td>
 						{% endifequal%}

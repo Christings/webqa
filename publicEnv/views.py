@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from publicEnv import models
 from django.db.models import Q
 from utils import pagination
+from publicEnv.task import get_pnine_result
 import json, os, time
 # Create your views here.
 
@@ -81,11 +82,18 @@ def pnine(request):
             basebox = '500'
         print(ip,monitor_user,monitor_passw,testlogpath,baselogpath,basep,test_ttype,base_ttype)
         try:
-            a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, user=monitor_user, passw=monitor_passw,
+            a=models.AnalyDetail.objects.using('default').create(create_time=get_now_time(), ip=ip, status=3,user=monitor_user, passw=monitor_passw,
                                                                testlog_path=testlogpath, testp=testp, test_interval=test_interval,testbox=testbox,test_ttype=test_ttype,
                                                                baselog_path=baselogpath, basep=basep, base_interval=base_interval, basebox=basebox,base_ttype=base_ttype,
                                                                 user_fk_id=uid)
-            os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
+            #os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % a.id)
+            print(1111111)
+            r = get_pnine_result.delay(a.id)
+            print(r)
+            if r != 0:
+                ret['status'] = False
+                ret['error'] = 'error:执行失败'
+                models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
         except Exception as e:
             #models.AnalyDetail.objects.using('default').filter(id=a.id).update(status=2,errlog='start failed')
             ret['error'] = "Error:" + str(e)

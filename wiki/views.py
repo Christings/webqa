@@ -5,7 +5,7 @@ from wiki import models
 from django.db.models import Q
 from utils import pagination
 from utils import resizeImg
-import json, time, markdown2, os
+import json, time, os
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EditorTestForm
 from django.http import JsonResponse

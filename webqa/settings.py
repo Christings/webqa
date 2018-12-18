@@ -10,8 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-#import os ,djcelery
-import os
+import os ,djcelery
+#import os
+djcelery.setup_loader()
+BROKER_URL= 'redis://localhost:6379/3'
+BROKER_TRANSPORT = 'redis'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/3'
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,15 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rbac.apps.RbacConfig',
-    'polls.apps.PollsConfig',
-    'fanyi.apps.FanyiConfig',
-    'webqo.apps.WebqoConfig',
-    'webqw.apps.WebqwConfig',
-    'wiki.apps.WikiConfig',
+    'rbac',
+    'polls',
+    'fanyi',
+    'webqo',
+    'webqw',
+    'wiki',
     'editor_md',
-    'publicEnv.apps.PublicenvConfig',
-#    'djcelery',
+    'publicEnv',
+    'djcelery',
+    'kombu.transport.django',
 ]
 
 MIDDLEWARE = [
@@ -167,9 +176,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-# 定义session 键：
-# 保存用户权限url列表
-# 保存 权限菜单 和所有 菜单
 SESSION_COOKIE_AGE = 1209600
 SESSION_PERMISSION_URL_KEY = 'cool'
 
@@ -179,11 +185,10 @@ PERMISSION_MENU_KEY = 'k2'
 
 LOGIN_URL = '/login/'
 
-# REGEX_URL = r'^{url}$'  # url作严格匹配
+# REGEX_URL = r'^{url}$'
 
 REGEX_URL = r'^{url}'
 
-# 配置url权限白名单
 SAFE_URL = [
     r'/login/',
     '/admin/.*',
@@ -199,6 +204,4 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 ImageFormats = ["jpg", "jpeg", "png"]
 
-#djcelery.setup_loader()
-#BROKER_URL= 'amqp://guest@localhost//'
-#CELERY_RESULT_BACKEND = 'amqp://guest@localhost//'
+CELERY_TIMEZONE = TIME_ZONE

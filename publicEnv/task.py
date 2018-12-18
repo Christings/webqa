@@ -29,9 +29,9 @@ import os,traceback,time
 
 
 @celery_app.task
-def get_fanyi_result(task_id):
+def get_pnine_result(task_id):
     try:
-        task_status = os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % task_id)
+        task_status = os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/syncfiles_test.py %d &' % task_id) 
     except Exception as e:
         traceback.print_exc()
         pass
