@@ -14,5 +14,4 @@ diff.html
 w1.log
 w1.pid
 script/dump.rdb
-script/*
 script/start_redis.sh
