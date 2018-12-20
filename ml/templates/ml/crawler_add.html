@@ -206,7 +206,7 @@
             var field_id = field_path_ele.attr('data-field-id');
             if (field_id) {
                 $.ajax({
-                    url: '/publicsv/field/' + field_id + '/',
+                    url: '/ml/field/' + field_id + '/',
                     type: 'DELETE',
                     success: function (res) {
                     }
