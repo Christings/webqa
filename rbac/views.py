@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect, reverse
 from .models import UserInfo, Role, Permission, Menu
 from .forms import UserInfoModelForm, RoleModelForm, PermissionModelForm, MenuModelForm
+from rbac import models
+from utils import pagination
 
 
 def index(request):
@@ -10,8 +12,21 @@ def index(request):
 
 def users(request):
     """查询所有用户信息"""
-    user_list = UserInfo.objects.all()
-    return render(request, 'rbac/users.html', {'user_list': user_list})
+    # user_list = UserInfo.objects.all()
+    # return render(request, 'rbac/users.html', {'user_list': user_list})
+    page = request.GET.get('page')
+    current_page = 1
+    if page:
+        current_page = int(page)
+    try:
+        user_info = models.UserInfo.objects.all().order_by('id')[::-1]
+        page_obj = pagination.Page(current_page, len(user_info), 15, 9)
+        data = user_info[page_obj.start:page_obj.end]
+        page_str = page_obj.page_str("/rbac/users/?page=")
+    except Exception as e:
+        print(e)
+        pass
+    return render(request, 'rbac/user_control.html', {'li': data, 'page_str': page_str})
 
 
 def users_new(request):
