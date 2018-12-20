@@ -157,7 +157,7 @@
             var rule_id = rule_path_ele.attr('data-rule-id');
             if (rule_id) {
                 $.ajax({
-                    url: '/publicsv/rule/' + rule_id + '/',
+                    url: '/ml/rule/' + rule_id + '/',
                     type: 'DELETE',
                     success: function (res) {
                     }
@@ -183,7 +183,7 @@
 
 
             if (field_path_ele.val() && field_name_ele.val()) {
-                $.post('/publicsv/field/', {
+                $.post('/ml/field/', {
                     "path": field_path_ele.val(),
                     "name": field_name_ele.val(),
                     "rule": rule_id
