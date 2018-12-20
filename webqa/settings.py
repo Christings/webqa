@@ -53,9 +53,11 @@ INSTALLED_APPS = [
     'publicEnv',
     'djcelery',
     'kombu.transport.django',
-    'ml',
-    'rest_framework',
+    #'ml',
+    #'rest_framework',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
