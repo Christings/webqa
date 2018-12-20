@@ -134,7 +134,7 @@
             var rule_cb_ele = currentEntry.find('input[name="rule_cb"]')
 
             if (rule_path_ele.val()) {
-                $.post('/publicsv/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
+                $.post('/ml/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
                     var rule_id = res.data.id;
                     rule_path_ele.attr('data-rule-id', rule_id);
                     rule_cb_ele.attr('data-rule-id', rule_id);
