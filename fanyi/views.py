@@ -19,18 +19,19 @@ import time
 import os
 import signal
 import traceback
-
-def auth(func):
-    def inner(request,*args,**kwargs):
-        login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
-        try:
-            user_id = request.COOKIES.get('uid')
-            if not user_id:
-                return redirect(login_url)
-        except:
-            return redirect(login_url)
-        return func(request,*args,**kwargs)
-    return inner
+from utils.verify import auth
+from utils import verify
+#def auth(func):
+#    def inner(request,*args,**kwargs):
+#        login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
+#        try:
+#            user_id = request.COOKIES.get('uid')
+#            if not user_id:
+#                return redirect(login_url)
+#        except:
+#            return redirect(login_url)
+#        return func(request,*args,**kwargs)
+#    return inner
 
 # auto Bleu
 
@@ -622,7 +623,8 @@ def debug(request):
 
 
 def login(request):
-    login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
+    #login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
+    login_url=verify.login_url
     ptoken = ""
     try:
         ptoken = request.GET['ptoken']
@@ -635,7 +637,7 @@ def login(request):
     if (ptoken != "" ):#login request callback
         message = urllib.parse.unquote(ptoken)
         strcode = base64.b64decode(message)
-        pkey = M2Crypto.RSA.load_pub_key('/search/odin/pypro/webqa/public.pem')
+        pkey = M2Crypto.RSA.load_pub_key(verify.publicPem_path)
         output = pkey.public_decrypt(strcode, M2Crypto.RSA.pkcs1_padding)
         try:
             json_data = json.loads(output.decode('utf-8'))
@@ -681,7 +683,8 @@ def index(request):
 
 
 def logout(request):
-    response = redirect('https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl=')
+    #response = redirect('https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl=')
+    response = redirect(verify.login_url)
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
     if ('sessionid' in request.COOKIES):
