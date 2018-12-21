@@ -18,3 +18,5 @@ script/start_redis.sh
 script/err
 script/err_flower
 .env/
+.venv/
+webqa/settings.py
