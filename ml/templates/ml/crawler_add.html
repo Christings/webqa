@@ -54,10 +54,10 @@
                                 </div>
                                 <div class="field-block hide">
                                     <div class="field-group">
-                                        <input style="display: inline" class="form-control col-md-5 field-input"
+                                        <input style="display: inline" class="form-control col-md-4 field-input"
                                                name="field_path" type="text"
                                                placeholder="xpath 规则 （eg. //div/a[@href]/text()）"/>
-                                        <input style="display: inline" class="form-control col-md-5 field-input"
+                                        <input style="display: inline" class="form-control col-md-4 field-input"
                                                name="field_name" type="text" placeholder="Field 名字 （eg. title ）"/>
                                         <span class="input-group-btn" style="display: inline;">
                                     <button class="btn btn-success btn-add-field" type="button">
@@ -68,46 +68,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-                        {#                        <div class="form-group col-md-12 block-list row">#}
-                        {#                            <div class="rule-block col-sm-12">#}
-                        {#                            <div class="rule-group col-md-5">#}
-                        {#                                <input style="" class="form-control rule-input" type="text" name="rule_path"#}
-                        {#                                       placeholder="链接正则(/group/topic/\d+/)"/>#}
-                        {#                            </div>#}
-                        {#                            <div class="rule-group col-md-5">#}
-                        {##}
-                        {#                                <input class="form-control rule-input" name="rule_cb" type="text"#}
-                        {#                                       placeholder="回调函数,parse_开头(parse_topic)"/>#}
-                        {#                            </div>#}
-                        {#                            <div class="rule-group col-md-2">#}
-                        {#                                    <span class="input-group-btn" style="display: inline;">#}
-                        {#                                    <button class="btn btn-success btn-add-rule" type="button">#}
-                        {#                                        <i class="fa fa-plus"></i>#}
-                        {#                                    </button>#}
-                        {#                                    </span>#}
-                        {#                            </div>#}
-                        {#                                <div class="field-block">#}
-                        {#                            <div class="field-group col-md-5">#}
-                        {#                                <input style="" class="form-control field-input" name="field_path" type="text"#}
-                        {#                                       placeholder="xpath 规则 （//div/a[@href]/text()）"/>#}
-                        {#                            </div>#}
-                        {#                            <div class="field-group col-md-5">#}
-                        {#                                <input style="" class="form-control field-input" name="field_name" type="text"#}
-                        {#                                       placeholder="Field 名字 （eg. title ）"/>#}
-                        {#                            </div>#}
-                        {#                            <div class="field-group col-md-2">#}
-                        {#                                        <span class="input-group-btn" style="display: inline;">#}
-                        {#                                    <button class="btn btn-success btn-add-field" type="button">#}
-                        {#                                        <i class="fa fa-minus" aria-hidden="true"></i>#}
-                        {#                                    </button>#}
-                        {#                                        </span>#}
-                        {#                            </div>#}
-                        {#                        </div>#}
-                        {#                            </div>#}
-                        {#                        </div>#}
-
 
                     </form>
                 </div>
@@ -127,16 +87,23 @@
         $(document).on('click', '.btn-add-rule', function (e) {
             e.preventDefault();
 
-            var controlForm = $('.block-list:first'),
-                    currentEntry = $(this).parents('.rule-block:first');
+            var controlForm = $('.block-list:first'), currentEntry = $(this).parents('.rule-block:first');
 
             var rule_path_ele = currentEntry.find('input[name="rule_path"]')
             var rule_cb_ele = currentEntry.find('input[name="rule_cb"]')
 
             if (rule_path_ele.val()) {
                 $.post('/ml/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
-                    var rule_id = res.data.id;
+
+                    if(res.data[0]!= 'id')
+                        rule_id=res.data[0]
+                    else
+                        rule_id=res.data[1]
+                    console.log('idid',rule_id)
+
+{#                    var rule_id = res.data[0];#}
                     rule_path_ele.attr('data-rule-id', rule_id);
+                    console.log(res.data)
                     rule_cb_ele.attr('data-rule-id', rule_id);
                     newEntry = $(currentEntry.clone()).appendTo(controlForm);
                     newEntry.find('input').val('');
@@ -153,7 +120,7 @@
         }).on('click', '.btn-remove-rule', function (e) {
             var currentEntry = $(this).parents('.rule-block:first');
             var rule_path_ele = currentEntry.find('input[name="rule_path"]');
-            //var rule_cb_ele = currentEntry.find('input[name="rule_cb"]');
+            //var rule_cb_ele = currentEntry.find('input[name="rule_cb"]');#}
             var rule_id = rule_path_ele.attr('data-rule-id');
             if (rule_id) {
                 $.ajax({
@@ -188,7 +155,12 @@
                     "name": field_name_ele.val(),
                     "rule": rule_id
                 }, function (res) {
-                    var field_id = res.data.id;
+                    if(res.data[0]!= 'id')
+                        field_id=res.data[0]
+                    else
+                        field_id=res.data[1]
+                    console.log('field',field_id)
+{#                    var field_id = res.data[0];#}
                     field_path_ele.attr('data-field-id', field_id);
                     field_name_ele.attr('data-field-id', field_id);
                     newEntry = $(currentEntry.clone()).appendTo(controlForm);
@@ -238,6 +210,7 @@
                     var field_path_value = $(this).find('input[name="field_path"]').eq(0).val();
                     var field_name_value = $(this).find('input[name="field_name"]').eq(0).val();
                     var field_id = $(this).find('input[name="field_name"]').eq(0).attr('data-field-id');
+                    console.log(field_id)
                     if (field_path_value && field_name_value) {
                         rule_data['fields'].push({'name': field_name_value, 'path': field_path_value, 'id': field_id})
                     }
@@ -272,15 +245,13 @@
                         dataType: "json",
                         success: function (res) {
                             project_id = res.id;
-                            alert(project_id)
+                            console.log('res.id',res.id)
                             alert("创建成功，3秒后跳转");
-                            setTimeout(window.location.href = "/ml/project/" + project_id, 3000)
+                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)
                         }
                     }
             );
         })
-
-
     </script>
 {% endblock %}
 

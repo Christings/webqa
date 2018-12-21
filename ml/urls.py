@@ -24,6 +24,7 @@ from django.urls import re_path,include
 from . import views
 from rest_framework import routers
 
+
 app_name = 'ml'
 
 router = routers.DefaultRouter()
@@ -36,7 +37,7 @@ urlpatterns = [
     # crawler
     # re_path(r'^project', views.crawler_list),
     re_path(r'^project/add', views.crawler_add),
-    re_path(r'^project/(?P<id>\d+)$', views.crawler_detail),
+    re_path(r'^project_status/(?P<id>\d+)$', views.crawler_detail),
 
     # re_path(r'^project', include(router.urls)),
     re_path(r'^', include(router.urls)),
