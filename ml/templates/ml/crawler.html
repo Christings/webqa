@@ -77,12 +77,13 @@
             e.preventDefault()
             var that = $(this)
             var project_id = that.attr('data-id')
-            window.location= project_id
+            window.location.href= project_id
         });
 
         $(document).on('click', '.create_project', function (e) {
             e.preventDefault();
-            window.open("add")
+            window.location='add'
+{#            window.open("add")#}
         });
     </script>
 {% endblock %}

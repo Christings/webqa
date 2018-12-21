@@ -47,24 +47,24 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def list(self, request):
         # public_projects = self.queryset.filter(is_public=True, is_delete=False)
-        public_projects = self.queryset.all()
+        projects = self.queryset.all()
 
-        return render(request, 'ml/crawler.html', {"project": public_projects})
+        return render(request, 'ml/crawler.html', {"project": projects})
 
-    def retrieve(self, request, pk=None):
-        user_id = 'gongyanli'
-        queryset = self.queryset.filter(id=pk)
-        queryset = queryset[0] if queryset else None
-        if not queryset:
-            return JsonResponse({"msg": "project not found"})
-        if queryset.is_public or queryset.user == user_id:
-            serializer = ProjectDetailSerializer(queryset)
-            if queryset.is_public:
-                render_template = "ml/crawler.html"
-            else:
-                render_template = "ml/crawler_detail.html"
-            return render(request, render_template, {"project": serializer.data})
-        return JsonResponse({"msg": "project not found"})
+    # def retrieve(self, request, pk=None):
+    #     user_id = 'gongyanli'
+    #     queryset = self.queryset.filter(id=pk)
+    #     queryset = queryset[0] if queryset else None
+    #     if not queryset:
+    #         return JsonResponse({"msg": "project not found"})
+    #     if queryset.is_public or queryset.user == user_id:
+    #         serializer = ProjectDetailSerializer(queryset)
+    #         if queryset.is_public:
+    #             render_template = "ml/crawler.html"
+    #         else:
+    #             render_template = "ml/crawler_detail.html"
+    #         return render(request, render_template, {"project": serializer.data})
+    #     return JsonResponse({"msg": "project not found"})
 
     def create(self, request):
         user_id = 'gongyanli'
@@ -75,6 +75,7 @@ class ProjectViewSet(viewsets.ViewSet):
         data["status"] = 1
         serializer = ProjectDetailSerializer(data=data)
         if serializer.is_valid():
+            print('success')
             project = serializer.create(data)
             update_crawl_template(project)
             return Response({"msg": "ok", "id": project.id})
@@ -99,8 +100,7 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         user_id = 'gongyanli'
-        request.user=user_id
-        project = Project.objects.get(pk=pk, user=request.user)
+        project = Project.objects.get(pk=pk, user=user_id)
         # project = Project.objects.get(pk=pk, user=user_id)
         # project.is_delete = True
         # project.save()
@@ -112,14 +112,15 @@ def crawler_detail(request, id):
     user_id = 'gongyanli'
 
     if request.method == "GET":
-        project = get_object_or_404(Project, 404)
+        print('get')
+        project = get_object_or_404(Project,pk=id)
         return render(request, "ml/crawler_detail.html", {"project": project})
     if request.method == "POST":
         user = user_id
         body = json.loads(request.body)
         id = body.get("id")
         status = int(body.get("status", 0))
-        project = Project.objects.get(pk=id)
+        project = Project.objects.get(pk=id,user=user)
         project.status = status
         project.save()
 

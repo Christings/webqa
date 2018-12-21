@@ -1,24 +1,28 @@
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from rbac.models import UserInfo
+from django.db import models
 from ml.utils.template_engine import generate_crawl
+
 
 class Project(models.Model):
     PIPELINE_CHOICES = {
         "1": "JsonWriterPipeline",
         "2": "ImagesPipeline",
-        "3": "MongePipeline",
+        "3": "MongoPipeline",
         "4": "CsvWriterPipeline",
-        "5": "ElasticSearchPipeline",
+        "5": "ElasticSearchPipeline"
     }
 
     RUN_STATUS = (
         (0, u"构建中"),
-        (1, u"初始化"),
-        (2, u"运行"),
-        (3, u"停止"),
+        (1, u'初始化'),
+        (2, u'运行'),
+        (3, u'停止'),
     )
 
     user = models.CharField(max_length=50, default="")
+    # user = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     alias = models.CharField(max_length=200)
     domain = models.TextField()
@@ -28,7 +32,7 @@ class Project(models.Model):
     download_delay = models.IntegerField(default=3)
 
     image_urls = models.CharField(max_length=50, null=True, blank=True)
-    image = models.CharField(max_length=50, null=True, blank=True)
+    images = models.CharField(max_length=50, null=True, blank=True)
 
     md5 = models.CharField(max_length=64, null=True, blank=True)
     status = models.IntegerField(choices=RUN_STATUS, default=0)
@@ -39,8 +43,8 @@ class Project(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     @property
-    def get_pipeline(self):
-        return [self.PIPELINE_CHOICES[pipeline] for pipeline in self.pipelines.split(',')]
+    def get_pipelines(self):
+        return [self.PIPELINE_CHOICES[pipeline] for pipeline in self.pipelines.split(",")]
 
 
 class Rule(models.Model):
@@ -52,7 +56,7 @@ class Rule(models.Model):
 
 
 class Field(models.Model):
-    rule = models.ForeignKey(Rule, null=True, blank=True,on_delete=models.CASCADE)
+    rule = models.ForeignKey(Rule, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     path = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True)
