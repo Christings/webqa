@@ -36,3 +36,14 @@ def get_fanyi_result(task_id):
         traceback.print_exc()
         pass
     return task_status
+
+
+@celery_app.task
+def get_gpu_detail(runningid,req_id):
+    try:
+        task_status = os.system('python3 /search/odin/pypro/webqa/utils/monitor.py %s %s &' % (str(runningid), req_id))
+        # task_status = os.system('python3 /Users/zhangjingjun/work/code/webqa/utils/monitor.py %s %s &' % (str(runningid), req_id))
+    except Exception as e:
+        traceback.print_exc()
+        pass
+    return task_status

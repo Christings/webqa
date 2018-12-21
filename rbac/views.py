@@ -18,15 +18,48 @@ def users(request):
     current_page = 1
     if page:
         current_page = int(page)
+    search_fl = request.GET.get('fl')
+    search_fn = request.GET.get('fn')
+    if search_fl:
+        search_fl = search_fl
+    else:
+        search_fl = ''
+    if search_fn:
+        search_fn = search_fn
+    else:
+        search_fn = ''
     try:
-        user_info = models.UserInfo.objects.all().order_by('id')[::-1]
-        page_obj = pagination.Page(current_page, len(user_info), 15, 9)
-        data = user_info[page_obj.start:page_obj.end]
-        page_str = page_obj.page_str("/rbac/users/?page=")
+        if search_fl!='':
+            user_info = models.UserInfo.objects.filter(username__startswith=search_fl.lower()).order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(user_info), 10, 9)
+            data = user_info[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/rbac/users/?fl=%s&page=" % search_fl.lower())
+        elif search_fn!='':
+            user_info = models.UserInfo.objects.filter(username__contains=search_fn).all()
+            page_obj = pagination.Page(current_page, len(user_info), 10, 9)
+            data = user_info[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/rbac/users/?fn=%s&page=" % search_fn)
+        else:
+            user_info = models.UserInfo.objects.all().order_by('id')[::-1]
+            page_obj = pagination.Page(current_page, len(user_info), 10, 9)
+            data = user_info[page_obj.start:page_obj.end]
+            page_str = page_obj.page_str("/rbac/users/?page=")
+        first_letter=list()
+        user_name_info = models.UserInfo.objects.all().order_by('id')[::-1]
+        for item in user_name_info:
+            if item.username[0].upper() not in first_letter:
+                first_letter.append(item.username[0].upper())
+        first_letter=sorted(first_letter)
+
+        none_limit=list()
+        for user_role in user_name_info:
+            if user_role.roles.all().count()==0:
+                none_limit.append(user_role.username)
+
     except Exception as e:
         print(e)
         pass
-    return render(request, 'rbac/user_control.html', {'li': data, 'page_str': page_str})
+    return render(request, 'rbac/user_control.html', {'li': data, 'page_str': page_str,'first_letter':first_letter,'none_limit_num':len(none_limit),'none_limit':none_limit})
 
 
 def users_new(request):

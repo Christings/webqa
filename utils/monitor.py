@@ -98,25 +98,27 @@ def gpu_info(host_id):
                 child.expect(pexpect.EOF)
                 gpuinfo = (child.before).decode('utf-8')
                 gpu_lst = gpuinfo.strip().split('\r\n')
-                g_mem=gpu_lst[0].split()[8].split('MiB')[0]
-                g_used=gpu_lst[0].split()[12].split('%')[0]
-                g_mem_list = g_mem + ","
-                g_used_list = g_used + ","
-                timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
-                gpumeminfo = timedata+","+g_mem+'],\n'
-                gpumemused = timedata+","+g_used+'],\n'
-                db = pymysql.connect(database_host, database_user, database_pass, database_data)
-                cursor = db.cursor()
-                sql = "UPDATE %s set gpumem=CONCAT(gpumem, '%s'),gpumemused=CONCAT(gpumemused, '%s') ,gpumem_list=CONCAT(gpumem_list, '%s'),gpumemused_list=CONCAT(gpumemused_list, '%s') where id=%d;" % (database_table, gpumeminfo, gpumemused,g_mem_list,g_used_list,monitor_id)
-                logInfo.log_info('gpu mem is '+g_mem+' and gpu mem used is '+g_used)
-                cursor.execute(sql)
-                try:
-                    db.commit()
-                except:
-                    db.rollback()
-                    update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
-                    logInfo.log_info('Insert a piece of data failed')
-                    pass
+                for item in gpu_lst:
+                    if 'MiB' in item:
+                        g_mem=item.split()[8].split('MiB')[0]
+                        g_used=item.split()[12].split('%')[0]
+                        g_mem_list = g_mem + ","
+                        g_used_list = g_used + ","
+                        timedata = datetime.now().strftime('[Date.UTC(%Y,%m,%d,%H,%M,%S)')
+                        gpumeminfo = timedata+","+g_mem+'],\n'
+                        gpumemused = timedata+","+g_used+'],\n'
+                        db = pymysql.connect(database_host, database_user, database_pass, database_data)
+                        cursor = db.cursor()
+                        sql = "UPDATE %s set gpumem=CONCAT(gpumem, '%s'),gpumemused=CONCAT(gpumemused, '%s') ,gpumem_list=CONCAT(gpumem_list, '%s'),gpumemused_list=CONCAT(gpumemused_list, '%s') where id=%d;" % (database_table, gpumeminfo, gpumemused,g_mem_list,g_used_list,monitor_id)
+                        logInfo.log_info('gpu mem is '+g_mem+' and gpu mem used is '+g_used)
+                        cursor.execute(sql)
+                        try:
+                            db.commit()
+                        except:
+                            db.rollback()
+                        update_errorlog("[%s] Insert a piece of data failed \n" % get_now_time())
+                        logInfo.log_info('Insert a piece of data failed')
+                        pass
             except Exception as e:
                 update_errorlog("[%s] SSH  failed e: %s \n" % (get_now_time(),str(e)))
                 logInfo.log_info('SSH  failed'+str(e))
