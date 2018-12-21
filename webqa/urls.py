@@ -34,7 +34,7 @@ urlpatterns = [
     re_path(r'webqw/', include('webqw.urls')),
     re_path(r'wiki/', include('wiki.urls')),
     re_path(r'publicsv/', include('publicEnv.urls')),
-    #re_path(r'ml/', include('ml.urls')),
+    re_path(r'ml/', include('ml.urls')),
     # re_path(r'^$', RedirectView.as_view(url='/project')),
 
     re_path(r'', include('editor_md.urls')),

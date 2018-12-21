@@ -32,7 +32,7 @@ SECRET_KEY = '+y!y#j+guc+r8#51yxlx83jrbkbenyegj)1z6$vl)%6s)*cv8@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.144.120.30', 'webqa.web.sjs.ted', '127.0.0.1']
+ALLOWED_HOSTS = ['10.134.110.163', 'frontqa.web.sjs.ted', '127.0.0.1']
 
 # Application definition
 
@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'publicEnv',
     'djcelery',
     'kombu.transport.django',
-    #'ml',
-    #'rest_framework',
+    'ml',
+    'rest_framework',
 ]
 
 
