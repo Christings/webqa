@@ -61,12 +61,16 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         rules_data = project_data.pop("rules")
 
         project = Project.objects.create(**project_data)
+        print('id',project.id)
 
         for rule_data in rules_data:
             rule_data["project_id"] = project.id
             fields_data = rule_data.pop("fields")
+            print('rule_data',rule_data)
             Rule.objects.filter(pk=rule_data["id"]).update(**rule_data)
             for field_data in fields_data:
+                print('field_data', field_data)
+
                 field_data["rule_id"] = rule_data["id"]
                 Field.objects.filter(pk=field_data["id"]).update(**field_data)
         return project

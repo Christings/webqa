@@ -1,4 +1,4 @@
-{% extends 'father.html' %}
+{% extends 'main.html' %}
 {% block content %}
     {% load tag_tools %}
     {% load static %}
@@ -6,13 +6,17 @@
         <div class="col-md-12">
             <div class="tile">
                 <div class="tile-body">
-                    <h3 class="tile-title">创建&nbsp;&nbsp;&nbsp;<span style="color:red;font-size:15px;"
+                    <h3 class="tile-title">编辑&nbsp;&nbsp;&nbsp;<span style="color:red;font-size:15px;"
                                                                      id="error_xml"></span></h3>
                     <form class="row" action="" method="POST" id="form_automation">
+                        <input type="hidden" value="{{ project.id }}" id="project_id">
+                        <input type="hidden" value="{{ project.pipelines }}" id="project_pipelines">
+
                         {% csrf_token %}
                         <div class="form-group col-md-12">
                             <label class="control-label">基础配置</label>
-                            <input type="text" name="name" placeholder="输入项目名（eg. douban）" class="form-control">
+                            <input type="text" name="name" placeholder="输入项目名（eg. douban）" class="form-control"
+                                   value="{{ project.name }}">
                         </div>
                         <div class="form-group col-md-12">
                             <input type="text" name="alias" placeholder="输入别名 （eg. 豆瓣小组）" class="form-control"
@@ -20,16 +24,17 @@
                         </div>
                         <div class="form-group col-md-12">
                             <input type="text" name="domain" placeholder="输入域名, 多个以英文逗号相隔（eg. www.douban.com）"
-                                   class="form-control">
+                                   class="form-control" value="{{ project.domain }}">
                         </div>
                         <div class="form-group col-md-12">
                             <input type="text" name="start_urls"
                                    placeholder="输入爬取开始的链接， 多个以英文逗号相隔（eg. https://www.douban.com/group/ustv/discussion）"
-                                   class="form-control">
+                                   class="form-control" value="{{ project.start_urls }}">
                         </div>
 
                         <div class="form-group col-md-12">
-                            <select id="pipelines" class="multiselect-ui form-control" multiple="multiple">
+                            <select id="pipelines" class="multiselect-ui form-control" multiple="multiple"
+                                    value="{{ project.pipelines }}">
                                 <option value="1">Json</option>
                                 <option value="4">Csv</option>
                                 <option value="2">Image</option>
@@ -40,33 +45,44 @@
 
 
                         <div class="form-group col-md-12 block-list">
-                            <div class="rule-block">
-                                <div class="rule-group">
-                                    <input style="display: inline" class="form-control col-md-5 rule-input" type="text"
-                                           name="rule_path" placeholder="链接正则（eg. /group/topic/\d+/）"/>
-                                    <input style="display: inline" class="form-control col-md-5 rule-input"
-                                           name="rule_cb" type="text" placeholder="回调函数, 以 parse_ 开头（eg. parse_topic）"/>
-                                    <span class=" input-group-btn" style="display: inline;">
-                                <button class="btn btn-success btn-add-rule" type="button">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                </button>
-                            </span>
-                                </div>
-                                <div class="field-block hide">
-                                    <div class="field-group">
-                                        <input style="display: inline" class="form-control col-md-4 field-input"
-                                               name="field_path" type="text"
-                                               placeholder="xpath 规则 （eg. //div/a[@href]/text()）"/>
-                                        <input style="display: inline" class="form-control col-md-4 field-input"
-                                               name="field_name" type="text" placeholder="Field 名字 （eg. title ）"/>
-                                        <span class="input-group-btn" style="display: inline;">
+                            {% for rule in project.rules %}
+                                <div class="rule-block">
+                                    <div class="rule-group">
+                                        <input data-rule-id="{{ rule.id }}" value="{{ rule.path }}"
+                                               style="display: inline" class="form-control col-md-5 rule-input"
+                                               type="text"
+                                               name="rule_path" placeholder="链接正则（eg. /group/topic/\d+/）"/>
+                                        <input data-rule-id="{{ rule.id }}" value="{{ rule.callback_func }}"
+                                               style="display: inline" class="form-control col-md-5 rule-input"
+                                               name="rule_cb" type="text"
+                                               placeholder="回调函数, 以 parse_ 开头（eg. parse_topic）"/>
+                                        <span class=" input-group-btn" style="display: inline;">
+                                        <button class="btn btn-success btn-add-rule" type="button">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                    <div class="field-block">
+                                        {% for field in rule.fields %}
+                                            <div class="field-group">
+                                                <input data-field-id="{{ field.id }}" value="{{ field.path }}"
+                                                       style="display: inline" class="form-control col-md-4 field-input"
+                                                       name="field_path" type="text"
+                                                       placeholder="xpath 规则 （eg. //div/a[@href]/text()）"/>
+                                                <input data-field-id="{{ field.id }}" value="{{ field.name }}"
+                                                       style="display: inline" class="form-control col-md-4 field-input"
+                                                       name="field_name" type="text"
+                                                       placeholder="Field 名字 （eg. title ）"/>
+                                                <span class="input-group-btn" style="display: inline;">
                                     <button class="btn btn-success btn-add-field" type="button">
                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                     </button>
                                 </span>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                         </div>
 
                     </form>
@@ -95,14 +111,15 @@
             if (rule_path_ele.val()) {
                 $.post('/ml/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
 
-                    if(res.data[0]!= 'id')
-                        rule_id=res.data[0]
+                    if (res.data[0] != 'id')
+                        rule_id = res.data[0]
                     else
-                        rule_id=res.data[1]
-                    console.log('rule_id',rule_id)
+                        rule_id = res.data[1]
+                    console.log('idid', rule_id)
 
-{#                    var rule_id = res.data[0];#}
+                    {#                    var rule_id = res.data[0];#}
                     rule_path_ele.attr('data-rule-id', rule_id);
+                    console.log(res.data)
                     rule_cb_ele.attr('data-rule-id', rule_id);
                     newEntry = $(currentEntry.clone()).appendTo(controlForm);
                     newEntry.find('input').val('');
@@ -154,12 +171,12 @@
                     "name": field_name_ele.val(),
                     "rule": rule_id
                 }, function (res) {
-                    if(res.data[0]!= 'id')
-                        field_id=res.data[0]
+                    if (res.data[0] != 'id')
+                        field_id = res.data[0]
                     else
-                        field_id=res.data[1]
-                    console.log('field_id',field_id)
-{#                    var field_id = res.data[0];#}
+                        field_id = res.data[1]
+                    console.log('field', field_id)
+                    {#                    var field_id = res.data[0];#}
                     field_path_ele.attr('data-field-id', field_id);
                     field_name_ele.attr('data-field-id', field_id);
                     newEntry = $(currentEntry.clone()).appendTo(controlForm);
@@ -196,6 +213,15 @@
             nonSelectedText: "选择保存数据方式"
         });
 
+        $('input[type="checkbox"]').map(
+                function (i, e) {
+                    console.log($(this))
+                    if ($('#project_pipelines').val().split(',').includes($(this).val().toString())) {
+                        $('.checkbox').eq(i).click();
+                    }
+                }
+        )
+
         $(document).on('click', '.submit-project', function (e) {
             e.preventDefault();
             var rules_data = [];
@@ -225,6 +251,7 @@
             })
 
             var data = {
+                'id': $("#project_id").val(),
                 "name": $("input[name='name']").val(),
                 "alias": $("input[name='alias']").val(),
                 "domain": $("input[name='domain']").val(),
@@ -237,15 +264,17 @@
 
             $.ajax(
                     {
-                        url: '/ml/project/',
+                        url: '/ml/project/' + $('#project_id').val() + '/',
                         type: 'POST',
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (res) {
-                            project_id = res.id;
-                            console.log('res.id',res.id)
+{#                            project_id = res.id;#}
+                            project_id = res.data.id;
+                            console.log('res.id', res.data)
                             alert("创建成功，3秒后跳转");
+                            {#                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)#}
                             setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)
                         }
                     }
