@@ -1,4 +1,4 @@
-{% extends 'father.html' %}
+{% extends 'main.html' %}
 {% block content %}
     {% load tag_tools %}
     {% load static %}
@@ -38,8 +38,11 @@
                                         <button class="btn btn-primary remove" type="button" data-id="{{ item.id }}">
                                             删除
                                         </button>
-                                        <button class="btn btn-primary detail" type="button" data-id="{{ item.id }}">
-                                            详情
+                                        <a class="btn btn-primary" type="button" data-id="{{ item.id }}">
+                                            跳转
+                                        </a>
+                                        <button class="btn btn-primary" type="button" data-id="{{ item.id }}">
+                                            下载
                                         </button>
                                     </td>
                                 </tr>

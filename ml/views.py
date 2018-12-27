@@ -9,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.views import Response
 from ml.utils.serializers import *
 from ml.models import Project, Rule, Field, update_crawl_template
-from ml.utils.template_engine import generate_crawl
+from ml.utils.template_engine import generate_crawl, run
 from ml.utils.utils import create_md5
 from utils.verify import auth
 
@@ -101,6 +101,7 @@ class ProjectViewSet(viewsets.ViewSet):
         project.delete()
         return Response({"msg": "ok"})
 
+
 def crawler_edit(request, id):
     user_id = 'gongyanli'
 
@@ -131,6 +132,17 @@ def crawler_edit(request, id):
     print('testtest')
     return JsonResponse({'msg': "method not allowed"})
 
+
+def crawler_run(request, id):
+    user_id = 'gongyanli'
+    if request.method == "GET":
+        project = get_object_or_404(Project, pk=id)
+        run(project)
+        return render(request,"ml/crawler_run.html", {"project": project})
+    return JsonResponse({'msg': "method not allowed"})
+
+
+
 def crawler_detail(request, id):
     user_id = 'gongyanli'
 
@@ -140,6 +152,7 @@ def crawler_detail(request, id):
         if project.is_public or project.user == user_id:
             # return render(request, "ml/crawler_detail.html", {"project": project})
             return render(request, "ml/crawler_run.html", {"project": project})
+
     if request.method == "POST":
         user = user_id
         body = json.loads(request.body)

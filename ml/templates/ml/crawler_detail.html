@@ -1,195 +1,257 @@
-{% extends 'father.html' %}
+{% extends 'main.html' %}
 {% block content %}
     {% load tag_tools %}
     {% load static %}
     <div class="row">
         <div class="col-md-12">
-            <div>111</div>
-            <div class="tile-body">
-                <div id="main-charts" style="width: 800px;height:400px;"></div>
-            </div>
-            <div class="tile-footer">
-                <button class="btn btn-primary" type="button"><a href="/ml/outputs/{{ project.md5 }}.zip">运行</a>
-                </button>
-            </div>
-        </div>
+            <div class="tile">
+                <div class="tile-body">
+                    <h3 class="tile-title">编辑&nbsp;&nbsp;&nbsp;<span style="color:red;font-size:15px;"
+                                                                     id="error_xml"></span></h3>
+                    <form class="row" action="" method="POST" id="form_automation">
+                        {% csrf_token %}
+                        <div class="form-group col-md-12">
+                            <label class="control-label">基础配置</label>
+                            <input type="text" name="name" placeholder="输入项目名（eg. douban）" class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <input type="text" name="alias" placeholder="输入别名 （eg. 豆瓣小组）" class="form-control"
+                                   value="{{ project.alias }}">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <input type="text" name="domain" placeholder="输入域名, 多个以英文逗号相隔（eg. www.douban.com）"
+                                   class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <input type="text" name="start_urls"
+                                   placeholder="输入爬取开始的链接， 多个以英文逗号相隔（eg. https://www.douban.com/group/ustv/discussion）"
+                                   class="form-control">
+                        </div>
 
-    </div>
+                        <div class="form-group col-md-12">
+                            <select id="pipelines" class="multiselect-ui form-control" multiple="multiple">
+                                <option value="1">Json</option>
+                                <option value="4">Csv</option>
+                                <option value="2">Image</option>
+                                <option value="3">Mongodb</option>
+                                <option value="5">Elasticsearch</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group col-md-12 block-list">
+                            <div class="rule-block">
+                                <div class="rule-group">
+                                    <input style="display: inline" class="form-control col-md-5 rule-input" type="text"
+                                           name="rule_path" placeholder="链接正则（eg. /group/topic/\d+/）"/>
+                                    <input style="display: inline" class="form-control col-md-5 rule-input"
+                                           name="rule_cb" type="text" placeholder="回调函数, 以 parse_ 开头（eg. parse_topic）"/>
+                                    <span class=" input-group-btn" style="display: inline;">
+                                <button class="btn btn-success btn-add-rule" type="button">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                                </div>
+                                <div class="field-block hide">
+                                    <div class="field-group">
+                                        <input style="display: inline" class="form-control col-md-4 field-input"
+                                               name="field_path" type="text"
+                                               placeholder="xpath 规则 （eg. //div/a[@href]/text()）"/>
+                                        <input style="display: inline" class="form-control col-md-4 field-input"
+                                               name="field_name" type="text" placeholder="Field 名字 （eg. title ）"/>
+                                        <span class="input-group-btn" style="display: inline;">
+                                    <button class="btn btn-success btn-add-field" type="button">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="tile-footer">
+                    <button class="btn btn-primary submit-project" type="button"><i
+                            class="fa fa-fw fa-lg fa-check-circle"></i>添加
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
 {% endblock %}
 {% block js %}
     <script>
-{#        var pieChart=echarts.init(document.getElementById('main-charts'));#}
-{#        var labelTop = {//上层样式#}
-{#            normal : {#}
-{#                color :'#0099cc',#}
-{#                label : {#}
-{#                    show : true,#}
-{#                    position : 'center',#}
-{#                    formatter : '{b}',#}
-{#                    textStyle: {#}
-{#                        baseline : 'bottom',#}
-{#                        fontSize:26#}
-{#                    }#}
-{#                },#}
-{#                labelLine : {#}
-{#                    show : false#}
-{#                }#}
-{#            }#}
-{#        };#}
-{#        var labelFromatter = {//环内样式#}
-{#            normal : {//默认样式#}
-{#                label : {//标签#}
-{#                    formatter : function (a,b,c){return 100 - c + '%'},#}
-{#                    // labelLine.length：30,  //线长，从外边缘起计算，可为负值#}
-{#                    textStyle: {//标签文本样式#}
-{#                        color:'black',#}
-{#                        align :'center',#}
-{#                        baseline : 'top'//垂直对其方式#}
-{#                    }#}
-{#                }#}
-{#            },#}
-{#        };#}
-{#        var labelBottom = {//底层样式#}
-{#            normal : {#}
-{#                color: '#99ccff',#}
-{#                label : {#}
-{#                    show : true,#}
-{#                    position : 'center',#}
-{#                    fontSize:22#}
-{#                },#}
-{#                labelLine : {#}
-{#                    show : false#}
-{#                }#}
-{#            },#}
-{#            emphasis: {//悬浮式样式#}
-{#                color: 'rgba( 0,0,0,0)'#}
-{#            }#}
-{#        };#}
-{#        var radius = [80,122];// 半径[内半径，外半径]#}
-{##}
-{#        var pieChartOption = {#}
-{#            title : {#}
-{#                text: 'echarts实现圆环进度条',#}
-{#                subtext: '易唐云网智能科技',#}
-{#                x:'center',#}
-{#                //正标题样式#}
-{#                textStyle: {#}
-{#                    fontSize:44,#}
-{#                    fontFamily:'Arial',#}
-{#                    fontWeight:100,#}
-{#                    //color:'#1a4eb0',#}
-{#                },#}
-{#                //副标题样式#}
-{#                subtextStyle: {#}
-{#                    fontSize:28,#}
-{#                    fontFamily:'Arial',#}
-{#                    color:"#1a4eb0",#}
-{#                },#}
-{#            },#}
-{#            animation:false,#}
-{#            tooltip : {         // 提示框. Can be overwrited by series or data#}
-{#                trigger: 'axis',#}
-{#                //show: true,   //default true#}
-{#                showDelay: 0,#}
-{#                hideDelay: 50,#}
-{#                transitionDuration:0,#}
-{#                borderRadius : 8,#}
-{#                borderWidth: 2,#}
-{#                padding: 10,    // [5, 10, 15, 20]#}
-{#            },#}
-{#            series : [#}
-{#                {#}
-{#                    type : 'pie',#}
-{#                    center : ['50%', '70%'],//圆心坐标（div中的%比例）#}
-{#                    radius : radius,//半径#}
-{#                    x: '0%', // for funnel#}
-{#                    itemStyle : labelTop,//graphStyleA,//图形样式 // 当查到的数据不存在（并非为0），此属性隐藏#}
-{#                    data : [#}
-{#                        {name:'达成率', value:79,itemStyle : labelTop},#}
-{#                        {name:'79%', value:21, itemStyle : labelBottom}#}
-{#                    ]#}
-{#                }#}
-{#            ]#}
-{#        };#}
-{#        pieChart.setOption(pieChartOption);#}
 
+        $(document).on('click', '.btn-add-rule', function (e) {
+            e.preventDefault();
 
-        var myChart = echarts.init(document.getElementById('main-charts'));
+            var controlForm = $('.block-list:first'), currentEntry = $(this).parents('.rule-block:first');
 
-        function generateData(value) {
-            now = new Date();
-            return {
-                name: now.toString(),
-                value: [
-                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-') + " " + now.getHours() + ":" + now.getMinutes(),
-                    parseInt(value)
-                ]
+            var rule_path_ele = currentEntry.find('input[name="rule_path"]')
+            var rule_cb_ele = currentEntry.find('input[name="rule_cb"]')
+
+            if (rule_path_ele.val()) {
+                $.post('/ml/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
+
+                    if(res.data[0]!= 'id')
+                        rule_id=res.data[0]
+                    else
+                        rule_id=res.data[1]
+                    console.log('idid',rule_id)
+
+{#                    var rule_id = res.data[0];#}
+                    rule_path_ele.attr('data-rule-id', rule_id);
+                    console.log(res.data)
+                    rule_cb_ele.attr('data-rule-id', rule_id);
+                    newEntry = $(currentEntry.clone()).appendTo(controlForm);
+                    newEntry.find('input').val('');
+                    currentEntry.find(".field-block").removeClass('hide');
+                    currentEntry.find(".field-block").attr('data-rule-id', rule_id);
+                    controlForm.find('.rule-group:not(:last) .btn-add-rule')
+                            .removeClass('btn-add-rule').addClass('btn-remove-rule')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="fa fa-minus" aria-hidden="true"></i>');
+                })
             }
-        }
 
-        var charts_data = []
 
-        option = {
-            title: {
-                text: '动态数据 + 时间坐标轴'
-            },
-            tooltip: {
-                trigger: 'axis',
-                formatter: function (params) {
-                    params = params[0];
-                    var date = new Date(params.name);
-                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
-                },
-                axisPointer: {
-                    animation: false
+        }).on('click', '.btn-remove-rule', function (e) {
+            var currentEntry = $(this).parents('.rule-block:first');
+            var rule_path_ele = currentEntry.find('input[name="rule_path"]');
+            //var rule_cb_ele = currentEntry.find('input[name="rule_cb"]');#}
+            var rule_id = rule_path_ele.attr('data-rule-id');
+            if (rule_id) {
+                $.ajax({
+                    url: '/ml/rule/' + rule_id + '/',
+                    type: 'DELETE',
+                    success: function (res) {
+                    }
+                })
+            }
+
+            $(this).parents('.rule-block:first').remove();
+            e.preventDefault();
+            return false;
+        });
+
+
+        $(document).on('click', '.btn-add-field', function (e) {
+            e.preventDefault();
+
+            var controlForm = $(this).parents('.field-block:first'),
+                    currentEntry = $(this).parents('.field-group:first');
+
+
+            var field_path_ele = currentEntry.find('input[name="field_path"]')
+            var field_name_ele = currentEntry.find('input[name="field_name"]')
+            var rule_id = controlForm.attr('data-rule-id');
+
+
+            if (field_path_ele.val() && field_name_ele.val()) {
+                $.post('/ml/field/', {
+                    "path": field_path_ele.val(),
+                    "name": field_name_ele.val(),
+                    "rule": rule_id
+                }, function (res) {
+                    if(res.data[0]!= 'id')
+                        field_id=res.data[0]
+                    else
+                        field_id=res.data[1]
+                    console.log('field',field_id)
+{#                    var field_id = res.data[0];#}
+                    field_path_ele.attr('data-field-id', field_id);
+                    field_name_ele.attr('data-field-id', field_id);
+                    newEntry = $(currentEntry.clone()).appendTo(controlForm);
+                    newEntry.find('input').val('');
+                    controlForm.find('.field-group:not(:last) .btn-add-field')
+                            .removeClass('btn-add-field').addClass('btn-remove-field')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="fa fa-minus" aria-hidden="true"></i>');
+                })
+            }
+
+        }).on('click', '.btn-remove-field', function (e) {
+            var currentEntry = $(this).parents('.field-group:first');
+            var field_path_ele = currentEntry.find('input[name="field_path"]');
+            var field_id = field_path_ele.attr('data-field-id');
+            if (field_id) {
+                $.ajax({
+                    url: '/ml/field/' + field_id + '/',
+                    type: 'DELETE',
+                    success: function (res) {
+                    }
+                })
+            }
+
+            $(this).parents('.field-group:first').remove();
+
+            e.preventDefault();
+            return false;
+        });
+
+
+        $('.multiselect-ui').multiselect({
+            includeSelectAllOption: true,
+            nonSelectedText: "选择保存数据方式"
+        });
+
+        $(document).on('click', '.submit-project', function (e) {
+            e.preventDefault();
+            var rules_data = [];
+            $(".rule-block").map(function () {
+                var rule_path = $(this).find('input[name="rule_path"]').eq(0).val();
+                var rule_cb = $(this).find('input[name="rule_cb"]').eq(0).val();
+                var rule_id = $(this).find('input[name="rule_cb"]').eq(0).attr('data-rule-id');
+                var rule_data = {'path': rule_path, 'callback_func': rule_cb, 'id': rule_id, 'fields': []}
+                var field_group_ele = $(this).find('.field-group');
+                field_group_ele.map(function (i, e) {
+                    var field_path_value = $(this).find('input[name="field_path"]').eq(0).val();
+                    var field_name_value = $(this).find('input[name="field_name"]').eq(0).val();
+                    var field_id = $(this).find('input[name="field_name"]').eq(0).attr('data-field-id');
+                    console.log(field_id)
+                    if (field_path_value && field_name_value) {
+                        rule_data['fields'].push({'name': field_name_value, 'path': field_path_value, 'id': field_id})
+                    }
+                })
+                if (rule_path) {
+                    rules_data.push(rule_data);
                 }
-            },
-            xAxis: {
-                type: 'time',
-                splitLine: {
-                    show: false
-                }
-            },
-            yAxis: {
-                type: 'value',
-                boundaryGap: [0, '100%'],
-                splitLine: {
-                    show: false
-                }
-            },
-            series: [{
-                name: '模拟数据',
-                type: 'line',
-                showSymbol: false,
-                hoverAnimation: false,
-                data: charts_data
-            }]
-        };
-
-        function get_statistics_data() {
-            $.get("/project_statistics/{{project.id}}", function (res) {
-                value = res.data.count[0];
-                charts_data.push(generateData(value));
-                option.series[0].data = charts_data
-
-                myChart.setOption(option);
             })
-        }
 
+            var pipelines = []
+            $('#pipelines :selected').map(function (i, el) {
+                pipelines.push($(el).val());
+            })
 
-{#        $.get("/project_statistics/{{project.id}}?all=true", function (res) {#}
-{#            values = res.data.count;#}
-{#            for (var i = 0; i < values.length; i++) {#}
-{#                charts_data.push(generateData(values[i]));#}
-{#            }#}
-{#            option.series[0].data = charts_data#}
-{#            myChart.setOption(option);#}
-{#        });#}
-{##}
-{#        setInterval(function () {#}
-{#            get_statistics_data();#}
-{#        }, 60000);#}
+            var data = {
+                "name": $("input[name='name']").val(),
+                "alias": $("input[name='alias']").val(),
+                "domain": $("input[name='domain']").val(),
+                "start_urls": $("input[name='start_urls']").val(),
+                "pipelines": pipelines.join(','),
+                "rules": rules_data
+            }
+
+            console.log(JSON.stringify(data));
+
+            $.ajax(
+                    {
+                        url: '/ml/project/',
+                        type: 'POST',
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (res) {
+                            project_id = res.id;
+                            console.log('res.id',res.id)
+                            alert("创建成功，3秒后跳转");
+                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)
+                        }
+                    }
+            );
+        })
     </script>
 {% endblock %}
 

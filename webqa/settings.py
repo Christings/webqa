@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'publicEnv',
     'djcelery',
     'kombu.transport.django',
-    'mleval'
+    'mleval',
     #'ml',
     #'rest_framework',
 ]
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'rbac.middleware.rbac.RbacMiddleware',
+    # 'rbac.middleware.rbac.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'webqa.urls'
@@ -210,3 +210,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 ImageFormats = ["jpg", "jpeg", "png"]
 
 CELERY_TIMEZONE = TIME_ZONE
+
+OUTPUT_URL = '/ml/outputs/'
+
+OUTPUT_ROOT = os.path.join(BASE_DIR, 'ml/outputs')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'PAGE_SIZE': 10
+}

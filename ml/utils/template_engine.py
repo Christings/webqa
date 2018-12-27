@@ -59,7 +59,7 @@ def _generate_crawl_template(project, rule_fields):
                       output_dir="ml/outputs/" + project.md5)
     t.render(**{"project": project})
 
-    t = CrawlTemplate(template_name="run.py.tpl", output_name="run.py",
+    t = CrawlTemplate(template_name="scripts1.py.tpl", output_name="scripts1.py",
                       output_dir="ml/outputs/" + project.md5)
     t.render(**{"project": project})
 
@@ -93,7 +93,7 @@ def generate_crawl(project, rule_fields, output_dirs="ml/outputs/"):
     # print('succ!!!')
 
 
-def run(project):
+
     # print(os.chdir('/Users/apple/PycharmProjects/scrapy_helper/outputs/161e5fd1a9e015080e3f86c0cffdd426/ziroom/'))
     # os.chdir('/Users/apple/AnacondaProjects/webqa/ml/outputs/42fa0c6a5deb88aba1652369d9510feb/ziru_1/')
     #
@@ -106,9 +106,13 @@ def run(project):
     # # print(OUTPUT_ROOT)
 
 
-    RUN_ROOT=os.path.join(settings.BASE_DIR,'ml/outputs',project.md5,project.name)
+    # RUN_ROOT=os.path.join(settings.BASE_DIR,'ml/outputs',project.md5,project.name)
+    # os.chdir(RUN_ROOT)
+    # from scrapy import cmdline
+    # cmd = 'scrapy crawl ' + project.name
+    # cmdline.execute(cmd.split())
+    # print(RUN_ROOT)
+def run(project):
+    RUN_ROOT=os.path.join(settings.BASE_DIR,'ml/outputs',project.md5,)
     os.chdir(RUN_ROOT)
-    from scrapy import cmdline
-    cmd = 'scrapy crawl ' + project.name
-    cmdline.execute(cmd.split())
-    print(RUN_ROOT)
+    os.system('python scripts1.py')

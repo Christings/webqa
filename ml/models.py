@@ -42,6 +42,8 @@ class Project(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    log = models.TextField()
+
     @property
     def get_pipelines(self):
         return [self.PIPELINE_CHOICES[pipeline] for pipeline in self.pipelines.split(",")]

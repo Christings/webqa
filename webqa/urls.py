@@ -19,6 +19,8 @@ from django.views.static import serve
 from django.urls import include, re_path
 from django.views.generic.base import RedirectView
 from fanyi import views
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     re_path(r'favicon.ico', RedirectView.as_view(url=r'static/favicon.ico')),
@@ -36,10 +38,11 @@ urlpatterns = [
     re_path(r'publicsv/', include('publicEnv.urls')),
     re_path(r'mleval/', include('mleval.urls')),
     #re_path(r'ml/', include('ml.urls')),
+    #re_path(r'ml/', include('ml.urls')),
     # re_path(r'^$', RedirectView.as_view(url='/project')),
 
     re_path(r'', include('editor_md.urls')),
     re_path(r"^static/media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
-
-
 ]
+
+urlpatterns += static(settings.OUTPUT_URL, document_root=settings.OUTPUT_ROOT)

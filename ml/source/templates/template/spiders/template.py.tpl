@@ -23,6 +23,7 @@ class ${project.name.capitalize()}Spider(CrawlSpider):
     % for rule_field in rule_fields:
     % if rule_field['rule'].callback_func:
     def ${rule_field["rule"].callback_func}(self, response):
+
         item = ${rule_field["rule"].callback_func.split("_")[-1].capitalize()}Item()
         % for field in rule_field["fields"]:
         item['${field.name}'] = self.get_${field.name}(response)

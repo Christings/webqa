@@ -37,6 +37,8 @@ urlpatterns = [
     # crawler
     # re_path(r'^project', views.crawler_list),
     re_path(r'^project/add', views.crawler_add),
+    re_path(r'^project/edit/(?P<id>\d+)$', views.crawler_edit),
+    re_path(r'^project/run/(?P<id>\d+)$', views.crawler_run),
     re_path(r'^project_status/(?P<id>\d+)$', views.crawler_detail),
 
     # re_path(r'^project', include(router.urls)),
