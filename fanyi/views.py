@@ -96,7 +96,7 @@ def interface(request):
                                                 queryuser=queryuser,
                                                 querypassw=querypassw, querypath=querypath,
                                                 testtag=testtag)
-            #os.system('/root/anaconda3/bin/python3 /search/odin/pypro/webqa/utils/getdiff_byxml.py %d &' % a.id)
+            #os.system('/root/anaconda3/bin/python3 /search/odin/pypro/frontqa/utils/getdiff_byxml.py %d &' % a.id)
             r = get_fanyi_result.delay(a.id)
             if r != 0:
                 ret['status'] = False
@@ -333,6 +333,7 @@ def gpu_task_start(request):
             models.GpuMonitor.objects.filter(id=close_id['id'], h_id=req_id).update(status=0)
         models.GpuMonitor.objects.create(create_time=get_now_time(), monitorip=monitor_ip.ip, gpuid=monitor_ip.gpuid,user=user_id, status=1, h_id=req_id)
         running_case_id = models.GpuMonitor.objects.filter(status=1, h_id=req_id).first()
+<<<<<<< HEAD
         # print('running_case_id',running_case_id)
 
         # os.system('/usr/local/bin/python3 /search/odin/pypro/webqa/utils/monitor.py %s %s &' % (str(running_case_id.id),req_id))
@@ -342,6 +343,11 @@ def gpu_task_start(request):
             ret['status'] = False
             ret['error'] = 'error:执行失败'
             models.GpuMonitor.objects.filter(id=running_case_id.id).update(status=2)
+=======
+        print('running_case_id',running_case_id)
+        print('req_id',req_id)
+        os.system('/usr/local/bin/python3 /search/odin/pypro/frontqa/utils/monitor.py %s %s &' % (str(running_case_id.id),req_id))
+>>>>>>> c316a4be979fe9e057dc896dbf70a74d186d0ede
         time.sleep(1)
         new_running_ip = models.Host.objects.filter(id=req_id).first()
         if new_running_ip.runningPID == '':
@@ -617,7 +623,12 @@ def debug(request):
 
 
 def login(request):
+<<<<<<< HEAD
     login_url = verify.login_url
+=======
+    #login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
+    login_url=verify.login_url
+>>>>>>> c316a4be979fe9e057dc896dbf70a74d186d0ede
     ptoken = ""
     try:
         ptoken = request.GET['ptoken']
@@ -676,6 +687,10 @@ def index(request):
 
 
 def logout(request):
+<<<<<<< HEAD
+=======
+    #response = redirect('https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl=')
+>>>>>>> c316a4be979fe9e057dc896dbf70a74d186d0ede
     response = redirect(verify.login_url)
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")

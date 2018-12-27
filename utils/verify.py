@@ -14,4 +14,6 @@ def auth(func):
 
 
 publicPem_path='/search/odin/pypro/webqa/public.pem'
-login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
+
+login_url = "https://login.sogou-inc.com/?appid=1162&sso_redirect=http://frontqa.web.sjs.ted/login&targetUrl="
+
