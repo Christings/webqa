@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'publicEnv',
     'djcelery',
     'kombu.transport.django',
+    'mleval'
     #'ml',
     #'rest_framework',
 ]

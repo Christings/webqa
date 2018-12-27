@@ -1,0 +1,336 @@
+{% extends 'main.html' %} {% load static %}{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="tile">
+		<div class="bs-component">
+              <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#All" id='all'>All</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#English" id='en'>English</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Japanese" id="ja">Japanese</a></li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+              	<div class="tab-pane fade active show" id="All">
+                  	<div class="form-group row">
+						<div class="col-md-12">
+							<div id="container_all" style="width: 100%; height: 600px; margin: 0 auto"></div>
+						</div>
+					</div>
+                </div>
+                <div class="tab-pane fade" id="English">
+                  	<div class="form-group row">
+						<div class="col-md-12">
+							<div id="container_en" style="width: 100%; height: 600px; margin: 0 auto"></div>
+						</div>
+					</div>
+                </div>
+                <div class="tab-pane fade" id="Japanese">
+                  <div class="form-group row">
+						<div class="col-md-12">
+							<div id="container_ja" style="width: 100%; height: 600px; margin: 0 auto"></div>
+						</div>
+					</div>
+                </div>
+              </div>
+            </div>
+           </div>
+	</div>
+</div>
+{% endblock %} {% block js %}
+<script src="{% static "js/highstock.js" %}"></script>
+<script src="{% static "js/exporting.js" %}"></script>
+<script language="JavaScript">
+	$(function() {
+		var lang_style=new Array();
+		lang_style={
+			contextButtonTitle:"图表导出菜单",
+            decimalPoint:".",
+            downloadJPEG:"下载JPEG图片",
+            downloadPDF:"下载PDF文件",
+            downloadPNG:"下载PNG文件",
+            downloadSVG:"下载SVG文件",
+            drillUpText:"返回 {series.name}",
+            loading:"加载中",
+            months:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+            noData:"没有数据",
+            numericSymbols: [ "千" , "兆" , "G" , "T" , "P" , "E"],
+            printChart:"打印图表",
+            resetZoom:"恢复缩放",
+            resetZoomTitle:"恢复图表",
+            shortMonths: [ "Jan" , "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec"],
+            thousandsSep:",",
+            weekdays: ["星期一", "星期二", "星期三", "星期三", "星期四", "星期五", "星期六","星期天"]
+		}
+		createChart_all = function () {
+			Highcharts.stockChart('container_all', {
+	        rangeSelector: {
+	            selected: 5
+	        },
+	        xAxis: {
+			},
+	        title: {
+	            text: 'P99数据分析'
+	        },
+	        plotOptions: {	        	
+	            series: {
+	                showInLegend: true
+	            }
+	        },
+	        tooltip: {
+	            split: false,
+	            shared: true
+	        },
+	        series: [seriesOptions_en[0],seriesOptions_en[1],seriesOptions_ja[0],seriesOptions_ja[1]],
+	    	});
+    	    Highcharts.setOptions({
+	        lang:lang_style,
+		    });
+		};
+		
+		
+		var seriesOptions_en = [],
+		// create the chart when all data is loaded
+		createChart_en = function () {
+			Highcharts.stockChart('container_en', {
+	        rangeSelector: {
+	            selected: 5
+	        },
+	        xAxis: {
+			},
+	        title: {
+	            text: 'P99数据分析'
+	        },
+	        plotOptions: {
+	        	
+	            series: {
+	                showInLegend: true
+	            }
+	        },
+	        tooltip: {
+	            split: false,
+	            shared: true
+	        },
+	        series: seriesOptions_en,
+	    	});
+    	    Highcharts.setOptions({
+	        lang:lang_style,
+		    });
+		};
+	
+		seriesOptions_en[0] = {
+			name: 'Test P{{task_detail.testp}}/{{task_detail.test_interval}}/{{task_detail.testbox}}',
+			type: 'spline',
+			lineWidth: 2,
+			data: ([
+				[1544048898000,23756],[1544048909000,24186],[1544048920000,21660],[1544048931000,21494],[1544048942000,19475],[1544048953000,34026],[1544048964000,27582],[1544048975000,25902],[1544048986000,21229],[1544048997000,28480],[1544049008000,30061],[1544049019000,20531],[1544049030000,27250],[1544049041000,20932],[1544049052000,31798],[1544049063000,23382],
+			]),
+			tooltip: {
+				valueDecimals: 2
+			},
+			fillColor : {
+				linearGradient : {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 1
+				},
+				stops : [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+				]
+			}
+		};
+		seriesOptions_en[1] = {
+			name: 'Base P{{task_detail.basep}}/{{task_detail.base_interval}}/{{task_detail.basebox}}',
+			type: 'spline',
+			lineWidth: 2,
+			data: ([
+				[1544048898000,14047],[1544048909000,13753],[1544048920000,10306],[1544048931000,15204],[1544048942000,11473],[1544048953000,13011],[1544048964000,13084],[1544048975000,16148],[1544048986000,14284],[1544048997000,15280],[1544049008000,14924],[1544049019000,15125],[1544049030000,15678],[1544049041000,11244],[1544049052000,18239],[1544049063000,15879],
+			]),
+			tooltip: {
+				valueDecimals: 2
+			},
+			fillColor : {
+				linearGradient : {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 1
+				},
+				stops : [
+						[0, Highcharts.getOptions().colors[8]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+				]
+			}
+		};
+		$('#en').click(function(){
+			createChart_en();
+		})
+	
+	
+	
+		//	ja
+		var seriesOptions_ja = [],
+		createChart_ja = function () {
+			Highcharts.stockChart('container_ja', {
+	        rangeSelector: {
+	            selected: 5
+	        },
+	        xAxis: {
+			},
+	        title: {
+	            text: 'P99数据分析'
+	        },
+	        plotOptions: {
+	        	
+	            series: {
+	                showInLegend: true
+	            }
+	        },
+	        tooltip: {
+	            split: false,
+	            shared: true
+	        },
+	        series: seriesOptions_ja,
+	    	});
+    	    Highcharts.setOptions({
+	        lang:lang_style,
+		    });
+		};
+		seriesOptions_ja[0] = {
+			name: 'Test P{{task_detail.testp}}/{{task_detail.test_interval}}/{{task_detail.testbox}}',
+			type: 'spline',
+			lineWidth: 2,
+			data: ([
+				[1544048898000,16000],[1544048909000,12000],[1544048920000,6000],[1544048931000,18000],[1544048942000,9000],[1544048953000,13011],[1544048964000,15000],[1544048975000,13000],[1544048986000,16000],[1544048997000,12000],[1544049008000,17000],[1544049019000,6000],[1544049030000,19000],[1544049041000,11244],[1544049052000,16000],[1544049063000,15879],
+			]),
+			tooltip: {
+				valueDecimals: 2
+			},
+			fillColor : {
+				linearGradient : {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 1
+				},
+				stops : [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+				]
+			}
+		};
+		seriesOptions_ja[1] = {
+			name: 'Base P{{task_detail.basep}}/{{task_detail.base_interval}}/{{task_detail.basebox}}',
+			type: 'spline',
+			lineWidth: 2,
+			data: ([
+				[1544048898000,26000],[1544048909000,26000],[1544048920000,29000],[1544048931000,25000],[1544048942000,15000],[1544048953000,30000],[1544048964000,29000],[1544048975000,18000],[1544048986000,26000],[1544048997000,24000],[1544049008000,26000],[1544049019000,23000],[1544049030000,30000],[1544049041000,12000],[1544049052000,26000],[1544049063000,18000],
+			]),
+			tooltip: {
+				valueDecimals: 2
+			},
+			fillColor : {
+				linearGradient : {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 1
+				},
+				stops : [
+						[0, Highcharts.getOptions().colors[8]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+				]
+			}
+		};
+	
+	//cancel task
+	$('#ja').click(function(){
+		createChart_ja();
+	})
+	createChart_all();
+	})
+</script>
+
+<script>
+	//cancel task
+	$('#cancel_task').click(function(){
+		var task_id = $(this).attr('task_id');
+		$.ajax({
+				type: "POST",
+				url: "/qo_task_cancel",
+				async: true,
+				traditional: true,
+				data: {
+					'task_id':task_id,
+				},
+				dataType: 'JSON',
+				success: function(obj) {
+					if(obj.status) {						
+						location.reload();
+					} else {
+						$('#error_xml').text(obj.error);
+					}
+				},
+				error: function() {
+
+				},
+			});
+	})
+	
+	//restart task
+	$('#restart_task').click(function(){
+		var task_id = $(this).attr('task_id');
+		$.ajax({
+				type: "POST",
+				url: "/qo_task_readd",
+				async: true,
+				traditional: true,
+				data: {
+					'task_id':task_id,
+				},
+				dataType: 'JSON',
+				success: function(obj) {
+					if(obj.status) {
+						//location.reload();
+						window.location.href='/qo_automation';
+					} else {
+						$('#error_xml').text(obj.error);
+					}
+				},
+				error: function() {
+
+				},
+			});
+	})
+	
+		//table hover
+	$(function() {
+		function showBox(obj, box) {
+			var timer = null;
+			$(obj).on("mouseover", function(e) {
+				clearTimeout(timer);
+				var clientX = e.clientX;
+				var clientY = e.clientY;
+				var y = clientY + 20;
+				var txt = $(this).text();
+				timer = setTimeout(function() {
+					$(box).css("left", clientX).css("top", y);
+					if(txt == "") {
+						$(box).hide();
+					} else {
+						$(box).show();
+						$(box).html(txt);
+					}
+				}, 300);
+			});
+			$(obj).on("mouseout", function() {
+				clearTimeout(timer);
+				$(box).hide();
+			});
+		}
+		showBox("#reqData > tbody td", "#showDiv");
+	});
+	
+	
+</script>
+{% endblock %}
