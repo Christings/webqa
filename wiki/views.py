@@ -9,21 +9,9 @@ import json, time, os
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EditorTestForm
 from django.http import JsonResponse
-
+from utils.verify import auth
 
 # Create your views here.
-def auth(func):
-    def inner(request, *args, **kwargs):
-        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
-        try:
-            user_id = request.COOKIES.get('uid')
-            if not user_id:
-                return redirect(login_url)
-        except:
-            return redirect(login_url)
-        return func(request, *args, **kwargs)
-
-    return inner
 
 
 # wiki detail

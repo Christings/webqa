@@ -11,22 +11,7 @@ from ml.utils.serializers import *
 from ml.models import Project, Rule, Field, update_crawl_template
 from ml.utils.template_engine import generate_crawl
 from ml.utils.utils import create_md5
-
-
-# Create your views here.
-
-def auth(func):
-    def inner(request, *args, **kwargs):
-        login_url = "https://login.sogou-inc.com/?appid=1220&sso_redirect=http://webqa.web.sjs.ted/login&targetUrl="
-        # try:
-        #     user_id = request.COOKIES.get('uid')
-        #     if not user_id:
-        #         return redirect(login_url)
-        # except:
-        #     return redirect(login_url)
-        return func(request, *args, **kwargs)
-
-    return inner
+from utils.verify import auth
 
 
 # @csrf_exempt
