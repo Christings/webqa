@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rbac.models import UserInfo
 from django.db import models

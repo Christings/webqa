@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'father.html' %}
 {% block content %}
     {% load tag_tools %}
     {% load static %}
@@ -33,15 +33,14 @@
                                     <td>{{ item.domain }}</td>
                                     <td>{{ item.status }}</td>
                                     <td>
-                                        <button class="btn btn-primary edit" type="button" data-id="{{ item.id }}">编辑
-                                        </button>
+                                        {#                                        <button class="btn btn-primary edit" type="button" data-id="{{ item.id }}">编辑</button>#}
                                         <button class="btn btn-primary remove" type="button" data-id="{{ item.id }}">
                                             删除
                                         </button>
-                                        <a class="btn btn-primary" type="button" data-id="{{ item.id }}">
+                                        <button class="btn btn-primary jump" type="button" data-id="{{ item.id }}">
                                             跳转
-                                        </a>
-                                        <button class="btn btn-primary" type="button" data-id="{{ item.id }}">
+                                        </button>
+                                        <button class="btn btn-primary" type="button" onclick="window.open('/ml/outputs/{{ item.name }}_items.csv')" data-id="{{ item.id }}">
                                             下载
                                         </button>
                                     </td>
@@ -63,21 +62,21 @@
 {% endblock %}
 {% block js %}
     <script>
-{#        $(document).on('click', '.edit', function (e) {#}
-{#            e.preventDefault()#}
-{#            var that = $(this)#}
-{#            var project_id = that.attr('data-id')#}
-{#            window.location.href = "/ml/project/edit/" + project_id#}
-{##}
-            {#            $.ajax({#}
-            {#                url: '/ml/project/',#}
-            {#                type: 'POST',#}
-            {#                data: project_id,#}
-            {#                success: function (res) {#}
-            {#                    window.location.href = 'eidt'#}
-            {#                }#}
-            {#            })#}
-{#        });#}
+        {#        $(document).on('click', '.edit', function (e) {#}
+        {#            e.preventDefault()#}
+        {#            var that = $(this)#}
+        {#            var project_id = that.attr('data-id')#}
+        {#            window.location.href = "/ml/project/edit/" + project_id#}
+        {##}
+        {#            $.ajax({#}
+        {#                url: '/ml/project/',#}
+        {#                type: 'POST',#}
+        {#                data: project_id,#}
+        {#                success: function (res) {#}
+        {#                    window.location.href = 'eidt'#}
+        {#                }#}
+        {#            })#}
+        {#        });#}
         $(document).on('click', '.remove', function (e) {
             e.preventDefault()
             var that = $(this)
@@ -93,9 +92,8 @@
             })
         });
         $(document).on('click', '.detail', function (e) {
-            e.preventDefault()
-
-            var that = $(this)
+            e.preventDefault();
+            var that = $(this);
             var project_id = that.attr('data-id')
             window.location.href = "/ml/project_status/" + project_id
         });
@@ -103,7 +101,10 @@
         $(document).on('click', '.create_project', function (e) {
             e.preventDefault();
             window.location = 'add'
-            {#            window.open("add")#}
+        });
+        $(document).on('click', '.jump', function (e) {
+            e.preventDefault();
+            window.open('http://localhost:8004') //打开一个新页面
         });
     </script>
 {% endblock %}

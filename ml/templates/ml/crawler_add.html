@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'father.html' %}
 {% block content %}
     {% load tag_tools %}
     {% load static %}
@@ -246,7 +246,8 @@
                             project_id = res.id;
                             console.log('res.id',res.id)
                             alert("创建成功，3秒后跳转");
-                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)
+{#                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)#}
+                            setTimeout(window.open('http://localhost:8004'));
                         }
                     }
             );
