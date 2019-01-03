@@ -21,3 +21,4 @@ script/err_flower
 .venv/
 webqa/settings.py
 script/celerylog.pid
+ml/outputs

@@ -14,26 +14,10 @@ from ml.utils.utils import create_md5
 from utils.verify import auth
 
 
-# @csrf_exempt
-# def crawler_list(request):
-#     queryset = Project.objects.all()
-#
-#     return render(request, "publicsv/crawler.html", {"project": queryset})
-
-
 def crawler_add(request):
     return render(request, "ml/crawler_add.html")
 
-
-# def crawler_edit(request):
-#     pk=request.data.project_id
-#     print('edit',pk)
-#     projects = Project.objects.filter(id=pk)
-#     return render(request, "ml/crawler_edit.html", {"projects": projects})
-
-
 class ProjectViewSet(viewsets.ViewSet):
-    user_id = 'gongyanli'
 
     queryset = Project.objects.all()
     serializer_class = ProjectDetailSerializer
@@ -47,6 +31,7 @@ class ProjectViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         user_id = 'gongyanli'
         queryset = self.queryset.filter(id=pk)
+        # print('retrive!!!')
         queryset = queryset[0] if queryset else None
         if not queryset:
             return JsonResponse({"msg": "project not found"})
@@ -62,6 +47,7 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def create(self, request):
         user_id = 'gongyanli'
+        #user_id = request.COOKIES.get('uid')
 
         data = request.data.copy()
         data["user"] = user_id
@@ -69,7 +55,7 @@ class ProjectViewSet(viewsets.ViewSet):
         data["status"] = 1
         serializer = ProjectDetailSerializer(data=data)
         if serializer.is_valid():
-            print('success')
+            # print('create!!!')
             project = serializer.create(data)
             update_crawl_template(project)
             return Response({"msg": "ok", "id": project.id})
@@ -77,14 +63,17 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def update(self, request, pk=None):
         user_id = 'gongyanli'
+        # user_id = request.COOKIES.get('uid')
+
         # queryset = self.queryset.filter(id=pk, user=request.user)
         queryset = self.queryset.filter(id=pk, user=user_id)
         queryset = queryset[0] if queryset else None
+        # print('update!!!')
         if not queryset:
             return Response({"msg": "project not found"})
         data = request.data.copy()
-        data["user"] = request.user
-        # data["user"] = request.user_id
+        # data["user"] = request.user
+        data["user"] = user_id
         serializer = ProjectDetailSerializer(queryset, data=data)
         if serializer.is_valid():
             instance = serializer.update(queryset, data)
@@ -94,6 +83,8 @@ class ProjectViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         user_id = 'gongyanli'
+        # user_id = request.COOKIES.get('uid')
+
         project = Project.objects.get(pk=pk, user=user_id)
         # project = Project.objects.get(pk=pk, user=user_id)
         # project.is_delete = True
@@ -104,9 +95,9 @@ class ProjectViewSet(viewsets.ViewSet):
 
 def crawler_edit(request, id):
     user_id = 'gongyanli'
+    #user_id = request.COOKIES.get('uid')
 
     if request.method == "GET":
-        print('get')
         project = get_object_or_404(Project, pk=id)
         if project.is_public or project.user == user_id:
             return render(request, "ml/crawler_edit.html", {"project": project})
@@ -129,50 +120,15 @@ def crawler_edit(request, id):
         if status == 1:
             generate_crawl(project, rule_fields)
         return JsonResponse({"msg": "ok"})
-    print('testtest')
     return JsonResponse({'msg': "method not allowed"})
 
-
-def crawler_run(request, id):
-    user_id = 'gongyanli'
-    if request.method == "GET":
-        project = get_object_or_404(Project, pk=id)
-        run(project)
-        return render(request,"ml/crawler_run.html", {"project": project})
-    return JsonResponse({'msg': "method not allowed"})
-
-
-
-def crawler_detail(request, id):
-    user_id = 'gongyanli'
-
-    if request.method == "GET":
-        print('get')
-        project = get_object_or_404(Project, pk=id)
-        if project.is_public or project.user == user_id:
-            # return render(request, "ml/crawler_detail.html", {"project": project})
-            return render(request, "ml/crawler_run.html", {"project": project})
-
-    if request.method == "POST":
-        user = user_id
-        body = json.loads(request.body)
-        id = body.get("id")
-        status = int(body.get("status", 0))
-        project = Project.objects.get(pk=id, user=user)
-        project.status = status
-        project.save()
-
-        rule_fields = []
-        rules = Rule.objects.filter(project=project)
-        for rule in rules:
-            fields = Field.objects.filter(rule=rule)
-            rule_fields.append({"rule": rule, "field": fields})
-
-        if status == 1:
-            generate_crawl(project, rule_fields)
-        return JsonResponse({"msg": "ok"})
-    print('testtest')
-    return JsonResponse({'msg': "method not allowed"})
+# def crawler_run(request, id):
+#     user_id = 'gongyanli'
+#     if request.method == "GET":
+#         project = get_object_or_404(Project, pk=id)
+#         run(project)
+#         return render(request,"ml/crawler_run.html", {"project": project})
+#     return JsonResponse({'msg': "method not allowed"})
 
 
 class RuleViewSet(viewsets.ModelViewSet):
@@ -205,12 +161,3 @@ class FieldViewSet(viewsets.ModelViewSet):
     def destory(self, request, pk=None):
         Field.objects.filter(pk=pk).delete()
         return Response({"msg": "ok"})
-
-
-def get_now_time():
-    timeArray = time.localtime()
-    return time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
-
-
-def str_unix2br(input):
-    return input.replace('\n', '<br>')
