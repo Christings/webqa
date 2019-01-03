@@ -69,9 +69,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'rbac.middleware.rbac.RbacMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'rbac.middleware.rbac.RbacMiddleware',
+
 ]
 
 ROOT_URLCONF = 'webqa.urls'
