@@ -28,8 +28,10 @@ class ProjectViewSet(viewsets.ViewSet):
 
         return render(request, 'ml/crawler.html', {"project": projects})
 
+    @auth
     def retrieve(self, request, pk=None):
-        user_id = 'gongyanli'
+        user_id = request.COOKIES.get('uid')
+        # user_id = 'gongyanli'
         queryset = self.queryset.filter(id=pk)
         # print('retrive!!!')
         queryset = queryset[0] if queryset else None
@@ -45,9 +47,10 @@ class ProjectViewSet(viewsets.ViewSet):
             return render(request, render_template, {"project": serializer.data})
         return JsonResponse({"msg": "project not found"})
 
+    @auth
     def create(self, request):
-        user_id = 'gongyanli'
-        #user_id = request.COOKIES.get('uid')
+        # user_id = 'gongyanli'
+        user_id = request.COOKIES.get('uid')
 
         data = request.data.copy()
         data["user"] = user_id
@@ -61,9 +64,10 @@ class ProjectViewSet(viewsets.ViewSet):
             return Response({"msg": "ok", "id": project.id})
         return Response(serializer.errors)
 
+    @auth
     def update(self, request, pk=None):
-        user_id = 'gongyanli'
-        # user_id = request.COOKIES.get('uid')
+        # user_id = 'gongyanli'
+        user_id = request.COOKIES.get('uid')
 
         # queryset = self.queryset.filter(id=pk, user=request.user)
         queryset = self.queryset.filter(id=pk, user=user_id)
@@ -81,9 +85,10 @@ class ProjectViewSet(viewsets.ViewSet):
             return Response({"msg": "ok", "data": {"id": instance.id}})
         return Response(serializer.errors)
 
+    @auth
     def destroy(self, request, pk=None):
-        user_id = 'gongyanli'
-        # user_id = request.COOKIES.get('uid')
+        # user_id = 'gongyanli'
+        user_id = request.COOKIES.get('uid')
 
         project = Project.objects.get(pk=pk, user=user_id)
         # project = Project.objects.get(pk=pk, user=user_id)
@@ -92,10 +97,10 @@ class ProjectViewSet(viewsets.ViewSet):
         project.delete()
         return Response({"msg": "ok"})
 
-
+@auth
 def crawler_edit(request, id):
-    user_id = 'gongyanli'
-    #user_id = request.COOKIES.get('uid')
+    # user_id = 'gongyanli'
+    user_id = request.COOKIES.get('uid')
 
     if request.method == "GET":
         project = get_object_or_404(Project, pk=id)
