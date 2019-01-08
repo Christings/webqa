@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from utils import pagination
 import json, os, time
 
@@ -28,7 +29,7 @@ class ProjectViewSet(viewsets.ViewSet):
 
         return render(request, 'ml/crawler.html', {"project": projects})
 
-    @auth
+    @method_decorator(auth)
     def retrieve(self, request, pk=None):
         user_id = request.COOKIES.get('uid')
         # user_id = 'gongyanli'
@@ -47,7 +48,7 @@ class ProjectViewSet(viewsets.ViewSet):
             return render(request, render_template, {"project": serializer.data})
         return JsonResponse({"msg": "project not found"})
 
-    @auth
+    @method_decorator(auth)
     def create(self, request):
         # user_id = 'gongyanli'
         user_id = request.COOKIES.get('uid')
@@ -64,7 +65,7 @@ class ProjectViewSet(viewsets.ViewSet):
             return Response({"msg": "ok", "id": project.id})
         return Response(serializer.errors)
 
-    @auth
+    @method_decorator(auth)
     def update(self, request, pk=None):
         # user_id = 'gongyanli'
         user_id = request.COOKIES.get('uid')
@@ -85,7 +86,7 @@ class ProjectViewSet(viewsets.ViewSet):
             return Response({"msg": "ok", "data": {"id": instance.id}})
         return Response(serializer.errors)
 
-    @auth
+    @method_decorator(auth)
     def destroy(self, request, pk=None):
         # user_id = 'gongyanli'
         user_id = request.COOKIES.get('uid')
@@ -97,7 +98,7 @@ class ProjectViewSet(viewsets.ViewSet):
         project.delete()
         return Response({"msg": "ok"})
 
-@auth
+@method_decorator(auth)
 def crawler_edit(request, id):
     # user_id = 'gongyanli'
     user_id = request.COOKIES.get('uid')
