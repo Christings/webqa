@@ -1,0 +1,110 @@
+2019-01-03 15:57:42 [scrapy.utils.log] INFO: Scrapy 1.5.1 started (bot: ziru_1)
+2019-01-03 15:57:42 [scrapy.utils.log] INFO: Versions: lxml 4.2.5.0, libxml2 2.9.8, cssselect 1.0.3, parsel 1.5.1, w3lib 1.19.0, Twisted 18.9.0, Python 3.6.4 |Anaconda, Inc.| (default, Jan 16 2018, 12:04:33) - [GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)], pyOpenSSL 18.0.0 (OpenSSL 1.1.0i  14 Aug 2018), cryptography 2.3.1, Platform Darwin-17.5.0-x86_64-i386-64bit
+2019-01-03 15:57:42 [scrapy.crawler] INFO: Overridden settings: {'BOT_NAME': 'ziru_1', 'DOWNLOAD_DELAY': 3, 'LOG_FILE': 'logs/42fa0c6a5deb88aba1652369d9510feb/ziru_1/3e454b9e0f2d11e9892c88e9fe4e32cf.log', 'NEWSPIDER_MODULE': 'ziru_1.spiders', 'SPIDER_MODULES': ['ziru_1.spiders'], 'USER_AGENT': ['Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0']}
+2019-01-03 15:57:42 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats']
+2019-01-03 15:57:42 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2019-01-03 15:57:42 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2019-01-03 15:57:42 [scrapy.middleware] INFO: Enabled item pipelines:
+['ziru_1.pipelines.JsonWriterPipeline']
+2019-01-03 15:57:42 [scrapy.core.engine] INFO: Spider opened
+2019-01-03 15:57:42 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2019-01-03 15:57:42 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
+2019-01-03 15:57:42 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/nl/z2-d23008614.html> (referer: None)
+2019-01-03 15:57:46 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61818703.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:57:46 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61818703.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:57:51 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61660220.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:57:51 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61660220.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:57:55 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61792799.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:57:55 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61792799.html>
+{'name': '未知', 'price': '未知'}
+2019-01-03 15:57:59 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61587210.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:57:59 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61587210.html>
+{'name': '...', 'price': '...'}
+2019-01-03 15:58:03 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61838644.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:03 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61838644.html>
+{'name': '销售', 'price': '销售'}
+2019-01-03 15:58:06 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61837352.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:06 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61837352.html>
+{'name': '硬件研发', 'price': '硬件研发'}
+2019-01-03 15:58:10 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61529807.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:10 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61529807.html>
+{'name': '经营管理', 'price': '经营管理'}
+2019-01-03 15:58:14 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61790569.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:14 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61790569.html>
+{'name': '高管', 'price': '高管'}
+2019-01-03 15:58:18 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61660219.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:18 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61660219.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:58:22 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61640685.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:22 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61640685.html>
+{'name': '销售', 'price': '销售'}
+2019-01-03 15:58:26 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61770586.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:26 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61770586.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:58:29 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61792800.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:29 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61792800.html>
+{'name': '未知', 'price': '未知'}
+2019-01-03 15:58:32 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61791078.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:32 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61791078.html>
+{'name': '销售/理财', 'price': '销售/理财'}
+2019-01-03 15:58:35 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61870583.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:35 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61870583.html>
+{'name': '艺术体育', 'price': '艺术体育'}
+2019-01-03 15:58:37 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61646774.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:38 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61646774.html>
+{'name': '医生', 'price': '医生'}
+2019-01-03 15:58:41 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61818702.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:42 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61818702.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:58:42 [scrapy.extensions.logstats] INFO: Crawled 17 pages (at 17 pages/min), scraped 16 items (at 16 items/min)
+2019-01-03 15:58:44 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/61818704.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:45 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/61818704.html>
+{'name': '…', 'price': '…'}
+2019-01-03 15:58:48 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://www.ziroom.com/z/vr/60821944.html> (referer: http://www.ziroom.com/z/nl/z2-d23008614.html)
+2019-01-03 15:58:49 [scrapy.core.scraper] DEBUG: Scraped from <200 http://www.ziroom.com/z/vr/60821944.html>
+{'name': '运营/编辑', 'price': '运营/编辑'}
+2019-01-03 15:58:49 [scrapy.core.engine] INFO: Closing spider (finished)
+2019-01-03 15:58:49 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 7892,
+ 'downloader/request_count': 19,
+ 'downloader/request_method_count/GET': 19,
+ 'downloader/response_bytes': 213720,
+ 'downloader/response_count': 19,
+ 'downloader/response_status_count/200': 19,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2019, 1, 3, 7, 58, 49, 14475),
+ 'item_scraped_count': 18,
+ 'log_count/DEBUG': 38,
+ 'log_count/INFO': 8,
+ 'memusage/max': 67952640,
+ 'memusage/startup': 56582144,
+ 'request_depth_max': 1,
+ 'response_received_count': 19,
+ 'scheduler/dequeued': 19,
+ 'scheduler/dequeued/memory': 19,
+ 'scheduler/enqueued': 19,
+ 'scheduler/enqueued/memory': 19,
+ 'start_time': datetime.datetime(2019, 1, 3, 7, 57, 42, 524943)}
+2019-01-03 15:58:49 [scrapy.core.engine] INFO: Spider closed (finished)

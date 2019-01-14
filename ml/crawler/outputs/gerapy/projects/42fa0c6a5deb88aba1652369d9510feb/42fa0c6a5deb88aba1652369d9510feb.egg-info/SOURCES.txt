@@ -1,0 +1,14 @@
+setup.py
+42fa0c6a5deb88aba1652369d9510feb.egg-info/PKG-INFO
+42fa0c6a5deb88aba1652369d9510feb.egg-info/SOURCES.txt
+42fa0c6a5deb88aba1652369d9510feb.egg-info/dependency_links.txt
+42fa0c6a5deb88aba1652369d9510feb.egg-info/entry_points.txt
+42fa0c6a5deb88aba1652369d9510feb.egg-info/top_level.txt
+ziru_1/__init__.py
+ziru_1/items.py
+ziru_1/pipelines.py
+ziru_1/settings.py
+ziru_1/middlewares/__init__.py
+ziru_1/middlewares/useragent_middleware.py
+ziru_1/spiders/__init__.py
+ziru_1/spiders/ziru_1.py

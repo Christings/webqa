@@ -15,7 +15,7 @@ def add_zipfile(source_dir, output_filename):
 
 class BaseTemplate(object):
     def __init__(self, template_name, output_name, template_dir="ml/source/templates",
-                 output_dir="ml/outputs/gerapy/projects"):
+                 output_dir="ml/crawler/gerapy/projects"):
         self.template = Template(filename=os.path.join(settings.BASE_DIR, template_dir, template_name))
         self.output_filename = os.path.join(settings.BASE_DIR, output_dir, output_name)
 
@@ -31,40 +31,40 @@ class CrawlTemplate(BaseTemplate):
 
 def _generate_crawl_template(project, rule_fields):
     t = CrawlTemplate(template_name="scrapy.cfg.tpl", output_name="scrapy.cfg",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"project_name": project.name})
 
     t = CrawlTemplate(template_name="template/settings.py.tpl", output_name=project.name + "/settings.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"project": project})
 
     t = CrawlTemplate(template_name="template/items.py.tpl", output_name=project.name + "/items.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"rule_fields": rule_fields})
 
     t = CrawlTemplate(template_name="template/spiders/template.py.tpl",
                       output_name=project.name + "/spiders/" + project.name + ".py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"rule_fields": rule_fields, "project": project})
 
     t = CrawlTemplate(template_name="template/pipelines.py.tpl", output_name=project.name + "/pipelines.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"rule_fields": rule_fields, "project": project})
 
     t = CrawlTemplate(template_name="template/middlewares/useragent_middleware.py.tpl",
                       output_name=project.name + "/middlewares/useragent_middleware.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render()
     t = CrawlTemplate(template_name="scripts.py.tpl", output_name="scripts.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"project": project})
 
     t = CrawlTemplate(template_name="scripts1.py.tpl", output_name="scripts1.py",
-                      output_dir="ml/outputs/gerapy/projects/" + project.md5)
+                      output_dir="ml/crawler/gerapy/projects/" + project.md5)
     t.render(**{"project": project})
 
 
-def generate_crawl(project, rule_fields, output_dirs="ml/outputs/gerapy/projects/"):
+def generate_crawl(project, rule_fields, output_dirs="ml/crawler/gerapy/projects/"):
     project_md5_dir = os.path.join(settings.BASE_DIR, output_dirs, project.md5)
     if os.path.exists(project_md5_dir):
         shutil.rmtree(project_md5_dir)
@@ -83,7 +83,7 @@ def generate_crawl(project, rule_fields, output_dirs="ml/outputs/gerapy/projects
 
 
 def lauch(project):
-    RUN_ROOT = os.path.join(settings.BASE_DIR, 'ml/outputs', project.md5, project.name)
+    RUN_ROOT = os.path.join(settings.BASE_DIR, 'ml/crawler', project.md5, project.name)
     os.chdir(RUN_ROOT)
     from scrapy import cmdline
     cmd = 'scrapy crawl ' + project.name
@@ -92,6 +92,6 @@ def lauch(project):
 
 
 def run(project):
-    RUN_ROOT = os.path.join(settings.BASE_DIR, 'ml/outputs', project.md5, )
+    RUN_ROOT = os.path.join(settings.BASE_DIR, 'ml/crawler', project.md5, )
     os.chdir(RUN_ROOT)
     os.system('python scripts1.py')

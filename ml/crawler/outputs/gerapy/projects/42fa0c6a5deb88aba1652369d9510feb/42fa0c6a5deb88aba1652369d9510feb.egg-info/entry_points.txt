@@ -1,0 +1,3 @@
+[scrapy]
+settings = ziru_1.settings
+
