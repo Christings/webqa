@@ -21,8 +21,8 @@ class Project(models.Model):
         (3, u'停止'),
     )
 
-    # user = models.CharField(max_length=50, default="")
-    user = models.ForeignKey(UserInfo, to_field='username',on_delete=models.CASCADE)
+    user = models.CharField(max_length=50, default="")
+    # user = models.ForeignKey(UserInfo, to_field='username',on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     alias = models.CharField(max_length=200)
     domain = models.TextField()

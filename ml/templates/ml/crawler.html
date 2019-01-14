@@ -28,7 +28,7 @@
 
                                 <tr>
                                     <td>{{ item.id }}</td>
-                                    <td><a href="/ml/project/{{ item.id }}">{{ item.name }}</a></td>
+                                    <td><a href="/ml/crawler/project/{{ item.id }}">{{ item.name }}</a></td>
                                     <td>{{ item.alias }}</td>
                                     <td>{{ item.domain }}</td>
                                     <td>{{ item.status }}</td>
@@ -84,7 +84,7 @@
             var yes = confirm("确认删除吗？")
             if (!yes) return;
             $.ajax({
-                url: '/ml/project/' + project_id + '/',
+                url: '/ml/crawler/project/' + project_id + '/',
                 type: 'DELETE',
                 success: function (res) {
                     that.parents('tr:first').remove();

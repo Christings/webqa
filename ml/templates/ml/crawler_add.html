@@ -93,7 +93,7 @@
             var rule_cb_ele = currentEntry.find('input[name="rule_cb"]')
 
             if (rule_path_ele.val()) {
-                $.post('/ml/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
+                $.post('/ml/crawler/rule/', {"path": rule_path_ele.val(), "callback_func": rule_cb_ele.val()}, function (res) {
 
                     if(res.data[0]!= 'id')
                         rule_id=res.data[0]
@@ -123,7 +123,7 @@
             var rule_id = rule_path_ele.attr('data-rule-id');
             if (rule_id) {
                 $.ajax({
-                    url: '/ml/rule/' + rule_id + '/',
+                    url: '/ml/crawler/rule/' + rule_id + '/',
                     type: 'DELETE',
                     success: function (res) {
                     }
@@ -149,7 +149,7 @@
 
 
             if (field_path_ele.val() && field_name_ele.val()) {
-                $.post('/ml/field/', {
+                $.post('/ml/crawler/field/', {
                     "path": field_path_ele.val(),
                     "name": field_name_ele.val(),
                     "rule": rule_id
@@ -177,7 +177,7 @@
             var field_id = field_path_ele.attr('data-field-id');
             if (field_id) {
                 $.ajax({
-                    url: '/ml/field/' + field_id + '/',
+                    url: '/ml/crawler/field/' + field_id + '/',
                     type: 'DELETE',
                     success: function (res) {
                     }
@@ -237,7 +237,7 @@
 
             $.ajax(
                     {
-                        url: '/ml/project/',
+                        url: '/ml/crawler/project/',
                         type: 'POST',
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
@@ -246,9 +246,9 @@
                             project_id = res.id;
                             console.log('res.id',res.id)
                             alert("创建成功，3秒后跳转");
-{#                            setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)#}
-                            setTimeout(window.open('http://localhost:8004'));
-                            setTimeout(window.location.href = "/ml/project/", 3000)
+                            // setTimeout(window.location.href = "/ml/project_status/" + project_id, 3000)
+                            // setTimeout(window.open('http://localhost:8004'));
+                            setTimeout(window.location.href = "/ml/crawler/project/", 3000)
                         }
                     }
             );
